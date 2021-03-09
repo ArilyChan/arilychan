@@ -48,6 +48,7 @@ class IRCBot extends Bot {
     // this.app.logger('adapter-irc:bot').info(s.parse(content))
     const parsed = s.parse(content)
     const message = parsed.map(this.transformSegment)
+    bot.app.logger('adapter-irc:bot').debug('sending message', { channelId, content })
     return this.client.say(channelId, message.join(''))
   }
 
@@ -86,6 +87,16 @@ class IRCAdapter extends Adapter {
 
   start () {
     this.bots.map(async bot => {
+      if (bot.client) {
+        try {
+            // bot.client.disconnect()
+            bot.client.removeAllListeners()
+            // bot.client = undefined
+        } catch (error) {
+          
+        }
+
+      }
       bot.client = new irc.Client(bot.host, bot.nickname, {
         ...bot,
         userName: bot.username || bot.userName
@@ -93,7 +104,7 @@ class IRCAdapter extends Adapter {
       bot.selfId = bot.nickname
       bot.client.connect()
       bot.client.addListener('error', function (message) {
-        // console.log('error: ', message)
+        bot.app.logger('adapter-irc:bot').error('error: ', message)
       })
       await pEvent(bot.client, 'registered')
 
@@ -102,7 +113,7 @@ class IRCAdapter extends Adapter {
       console.table(channels)
 
       bot.client.on('message', (nick, to, text, message) => {
-        bot.app.logger('adapter-irc').info('received message', { nick, to, text })
+        bot.app.logger('adapter-irc:bot').debug('received message', { nick, to, text })
         const data = {
           type: 'message',
           platform: bot.platform,
@@ -127,7 +138,7 @@ class IRCAdapter extends Adapter {
         })
         Object.defineProperty(data, 'message', {
           get () {
-            bot.app.logger('adapter-irc').warn(Error('please use session.content in v3.\n Stack Trace:\n').stack)
+            bot.app.logger('adapter-irc:bot').warn(Error('please use session.content in v3.\n Stack Trace:\n').stack)
             return data.content
           },
           set (newValue) { data.content = newValue },
@@ -136,7 +147,7 @@ class IRCAdapter extends Adapter {
         })
         Object.defineProperty(data, '$parsed', {
           get () {
-            bot.app.logger('adapter-irc').warn(Error('Session.$parsed is removed in v3.').stack)
+            bot.app.logger('adapter-irc:bot').warn(Error('Session.$parsed is removed in v3.').stack)
             return {
               message: data.content.trim()
             }

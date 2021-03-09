@@ -18,6 +18,10 @@
     "plugins/BlackFarts",
     "plugins/recorder",
     "plugins/sb-plugin-osu-stat-screenshot",
+    "plugins/koishi-plugin-netease",
+    "plugins/koishi-plugin-ppysb-query",
+    "plugins/koishi-plugin-ppysh-query",
+    "plugins/koishi-plugin-sillychooser",
     "utils/sb-prompt-filter",
     "utils/sb-qq-bot-framework",
     "sites/koishi-chat-web"

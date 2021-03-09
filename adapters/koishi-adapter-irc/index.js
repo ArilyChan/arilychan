@@ -124,7 +124,8 @@ class IRCAdapter extends Adapter {
           content: text,
           userId: nick
         }
-        Object.defineProperty(data, 'messageId', {
+        const session = new Session(bot.app, data)
+                Object.defineProperty(session, 'messageId', {
           get () {
             return {
               toString () {
@@ -136,7 +137,7 @@ class IRCAdapter extends Adapter {
           },
           enumerable: true
         })
-        Object.defineProperty(data, 'message', {
+        Object.defineProperty(session, 'message', {
           get () {
             bot.app.logger('adapter-irc:bot').warn(Error('please use session.content in v3.\n Stack Trace:\n').stack)
             return data.content
@@ -145,7 +146,7 @@ class IRCAdapter extends Adapter {
           enumerable: true,
           configurable: true
         })
-        Object.defineProperty(data, '$parsed', {
+        Object.defineProperty(session, '$parsed', {
           get () {
             bot.app.logger('adapter-irc:bot').warn(Error('Session.$parsed is removed in v3.').stack)
             return {
@@ -155,7 +156,6 @@ class IRCAdapter extends Adapter {
           enumerable: true,
           configurable: true
         })
-        const session = new Session(bot.app, data)
         session.$send = (...args) => {
           bot.app.logger('adapter-irc').warn(Error('please use session.send() in v3.\n Stack Trace:').stack)
           return session.send(...args)

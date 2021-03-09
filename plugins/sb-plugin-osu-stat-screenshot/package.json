@@ -1,0 +1,24 @@
+{
+  "name": "sb-plugin-osu-stat-screenshot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "puppeteer": "^5.5.0",
+    "puppeteer-cluster": "^0.22.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArilyChan/sb-plugin-osu-stat-screenshot.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ArilyChan/sb-plugin-osu-stat-screenshot/issues"
+  },
+  "homepage": "https://github.com/ArilyChan/sb-plugin-osu-stat-screenshot#readme"
+}

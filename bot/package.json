@@ -1,0 +1,59 @@
+{
+  "name": "qq-bot",
+  "version": "2.0.1",
+  "description": "qq bot",
+  "main": "index.js",
+  "dependencies": {
+    "@babel/preset-react": "^7.12.1",
+    "arilychan-radio": "github:ArilyChan/arilychan-radio",
+    "blackfarts": "file:Plugins/arily/BlackFarts",
+    "cqcode-builder": "github:ArilyChan/node-cqcode-builder",
+    "dotenv": "^8.2.0",
+    "koishi-adapter-cqhttp": "^1.0.8",
+    "koishi-plugin-blame": "*",
+    "koishi-plugin-eval": "^2.0.3",
+    "koishi-plugin-eval-addons": "^1.0.0-beta.0",
+    "koishi-plugin-mongo": "^1.1.0",
+    "koishi-plugin-osuercalendar": "github:ArilyChan/koishi-plugin-osuercalendar",
+    "koishi-plugin-sillychooser": "github:ArilyChan/koishi-plugin-sillychooser",
+    "sb-bot-message-recorder": "file:Plugins/arily/recorder",
+    "sb-plugin-auth": "github:ArilyChan/sb-plugin-auth",
+    "sb-plugin-osu-stat-screenshot": "github:ArilyChan/sb-plugin-osu-stat-screenshot",
+    "sb-prompt-filter": "github:ArilyChan/sb-prompt-filter",
+    "sb-qq-bot-framework": "github:ArilyChan/sb-qq-bot-framework",
+    "socket.io": "^2.4.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.11.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-standard": "^4.0.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArilyChan/qq-bot.git"
+  },
+  "keywords": [
+    "qq",
+    "bot",
+    "koishi",
+    "arily",
+    "ArilyChan",
+    "ari"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ArilyChan/qq-bot/issues"
+  },
+  "homepage": "https://github.com/ArilyChan/qq-bot#readme",
+  "workspaces": [
+    "koishi-adapter-irc"
+  ]
+}

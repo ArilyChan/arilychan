@@ -1,19 +1,23 @@
 {
-  "name": "koishi-v3-qq-bot",
+  "name": "arilychan",
   "version": "3.0.0",
   "description": "",
-  "main": "qq-bot/index.js",
+  "main": "bot/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node bot/index.js"
   },
   "author": "",
   "license": "MIT",
   "workspaces": [
+    "koishi-prompt-fix",
     "adapters/koishi-adapter-irc",
     "plugins/koishi-plugin-blame",
     "plugins/koishi-plugin-osuexstat",
     "plugins/sb-plugin-auth",
+    "plugins/BlackFarts",
+    "plugins/recorder",
     "plugins/sb-plugin-osu-stat-screenshot",
-    "plugins/sb-qq-bot-framework"
+    "utils/sb-qq-bot-framework"
   ]
 }

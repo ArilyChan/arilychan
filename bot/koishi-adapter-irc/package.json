@@ -1,0 +1,15 @@
+{
+  "name": "koishi-adapter-irc",
+  "version": "0.0.1",
+  "description": "irc adapter for koishi.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "arily",
+  "license": "MIT",
+  "dependencies": {
+    "irc": "github:SphereSoftware/node-irc",
+    "p-event": "^4.2.0"
+  }
+}

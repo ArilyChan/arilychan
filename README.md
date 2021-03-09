@@ -1,2 +1,2 @@
-# koishi-v3-qq-bot
+# ArilyChan
  monorepo for easy dev

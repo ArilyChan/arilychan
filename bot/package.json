@@ -5,16 +5,12 @@
   "main": "index.js",
   "dependencies": {
     "@babel/preset-react": "^7.12.1",
-    "arilychan-radio": "github:ArilyChan/arilychan-radio",
     "cqcode-builder": "github:ArilyChan/node-cqcode-builder",
     "dotenv": "^8.2.0",
-    "koishi-adapter-cqhttp": "^1.0.8",
     "koishi-plugin-blame": "*",
-    "koishi-plugin-eval": "^2.0.3",
+    "koishi-plugin-eval": "^2.0.5",
     "koishi-plugin-eval-addons": "^1.0.0-beta.0",
     "koishi-plugin-mongo": "^1.1.0",
-    "koishi-plugin-osuercalendar": "github:ArilyChan/koishi-plugin-osuercalendar",
-    "koishi-plugin-sillychooser": "github:ArilyChan/koishi-plugin-sillychooser",
     "socket.io": "^2.4.1"
   },
   "devDependencies": {

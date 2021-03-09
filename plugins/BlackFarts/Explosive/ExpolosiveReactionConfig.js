@@ -90,12 +90,12 @@ async function getUserByHandle (handle) {
 }
 // const playOrNot = async ({ command, meta, app}) => {
 //     const logger = app.logger('CabbageReaction');
-//     meta.$send(`${Math.round(Math.random()) ? '打' : '不打'}`).catch(e => console.error.bind(console))
+//     meta.send(`${Math.round(Math.random()) ? '打' : '不打'}`).catch(e => console.error.bind(console))
 // }
 const uploadElo = async ({ command, meta, app }) => {
   // const logger = app.logger('CabbageReaction');
   const message = []
-  if (meta.messageType !== 'private') message.push(new CQCode.At().qq(meta.userId))
+  if (meta.contentType !== 'private') message.push(new CQCode.At().qq(meta.userId))
   try {
     if (command[1] === undefined || command[1] === '') throw new NeedHelps()
     const matchID = command[1]
@@ -118,12 +118,12 @@ const uploadElo = async ({ command, meta, app }) => {
     setImmediate(async (response, meta) => {
       if (response.code === 10001) {
         const updateResult = await E.matches.calculateElo({ signal: timeoutSignal(20) })
-        meta.$send(`${new CQCode.At().qq(meta.userId)} ${updateResult.message}`).catch(e => console.error.bind(console))
+        meta.send(`${new CQCode.At().qq(meta.userId)} ${updateResult.message}`).catch(e => console.error.bind(console))
         const message = []
-        if (meta.messageType !== 'private') message.push(new CQCode.At().qq(meta.userId))
+        if (meta.contentType !== 'private') message.push(new CQCode.At().qq(meta.userId))
         try {
           message.push(await (await getMatchEloChangeWithOsuUser(matchID)).toString())
-          await meta.$send(message.join('\n'))
+          await meta.send(message.join('\n'))
         } catch (Error) {
           console.error(Error)
         }
@@ -135,13 +135,13 @@ const uploadElo = async ({ command, meta, app }) => {
     message.push(append)
     console.error(Error)
   } finally {
-    meta.$send(message.join('\n')).catch(e => console.error.bind(console))
+    meta.send(message.join('\n')).catch(e => console.error.bind(console))
   }
 }
 // const findRival = async function({ command, meta, app}) {
 //     const logger = app.logger('CabbageReaction');
 //     let message = [];
-//     if (meta.messageType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
+//     if (meta.contentType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
 //     try {
 //         let search = await matchapi.getPlayer({ handle: `qq.${meta.userId}` });
 //         if (search.length <= 0) throw new UserNotInMatchmakingError();
@@ -175,13 +175,13 @@ const uploadElo = async ({ command, meta, app }) => {
 //         message.push(append);
 //         logger.warn(Error);
 //     } finally {
-//         meta.$send(message.join("\n"));
+//         meta.send(message.join("\n"));
 //     }
 // }
 // const listPlayers = async function({ command, meta, app}) {
 //     const logger = app.logger('CabbageReaction');
 //     let message = [];
-//     if (meta.messageType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
+//     if (meta.contentType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
 //     try {
 //         // let all = match.list();
 //         let all = await matchapi.getAll();
@@ -212,13 +212,13 @@ const uploadElo = async ({ command, meta, app }) => {
 //         message.push(append);
 //         logger.warn(Error);
 //     } finally {
-//         meta.$send(message.join("\n"));
+//         meta.send(message.join("\n"));
 //     }
 // }
 // const joinMatch = async function({ command, meta, app}) {
 //     const logger = app.logger('CabbageReaction');
 //     let message = [];
-//     if (meta.messageType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
+//     if (meta.contentType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
 //     try {
 //         // let search = match.findByHandle(`qq.${meta.userId}`);
 //         let search = await matchapi.getPlayer({ handle: `qq.${meta.userId}` });
@@ -248,13 +248,13 @@ const uploadElo = async ({ command, meta, app }) => {
 //         message.push(append);
 //         logger.warn(Error);
 //     } finally {
-//         meta.$send(message.join("\n"));
+//         meta.send(message.join("\n"));
 //     }
 // }
 // const quitMatch = async function({ command, meta, app}) {
 //     const logger = app.logger('CabbageReaction');
 //     let message = [];
-//     if (meta.messageType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
+//     if (meta.contentType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
 //     try {
 //         let search = await matchapi.getPlayer({ handle: `qq.${meta.userId}` });
 //         if (search.length > 0) {
@@ -272,13 +272,13 @@ const uploadElo = async ({ command, meta, app }) => {
 //         message.push(append);
 //         logger.warn(Error);
 //     } finally {
-//         meta.$send(message.join("\n"));
+//         meta.send(message.join("\n"));
 //     }
 // }
 // const joinTeam = async function({ command, meta, app}) {
 //     const logger = app.logger('CabbageReaction');
 //     let message = [];
-//     if (meta.messageType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
+//     if (meta.contentType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
 //     try {
 //         let userTeam = command.slice(1).join(" ").trim();
 //         let [user, ...team] = userTeam.split('#');
@@ -299,13 +299,13 @@ const uploadElo = async ({ command, meta, app }) => {
 //         message.push(append);
 //         logger.warn(Error);
 //     } finally {
-//         meta.$send(message.join("\n"));
+//         meta.send(message.join("\n"));
 //     }
 // }
 // const quitTeam = async function({ command, meta, app}) {
 //     const logger = app.logger('CabbageReaction');
 //     let message = [];
-//     if (meta.messageType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
+//     if (meta.contentType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
 //     try {
 //         let userTeam = command.slice(1).join(" ").trim();
 //         let [user, ...team] = userTeam.split('#');
@@ -326,13 +326,13 @@ const uploadElo = async ({ command, meta, app }) => {
 //         message.push(append);
 //         logger.warn(Error);
 //     } finally {
-//         meta.$send(message.join("\n"));
+//         meta.send(message.join("\n"));
 //     }
 // }
 // const registerTeam = async function({ command, meta, app}) {
 //     const logger = app.logger('CabbageReaction');
 //     let message = [];
-//     if (meta.messageType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
+//     if (meta.contentType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
 //     try {
 //         let team = command.slice(1).join(" ").trim();
 //         if (team === '') throw new NeedHelps();
@@ -354,13 +354,13 @@ const uploadElo = async ({ command, meta, app }) => {
 //         message.push(append);
 //         logger.warn(Error);
 //     } finally {
-//         meta.$send(message.join("\n"));
+//         meta.send(message.join("\n"));
 //     }
 // }
 // const findTeam = async function({ command, meta, app}) {
 //     const logger = app.logger('CabbageReaction');
 //     let message = [];
-//     if (meta.messageType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
+//     if (meta.contentType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
 //     try {
 //         let team = command.slice(1).join(" ").trim();
 //         if (team === '') throw new NeedHelps();
@@ -382,13 +382,13 @@ const uploadElo = async ({ command, meta, app }) => {
 //         message.push(append);
 //         logger.warn(Error);
 //     } finally {
-//         meta.$send(message.join("\n"));
+//         meta.send(message.join("\n"));
 //     }
 // }
 // const findTeamsByRank = async function({ command, meta, app}) {
 //     const logger = app.logger('CabbageReaction');
 //     let message = [];
-//     if (meta.messageType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
+//     if (meta.contentType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
 //     try {
 //         let team = command.slice(1).join(" ").trim();
 //         if (team === '') throw new NeedHelps();
@@ -403,13 +403,13 @@ const uploadElo = async ({ command, meta, app }) => {
 //         message.push(append);
 //         logger.warn(Error);
 //     } finally {
-//         meta.$send(message.join("\n"));
+//         meta.send(message.join("\n"));
 //     }
 // }
 const dad = async function ({ command, meta, app }) {
   // const logger = app.logger('CabbageReaction')
   const message = []
-  if (meta.messageType !== 'private') message.push(new CQCode.At().qq(meta.userId))
+  if (meta.contentType !== 'private') message.push(new CQCode.At().qq(meta.userId))
   try {
     let user = command.slice(1).join(' ').trim()
     user = he.decode(user)
@@ -430,7 +430,7 @@ const dad = async function ({ command, meta, app }) {
     message.push(append)
     console.warn(Error)
   } finally {
-    meta.$send(message.join('\n')).catch(e => console.error.bind(console))
+    meta.send(message.join('\n')).catch(e => console.error.bind(console))
   }
 }
 
@@ -463,7 +463,7 @@ async function getMatchEloChangeWithOsuUser (matchId) {
 }
 async function sendMatchResult ({ meta, command }) {
   const message = []
-  if (meta.messageType !== 'private') message.push(new CQCode.At().qq(meta.userId))
+  if (meta.contentType !== 'private') message.push(new CQCode.At().qq(meta.userId))
   try {
     const matchId = command[1]
     if (!(matchId >>> 0 === parseFloat(matchId))) throw new NeedHelps()
@@ -473,7 +473,7 @@ async function sendMatchResult ({ meta, command }) {
     message.push(append)
     console.log(Error)
   } finally {
-    meta.$send(message.join('\n')).catch(e => console.error.bind(console))
+    meta.send(message.join('\n')).catch(e => console.error.bind(console))
   }
 }
 
@@ -518,10 +518,10 @@ const elo = async ({ command, meta, app }) => {
 
     const res = Object.assign(user, elo, recentPlay /* { recentMatch } */)
 
-    await meta.$send(`${new CQCode.At().qq(meta.userId)} \n${await eloTable(res)}`)
+    await meta.send(`${new CQCode.At().qq(meta.userId)} \n${await eloTable(res)}`)
   } catch (Error) {
     const append = handleErrorMessage(Error, 'elo')
-    meta.$send(`${new CQCode.At().qq(meta.userId)} ${append}`).catch(e => console.error.bind(console))
+    meta.send(`${new CQCode.At().qq(meta.userId)} ${append}`).catch(e => console.error.bind(console))
   }
 }
 const gamblingApiBase = 'http://47.101.168.165:5002'
@@ -554,25 +554,25 @@ const settleBet = ({ id }, data) => {
 }
 const createBet = async ({ command, meta: session, app }) => {
   try {
-    session.$send('给对局起个名字。发送“取消”可以中止。')
+    session.send('给对局起个名字。发送“取消”可以中止。')
     const name = await prompt({
       source: () => session.$prompt(),
       filter: res => res.length,
       rejectFilter: rej => rej.trim() === '取消',
       maxRetries: 2
     })
-    session.$send(`介绍一下对局：${name}。发送“取消”可以中止。`)
+    session.send(`介绍一下对局：${name}。发送“取消”可以中止。`)
     const description = await prompt({
       source: () => session.$prompt(),
       filter: res => res.length,
       rejectFilter: rej => rej.trim() === '取消',
       maxRetries: 2
     })
-    session.$send('请提供出场队伍/队员，用换行区分。发送“取消”可以中止。')
+    session.send('请提供出场队伍/队员，用换行区分。发送“取消”可以中止。')
     const member = await prompt({
       source: () => session.$prompt(),
       onRetry: (message, reason) => {
-        if (message) session.$send(`${message} 不符合要求。\n${reason || '换一个答案'}`)
+        if (message) session.send(`${message} 不符合要求。\n${reason || '换一个答案'}`)
       },
       filter: res => {
         if (res.split('\n').length > 1) return '至少要有两个人。'
@@ -582,7 +582,7 @@ const createBet = async ({ command, meta: session, app }) => {
     })
       .then(res => res.split('\r').join('').split('\n'))
 
-    session.$send([
+    session.send([
       `对局: ${name}`,
       `介绍: ${description}`,
       `队伍: ${member.join(',')}`,
@@ -595,7 +595,7 @@ const createBet = async ({ command, meta: session, app }) => {
       maxRetries: 10
     })
     console.log(confirm)
-    if (!confirm) return session.$send('请重试。')
+    if (!confirm) return session.send('请重试。')
     let result = await createMatch({
       name,
       description,
@@ -608,11 +608,11 @@ const createBet = async ({ command, meta: session, app }) => {
       console.log(result)
       result = JSON.parse(result)
     } catch (error) {
-      return session.$send(result)
+      return session.send(result)
     }
 
-    if (result.message) session.$send(result.message)
-    else session.$send(JSON.stringify(result))
+    if (result.message) session.send(result.message)
+    else session.send(JSON.stringify(result))
   } catch (error) {
   }
 }
@@ -623,21 +623,21 @@ const betOnMatch = async ({ command, meta, app }) => {
     [, match, target, amount] = command
     const matches = await matchList()
     matched = matches.find(m => m.name === match)
-    if (!matched) return meta.$send('没有找到这个对局。（小阿日没找到）')
+    if (!matched) return meta.send('没有找到这个对局。（小阿日没找到）')
   } else {
-    await meta.$send('对局名？')
+    await meta.send('对局名？')
     match = await meta.$prompt()
     const matches = await matchList()
     matched = matches.find(m => m.name === match)
-    if (!matched) return meta.$send('没有找到这个对局。（小阿日没找到）')
-    await meta.$send(`你可以支持:\n${matched.member.map((t, index) => `  ${index + 1}: ${t}`).join('\n')}\n你可以提供序号或者名字`)
+    if (!matched) return meta.send('没有找到这个对局。（小阿日没找到）')
+    await meta.send(`你可以支持:\n${matched.member.map((t, index) => `  ${index + 1}: ${t}`).join('\n')}\n你可以提供序号或者名字`)
     target = await meta.$prompt()
     // eslint-disable-next-line eqeqeq
     if (parseInt(target) && !matched.member.find(m => m == target)) target = matched.member[target - 1]
-    await meta.$send('支持多少？')
+    await meta.send('支持多少？')
     amount = await meta.$prompt()
   }
-  await meta.$send([
+  await meta.send([
       `对局: ${match}`,
       `下注: ${target}`,
       `数量: ${amount}`,
@@ -648,15 +648,15 @@ const betOnMatch = async ({ command, meta, app }) => {
     filter: res => res.trim() === '确认',
     rejectFilter: rej => rej.trim() === '取消',
     maxRetries: 10
-  }).catch(() => { meta.$send('操作已经取消') }) // confirm = undefined
+  }).catch(() => { meta.send('操作已经取消') }) // confirm = undefined
   if (!confirm) return
   const result = await bet(matched, {
     qq: meta.userId,
     amount,
     target
   }).then(res => res.json())
-  if (result.message) return meta.$send(result.message)
-  else meta.$send(JSON.stringify(result))
+  if (result.message) return meta.send(result.message)
+  else meta.send(JSON.stringify(result))
 }
 
 const endMatch = async ({ command, meta, app }) => {
@@ -665,19 +665,19 @@ const endMatch = async ({ command, meta, app }) => {
     [, match, winner] = command
     const matches = await matchList()
     matched = matches.find(m => m.name === match)
-    if (!matched) return meta.$send('没有找到这个对局。（小阿日没找到）')
+    if (!matched) return meta.send('没有找到这个对局。（小阿日没找到）')
   } else {
-    await meta.$send('对局名？')
+    await meta.send('对局名？')
     match = await meta.$prompt()
     const matches = await matchList()
     matched = matches.find(m => m.name === match)
-    if (!matched) return meta.$send('没有找到这个对局。（小阿日没找到）')
-    await meta.$send(`赢方？你可以宣布:\n${matched.member.map((t, index) => `  ${index + 1}: ${t}`).join('\n')}\n你可以提供序号或者名字`)
+    if (!matched) return meta.send('没有找到这个对局。（小阿日没找到）')
+    await meta.send(`赢方？你可以宣布:\n${matched.member.map((t, index) => `  ${index + 1}: ${t}`).join('\n')}\n你可以提供序号或者名字`)
     winner = await meta.$prompt()
     // eslint-disable-next-line eqeqeq
     if (parseInt(winner) && !matched.member.find(m => m == winner)) winner = matched.member[winner - 1]
   }
-  await meta.$send([
+  await meta.send([
       `将被清算的对局: ${match}`,
       `胜方: ${winner}`,
       '没问题嘛？发送“确认”提交'
@@ -688,8 +688,8 @@ const endMatch = async ({ command, meta, app }) => {
     qq: meta.userId,
     winner
   }).then(res => res.json())
-  if (result.message) return meta.$send(result.message)
-  else meta.$send(JSON.stringify(result))
+  if (result.message) return meta.send(result.message)
+  else meta.send(JSON.stringify(result))
 }
 
 module.exports = {
@@ -709,15 +709,15 @@ module.exports = {
       return acc
     }, {})
     data.uploader_qq = qq
-    meta.$send('order:' + JSON.stringify(data)).catch(e => console.error.bind(console))
-    if (!data.mappool_name) return meta.$send('mappool_name unspecified').catch(e => console.error.bind(console))
+    meta.send('order:' + JSON.stringify(data)).catch(e => console.error.bind(console))
+    if (!data.mappool_name) return meta.send('mappool_name unspecified').catch(e => console.error.bind(console))
     fetch(base(data.mappool_name), {
       method: 'POST',
       body: JSON.stringify(data)
     })
       .then(res => res.text())
-      .then(text => meta.$send(text))
-      .catch(err => meta.$send(err))
+      .then(text => meta.send(text))
+      .catch(err => meta.send(err))
   },
   // '找打': findRival,
   // rival: findRival,
@@ -743,12 +743,12 @@ module.exports = {
   // findteambyrank: findTeamsByRank,
   dad: dad,
   dad_of: dad
-  // policeadd: async ({ command, meta, app}) => meta.$send(await addUser(command.slice(1).join(' ')).then(_ => 'added')),
-  // forceupdate: async ({ command, meta, app}) => meta.$send(await addUser(command.slice(1).join(' '), true).then(_ => 'updated').catch(e => Promise.resolve(e.toString()))),
-  // deranker: async ({ command, meta, app}) => meta.$send(`[CQ:image,file=base64://${await DerankerBase64Table()}]`),
+  // policeadd: async ({ command, meta, app}) => meta.send(await addUser(command.slice(1).join(' ')).then(_ => 'added')),
+  // forceupdate: async ({ command, meta, app}) => meta.send(await addUser(command.slice(1).join(' '), true).then(_ => 'updated').catch(e => Promise.resolve(e.toString()))),
+  // deranker: async ({ command, meta, app}) => meta.send(`[CQ:image,file=base64://${await DerankerBase64Table()}]`),
   // policeexists: async ({ command, meta, app}) => {
   //    const result = await fetch(`https://o.ri.mk/api/pppolice/v1/localUserExists/${command.slice(1).join(' ')}`).then(res => res.json())
-  //    meta.$send(result.toString());
+  //    meta.send(result.toString());
   // },
 }
 

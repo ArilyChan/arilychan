@@ -44,7 +44,7 @@ module.exports.apply = async (app, options, storage) => {
     });
     // Store screenshot, do something else
     const cqcode = `[CQ:image,file=base64://${screen}]`
-    meta.$send(cqcode).catch(err => console.warn(err))
+    meta.send(cqcode).catch(err => console.warn(err))
   })
   cluster.on('taskerror', (err, data, willRetry) => {
       if (willRetry) {
@@ -55,15 +55,15 @@ module.exports.apply = async (app, options, storage) => {
   });
 
   app.middleware(async (meta, next) => {
-    if (!meta.message.startsWith('!!stat')) { return next() }
+    if (!meta.content.startsWith('!!stat')) { return next() }
     let mode = undefined
-    const command = meta.message.split(' ')
+    const command = meta.content.split(' ')
     const username = unescapeSpecialChars(command.slice(1).join(' ').trim())
-    if (!username) return meta.$send('提供一下用户名。 !!stat(@模式:[osu, taiko, fruits, mania]) osuid\nex: !!stat arily, !!stat@mania arily')
+    if (!username) return meta.send('提供一下用户名。 !!stat(@模式:[osu, taiko, fruits, mania]) osuid\nex: !!stat arily, !!stat@mania arily')
 
     if (!command[0].includes('@')) mode = undefined
     mode = command[0].split('@')[1]
-    if (!['osu', 'taiko', 'fruits', 'mania', undefined].includes(mode)) return meta.$send(`模式有 osu, taiko, fruits, mania. ${mode}不在其中。`)
+    if (!['osu', 'taiko', 'fruits', 'mania', undefined].includes(mode)) return meta.send(`模式有 osu, taiko, fruits, mania. ${mode}不在其中。`)
 
     await cluster.execute({
       url: `${options.base}/users/${username}/${mode ? mode : ''}`,
@@ -72,15 +72,15 @@ module.exports.apply = async (app, options, storage) => {
   })
 
   app.middleware(async (meta, next) => {
-    if (!meta.message.startsWith('!!pr') && !meta.message.startsWith('!!recent') ) { return next() }
+    if (!meta.content.startsWith('!!pr') && !meta.content.startsWith('!!recent') ) { return next() }
     let mode = undefined
-    const command = meta.message.split(' ')
+    const command = meta.content.split(' ')
     const username = unescapeSpecialChars(command.slice(1).join(' ').trim())
-    if (!username) return meta.$send('提供一下用户名。 !!pr(@模式:[osu, taiko, fruits, mania]) osuid\nex: !!pr arily, !!pr@mania arily')
+    if (!username) return meta.send('提供一下用户名。 !!pr(@模式:[osu, taiko, fruits, mania]) osuid\nex: !!pr arily, !!pr@mania arily')
 
     if (!command[0].includes('@')) mode = undefined
     mode = command[0].split('@')[1]
-    if (!['osu', 'taiko', 'fruits', 'mania', undefined].includes(mode)) return meta.$send(`模式有 osu, taiko, fruits, mania. ${mode}不在其中。`)
+    if (!['osu', 'taiko', 'fruits', 'mania', undefined].includes(mode)) return meta.send(`模式有 osu, taiko, fruits, mania. ${mode}不在其中。`)
 
     await cluster.execute({
       url: `${options.base}/recent/${username}/${mode ? mode : ''}`,
@@ -89,9 +89,9 @@ module.exports.apply = async (app, options, storage) => {
   })
 
   app.middleware(async (meta, next) => {
-    if (!meta.message.startsWith('!!best')) { return next() }
+    if (!meta.content.startsWith('!!best')) { return next() }
     let mode = undefined
-    const command = meta.message.split(' ')
+    const command = meta.content.split(' ')
     const username = unescapeSpecialChars(command.filter(c => !c.startsWith('@')).slice(1).join(' ').trim())
     const params = command.filter(c => c.startsWith('@')).reduce((acc, command) => {
       if (command.startsWith('@last:')) acc.startHoursBefore = command.slice(6)
@@ -100,11 +100,11 @@ module.exports.apply = async (app, options, storage) => {
       return acc
     }, {})
     if (Object.keys(params).length === 0) params.startHoursBefore = 24
-    if (!username) return meta.$send('提供一下用户名。 !!best(@模式:[osu, taiko, fruits, mania]) osuid\nex: !!best arily, !!best@mania arily')
+    if (!username) return meta.send('提供一下用户名。 !!best(@模式:[osu, taiko, fruits, mania]) osuid\nex: !!best arily, !!best@mania arily')
 
     if (!command[0].includes('@')) mode = undefined
     mode = command[0].split('@')[1]
-    if (!['osu', 'taiko', 'fruits', 'mania', undefined].includes(mode)) return meta.$send(`模式有 osu, taiko, fruits, mania. ${mode}不在其中。`)
+    if (!['osu', 'taiko', 'fruits', 'mania', undefined].includes(mode)) return meta.send(`模式有 osu, taiko, fruits, mania. ${mode}不在其中。`)
 
     await cluster.execute({
       url: `${options.base}/best/${username}/${mode || ''}?${new URLSearchParams(params)}`,

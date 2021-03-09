@@ -9,12 +9,12 @@ const config = require('./cabbageReactionUser')
 module.exports = ({ command, meta }) => {
   if (command[1] === '小阿日') {
     if (config.isManager(meta.userId)) {
-      if (command[2] === 'host') meta.$send(`Running on ${os.hostname()}`).catch(e => console.error.bind(console))
+      if (command[2] === 'host') meta.send(`Running on ${os.hostname()}`).catch(e => console.error.bind(console))
       else if (command[2] === 'ip') {
         let family = command.slice(3).join(' ').trim()
         family = family === '' ? 'ipv4 ipv6' : family
-        meta.$send(Object.entries(os.networkInterfaces()).map(([iface, ips]) => ips.filter(ip => family.includes(ip.family.toLowerCase())).map(ip => `${iface}: ${ip.address}`).join('\n')).join('\n').trim()).catch(e => console.error.bind(console))
-      } else if (command[2] === 'iface') meta.$send(JSON.stringify(os.networkInterfaces(), null, '\t')).catch(e => console.error.bind(console))
+        meta.send(Object.entries(os.networkInterfaces()).map(([iface, ips]) => ips.filter(ip => family.includes(ip.family.toLowerCase())).map(ip => `${iface}: ${ip.address}`).join('\n')).join('\n').trim()).catch(e => console.error.bind(console))
+      } else if (command[2] === 'iface') meta.send(JSON.stringify(os.networkInterfaces(), null, '\t')).catch(e => console.error.bind(console))
       else if (command[2] === 'cpu') {
         const message = []
         const cpus = os.cpus()
@@ -33,10 +33,10 @@ module.exports = ({ command, meta }) => {
           // cpu.times.idle
           message.push(`${cpu.model} ${100 - Math.round(100 * cpu.times.idle / total)}%`)
         }
-        meta.$send(message.join('\n')).catch(e => console.error.bind(console))
-      } else meta.$send('I\'m here.').catch(e => console.error.bind(console))
+        meta.send(message.join('\n')).catch(e => console.error.bind(console))
+      } else meta.send('I\'m here.').catch(e => console.error.bind(console))
     } else {
-      meta.$send('I\'m here.').catch(e => console.error.bind(console))
+      meta.send('I\'m here.').catch(e => console.error.bind(console))
     }
     return true
   }

@@ -44,10 +44,10 @@ module.exports.apply = (ctx, options) => {
     const stat = { isbusy: false };
     ctx.middleware(async (meta, next) => {
         try {
-            const message = meta.message;
+            const message = meta.content;
             const userId = meta.userId;
             const reply = await exs.apply(userId, message, stat);
-            if (reply) await meta.$send(`[CQ:at,qq=${userId}]\n` + reply);
+            if (reply) await meta.send(`[CQ:at,qq=${userId}]\n` + reply);
             else return next();
         } catch (ex) {
             console.log(ex);

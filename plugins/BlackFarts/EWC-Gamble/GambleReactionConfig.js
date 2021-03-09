@@ -30,14 +30,14 @@ const settleBet = ({ id }, data) => {
   })
 }
 const createBet = async ({ command, meta: session, app }) => {
-  session.$send('给对局起个名字')
+  session.send('给对局起个名字')
   const name = await session.$prompt()
-  session.$send(`介绍一下对局：${name}`)
+  session.send(`介绍一下对局：${name}`)
   const description = await session.$prompt()
-  session.$send('请提供出场队伍/队员，用换行区分')
+  session.send('请提供出场队伍/队员，用换行区分')
   const member = await session.$prompt().then(res => res.split('\r').join('').split('\n'))
 
-  session.$send([
+  session.send([
       `对局: ${name}`,
       `介绍: ${description}`,
       `队伍: ${member.join(',')}`,
@@ -58,11 +58,11 @@ const createBet = async ({ command, meta: session, app }) => {
   try {
     result = JSON.parse(result)
   } catch (error) {
-    return session.$send(result)
+    return session.send(result)
   }
 
-  if (result.message) session.$send(result.message)
-  else session.$send(JSON.stringify(result))
+  if (result.message) session.send(result.message)
+  else session.send(JSON.stringify(result))
 }
 
 const betOnMatch = async ({ command, meta, app }) => {
@@ -71,21 +71,21 @@ const betOnMatch = async ({ command, meta, app }) => {
     [, match, target, amount] = command
     const matches = await matchList()
     matched = matches.find(m => m.name === match)
-    if (!matched) return meta.$send('没有找到这个对局。（小阿日没找到）')
+    if (!matched) return meta.send('没有找到这个对局。（小阿日没找到）')
   } else {
-    await meta.$send('对局名？')
+    await meta.send('对局名？')
     match = await meta.$prompt()
     const matches = await matchList()
     matched = matches.find(m => m.name === match)
-    if (!matched) return meta.$send('没有找到这个对局。（小阿日没找到）')
-    await meta.$send(`你可以下注给:\n${matched.member.map((t, index) => `  ${index + 1}: ${t}`).join('\n')}\n你可以提供序号或者名字`)
+    if (!matched) return meta.send('没有找到这个对局。（小阿日没找到）')
+    await meta.send(`你可以下注给:\n${matched.member.map((t, index) => `  ${index + 1}: ${t}`).join('\n')}\n你可以提供序号或者名字`)
     target = await meta.$prompt()
     // eslint-disable-next-line eqeqeq
     if (parseInt(target) && !matched.member.find(m => m == target)) target = matched.member[target - 1]
-    await meta.$send('下注金额')
+    await meta.send('下注金额')
     amount = await meta.$prompt()
   }
-  await meta.$send([
+  await meta.send([
       `对局: ${match}`,
       `下注: ${target}`,
       `数量: ${amount}`,
@@ -98,8 +98,8 @@ const betOnMatch = async ({ command, meta, app }) => {
     amount,
     target
   }).then(res => res.json())
-  if (result.message) return meta.$send(result.message)
-  else meta.$send(JSON.stringify(result))
+  if (result.message) return meta.send(result.message)
+  else meta.send(JSON.stringify(result))
 }
 
 const endMatch = async ({ command, meta, app }) => {
@@ -108,19 +108,19 @@ const endMatch = async ({ command, meta, app }) => {
     [, match, winner] = command
     const matches = await matchList()
     matched = matches.find(m => m.name === match)
-    if (!matched) return meta.$send('没有找到这个对局。（小阿日没找到）')
+    if (!matched) return meta.send('没有找到这个对局。（小阿日没找到）')
   } else {
-    await meta.$send('对局名？')
+    await meta.send('对局名？')
     match = await meta.$prompt()
     const matches = await matchList()
     matched = matches.find(m => m.name === match)
-    if (!matched) return meta.$send('没有找到这个对局。（小阿日没找到）')
-    await meta.$send(`赢方？你可以宣布:\n${matched.member.map((t, index) => `  ${index + 1}: ${t}`).join('\n')}\n你可以提供序号或者名字`)
+    if (!matched) return meta.send('没有找到这个对局。（小阿日没找到）')
+    await meta.send(`赢方？你可以宣布:\n${matched.member.map((t, index) => `  ${index + 1}: ${t}`).join('\n')}\n你可以提供序号或者名字`)
     winner = await meta.$prompt()
     // eslint-disable-next-line eqeqeq
     if (parseInt(winner) && !matched.member.find(m => m == winner)) winner = matched.member[winner - 1]
   }
-  await meta.$send([
+  await meta.send([
       `将被清算的对局: ${match}`,
       `胜方: ${winner}`,
       '没问题嘛？发送“确认”提交'
@@ -131,8 +131,8 @@ const endMatch = async ({ command, meta, app }) => {
     qq: meta.userId,
     winner
   }).then(res => res.json())
-  if (result.message) return meta.$send(result.message)
-  else meta.$send(JSON.stringify(result))
+  if (result.message) return meta.send(result.message)
+  else meta.send(JSON.stringify(result))
 }
 
 module.exports = {

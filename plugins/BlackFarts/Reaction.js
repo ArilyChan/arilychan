@@ -15,7 +15,7 @@ CabbageReaction.prototype.actionRecursive = async function (action, reaction) {
   if (action instanceof Function) {
     await action(reaction)
   } else if (typeof action === 'string') {
-    await reaction.meta.$send(action).catch(e => console.error.bind(console))
+    await reaction.meta.send(action).catch(e => console.error.bind(console))
   } else if (action instanceof Array) {
     await Promise.all(action.map(sub => this.actionRecursive(sub, reaction)))
   }

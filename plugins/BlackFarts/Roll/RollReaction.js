@@ -4,7 +4,7 @@ function RollReaction ({ exclusive = [] } = {}) {
 RollReaction.prototype.reactTo = function ({ command, meta }) {
   if (this.exclusive.includes(meta.groupId)) return false
   const message = []
-  if (meta.messageType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`)
+  if (meta.contentType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`)
   try {
     const rand = Math.round(Math.random())
     const words = command.join(' ').trim()
@@ -41,7 +41,7 @@ RollReaction.prototype.reactTo = function ({ command, meta }) {
         return false
       }
     }
-    meta.$send(message.join('\n')).catch(e => console.error.bind(console))
+    meta.send(message.join('\n')).catch(e => console.error.bind(console))
     return true
   } catch (Error) {
 

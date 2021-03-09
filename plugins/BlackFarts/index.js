@@ -31,10 +31,10 @@ module.exports.apply = function (app, options, storage) {
 
   app.middleware(async (meta, next) => {
     let reacted = false
-    if (meta.message[0] === '!' || meta.message[0] === '！') {
+    if (meta.content[0] === '!' || meta.content[0] === '！') {
       reacted = Object.entries({ cabbage, explosive, gamble, recipe }).some(([name, reaction]) => {
         if (reaction.reactTo(new Command({ meta, app, storage }))) {
-          // console.log(`${meta.message} Catched by subplugin: ${name}`);
+          // console.log(`${meta.content} Catched by subplugin: ${name}`);
           return true
         }
         return false

@@ -67,20 +67,20 @@ const recipeToString = function (order) {
 
 const echoRecipe = function (meta, req, menu = compiledMenu) {
   const message = []
-  if (meta.messageType !== 'private') message.push(new CQ.Reply().id(meta.messageId))
+  if (meta.contentType !== 'private') message.push(new CQ.Reply().id(meta.contentId))
   if (!req) {
     // const order = random(compiledMenu)
     // message.push(recipeToString(order))
     message.push(randomRecipe(menu).toString())
-    return meta.$send(message.join('').trim()).catch(e => console.error.bind(console))
+    return meta.send(message.join('').trim()).catch(e => console.error.bind(console))
   } else {
     // const filtered = compiledMenu.filter(recipe => recipe.menu.name === req)
     // // console.log(filtered)
-    // if (filtered.length <= 0) return meta.$send('没东西')
+    // if (filtered.length <= 0) return meta.send('没东西')
     // const order = random(filtered)
     // message.push(recipeToString(order))
     message.push(randomRecipe(menu, recipe => recipe.menu.name === req))
-    return meta.$send(message.join('').trim()).catch(e => console.error.bind(console))
+    return meta.send(message.join('').trim()).catch(e => console.error.bind(console))
   }
 }
 
@@ -110,14 +110,14 @@ const randomRecipe = function (menu = compiledMenu, filter = () => true) {
 
 const refreshMenu = async ({ command, meta, storage }) => {
   compiledMenu.length = 0
-  return compileMenu({ storage }).then(() => meta.$send('ok')).catch(e => console.error.bind(console))
+  return compileMenu({ storage }).then(() => meta.send('ok')).catch(e => console.error.bind(console))
 }
 
 const addRecipe = async ({ command, meta, storage }, consumptionMethod = '吃') => {
   try {
     const [, name, ...others] = command
     const originalMenuNames = Object.keys(storage.originalMenu)
-    if (originalMenuNames.some(original => original === name)) return meta.$send('不能动这个!!').catch(e => console.error.bind(console))
+    if (originalMenuNames.some(original => original === name)) return meta.send('不能动这个!!').catch(e => console.error.bind(console))
     let { recipeSection, cqImage } = others.join(' ').split('[CQ:image,').reduce((acc, startsWithCQImage, index) => {
       if (index === 0 && !startsWithCQImage.startsWith('file=')) {
         acc.recipeSection.push(startsWithCQImage.replace('\r', '\n'))
@@ -132,7 +132,7 @@ const addRecipe = async ({ command, meta, storage }, consumptionMethod = '吃') 
     const [recipe, ...descriptions] = recipeSection.split('\n')
     const description = descriptions.join('\n').trim()
     cqImage = cqImage.join('\n').trim()
-    if (!recipe) return meta.$send('<menu> <recipe> [图片]').catch(e => console.error.bind(console))
+    if (!recipe) return meta.send('<menu> <recipe> [图片]').catch(e => console.error.bind(console))
     const { Recipe: RecipeModel, Menu: MenuModel } = storage.menuModels
     let menu = await MenuModel.findOne({ name }).exec()
     if (!menu) {
@@ -140,7 +140,7 @@ const addRecipe = async ({ command, meta, storage }, consumptionMethod = '吃') 
       menu = await menu.save()
     }
     let newrecipe = await RecipeModel.findOne({ name: recipe, menu: menu._id }).exec()
-    if (newrecipe) return meta.$send('menu exists!').catch(e => console.error.bind(console))
+    if (newrecipe) return meta.send('menu exists!').catch(e => console.error.bind(console))
     const recipeContent = {
       name: recipe,
       description,
@@ -154,8 +154,8 @@ const addRecipe = async ({ command, meta, storage }, consumptionMethod = '吃') 
     }
     newrecipe = new RecipeModel(recipeContent)
     newrecipe.save((err, saved) => {
-      if (err) meta.$send(err).catch(e => console.error.bind(console))
-      else meta.$send('ok').catch(e => console.error.bind(console))
+      if (err) meta.send(err).catch(e => console.error.bind(console))
+      else meta.send('ok').catch(e => console.error.bind(console))
       if (!storage.menu[name]) storage.menu[name] = []
       storage.menu[name].push(newrecipe.name)
       compiledMenu.push({
@@ -164,8 +164,8 @@ const addRecipe = async ({ command, meta, storage }, consumptionMethod = '吃') 
       })
     })
   } catch (error) {
-    meta.$send('出了点问题。。。希望你能帮我把这份报错发给阿日').catch(e => console.error.bind(console))
-    meta.$send(error.stack).catch(e => console.error.bind(console))
+    meta.send('出了点问题。。。希望你能帮我把这份报错发给阿日').catch(e => console.error.bind(console))
+    meta.send(error.stack).catch(e => console.error.bind(console))
   }
 }
 
@@ -184,28 +184,28 @@ const editRecipe = async ({ command, meta, storage }) => {
   if (!action) return
   if (!action.startsWith('是')) return
   const [, methodOfConsumption] = Object.entries(definedMethodOfConsumption).find(([actionOfConsumption, methodOfConsumption]) => action.includes(actionOfConsumption))
-  if (!methodOfConsumption) return meta.$send('?').catch(e => console.error.bind(console))
+  if (!methodOfConsumption) return meta.send('?').catch(e => console.error.bind(console))
 
   const { Recipe, Menu } = storage.menuModels
 
   menu = await Menu.findOne({ name: menu }).exec()
-  if (!menu) return meta.$send('there\'s no such menu').catch(e => console.error.bind(console))
+  if (!menu) return meta.send('there\'s no such menu').catch(e => console.error.bind(console))
 
   recipe = await Recipe.findOne({ name: recipe, menu: menu._id }).exec()
-  if (!recipe) return meta.$send('there\'s no such recipe in the menu').catch(e => console.error.bind(console))
+  if (!recipe) return meta.send('there\'s no such recipe in the menu').catch(e => console.error.bind(console))
 
   recipe.methodOfConsumption = methodOfConsumption
   await recipe.save()
 
   const inCompiledMenu = compiledMenu.find(r => r.name === recipe.name && r.menu.name === menu.name)
   if (inCompiledMenu) inCompiledMenu.methodOfConsumption = methodOfConsumption
-  meta.$send('好了好了我知道了')
+  meta.send('好了好了我知道了')
 }
 
 const removeRecipe = async ({ command, meta, storage }) => {
   let [, name, ...recipe] = command
   recipe = recipe.join(' ')
-  if (!recipe) return meta.$send('<menu> <recipe>').catch(e => console.error.bind(console))
+  if (!recipe) return meta.send('<menu> <recipe>').catch(e => console.error.bind(console))
   const { Recipe: RecipeModel, Menu: MenuModel } = storage.menuModels
   let menu = await MenuModel.findOne({ name }).exec()
   if (!menu) {
@@ -213,8 +213,8 @@ const removeRecipe = async ({ command, meta, storage }) => {
     await menu.save((err) => { if (err) console.log('menu error', err) })
   }
   const newrecipe = await RecipeModel.findOneAndRemove({ name: recipe }).exec()
-  if (!newrecipe) return meta.$send('menu non-exists!').catch(e => console.error.bind(console))
-  meta.$send('getting rid da 💩').catch(e => console.error.bind(console))
+  if (!newrecipe) return meta.send('menu non-exists!').catch(e => console.error.bind(console))
+  meta.send('getting rid da 💩').catch(e => console.error.bind(console))
   if (!storage.menu[name]) return
   storage.menu[name] = storage.menu[name].filter(r => r !== recipe)
   const ptrRecipe = compiledMenu.findIndex(r => r.name === recipe)
@@ -236,31 +236,31 @@ const markNSFWMenu = async function (storage, name, isNSFW) {
 const markNSFWRecipe = async function (storage, menu, recipe, meta, isNSFW) {
   const { Recipe, Menu } = storage.menuModels
   menu = await Menu.findOne({ name: menu }).exec()
-  if (!menu) return meta.$send('there\'s no such menu').catch(e => console.error.bind(console))
+  if (!menu) return meta.send('there\'s no such menu').catch(e => console.error.bind(console))
 
   recipe = await Recipe.findOne({ name: recipe, menu: menu._id }).exec()
-  if (!recipe) return meta.$send('there\'s no such recipe in the menu').catch(e => console.error.bind(console))
+  if (!recipe) return meta.send('there\'s no such recipe in the menu').catch(e => console.error.bind(console))
 
   recipe.nsfw = isNSFW
   await recipe.save()
 
   const inCompiledMenu = compiledMenu.find(r => r.name === recipe.name && r.menu.name === menu.name)
   if (inCompiledMenu) inCompiledMenu.nsfw = isNSFW
-  meta.$send('好了好了我知道了').catch(e => console.error.bind(console))
+  meta.send('好了好了我知道了').catch(e => console.error.bind(console))
 }
 
 const markNSFWMenuBot = async function ({ command, meta, storage }, isNSFW) {
   const [, name] = command
-  if (!name) return meta.$send('<menu>').catch(e => console.error.bind(console))
+  if (!name) return meta.send('<menu>').catch(e => console.error.bind(console))
   const result = await markNSFWMenu(storage, name, isNSFW)
-  if (!result) meta.$send('menu non-exists').catch(e => console.error.bind(console))
-  meta.$send('should work').catch(e => console.error.bind(console))
+  if (!result) meta.send('menu non-exists').catch(e => console.error.bind(console))
+  meta.send('should work').catch(e => console.error.bind(console))
 }
 
 const markNSFWRecipeBot = async function ({ command, meta, storage }, isNSFW) {
   let [, menu, ...recipe] = command
   recipe = recipe.join(' ')
-  if (!recipe) return meta.$send('<menu> <recipe>').catch(e => console.error.bind(console))
+  if (!recipe) return meta.send('<menu> <recipe>').catch(e => console.error.bind(console))
   markNSFWRecipe(storage, menu, recipe, meta, isNSFW)
 }
 

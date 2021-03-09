@@ -12,6 +12,8 @@
   "workspaces": [
     "adapters/koishi-adapter-irc",
     "plugins/koishi-plugin-blame",
+    "plugins/arilychan-radio",
+    "plugins/koishi-chat-web",
     "plugins/koishi-plugin-osuexstat",
     "plugins/sb-plugin-auth",
     "plugins/BlackFarts",

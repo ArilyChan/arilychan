@@ -139,7 +139,7 @@ class IRCAdapter extends Adapter {
         })
         Object.defineProperty(session, 'message', {
           get () {
-            bot.app.logger('adapter-irc:bot').warn(Error('please use session.content in v3.\n Stack Trace:\n').stack)
+            bot.app.logger('adapter-irc:bot').warn(Error('please use session.content in v3.\nStack Trace:').stack)
             return data.content
           },
           set (newValue) { data.content = newValue },
@@ -157,7 +157,7 @@ class IRCAdapter extends Adapter {
           configurable: true
         })
         session.$send = (...args) => {
-          bot.app.logger('adapter-irc').warn(Error('please use session.send() in v3.\n Stack Trace:').stack)
+          bot.app.logger('adapter-irc:bot').warn(Error('please use session.send() in v3.\nStack Trace:').stack)
           return session.send(...args)
         }
         this.dispatch(session)

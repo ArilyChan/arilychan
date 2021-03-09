@@ -51,37 +51,37 @@ module.exports = [
         options: {
           prefixs: ['!', '！']
         }
-      // }, {
-      //   type: 'node_module',
-      //   require: 'koishi-plugin-ppysb-query',
-      //   priority: 4,
-      //   options: {
-      //     admin: admins, // 管理员自行添加
-      //     database: path.join(appDir, 'Plugins/exsper/ppysbQuery/storage/database.db'),
-      //     prefixs: ['*']
-      //   }
-      // }, {
-      //   type: 'node_module',
-      //   require: 'koishi-plugin-ppysh-query',
-      //   priority: 5,
-      //   options: {
-      //     admin: admins, // 管理员自行添加
-      //     apiKey: process.env.BANCHO_API_KEY || '123456788', // osu Api token，必要
-      //     database: path.join(appDir, 'Plugins/exsper/ppyshQuery/storage/database.db'),
-      //     prefixs: ['?', '？']
-      //   }
       }, {
         type: 'node_module',
-        require: 'koishi-plugin-osuercalendar',
-        priority: 3,
+        require: 'koishi-plugin-ppysb-query',
+        priority: 4,
         options: {
-          users: {
-            admin: admins, // 管理员自行添加
-            blackList: [],
-            whiteList: []
-          },
-          eventFile: path.join(appDir, 'Plugins/exsper/osuerCalendar/osuercalendar-events.json') // __dirname为config文件夹
+          admin: admins, // 管理员自行添加
+          database: path.join(appDir, 'Plugins/exsper/ppysbQuery/storage/database.db'),
+          prefixs: ['*']
         }
+      }, {
+        type: 'node_module',
+        require: 'koishi-plugin-ppysh-query',
+        priority: 5,
+        options: {
+          admin: admins, // 管理员自行添加
+          apiKey: process.env.BANCHO_API_KEY || '123456788', // osu Api token，必要
+          database: path.join(appDir, 'Plugins/exsper/ppyshQuery/storage/database.db'),
+          prefixs: ['?', '？']
+        }
+      // }, {
+      //   type: 'node_module',
+      //   require: 'koishi-plugin-osuercalendar',
+      //   priority: 3,
+      //   options: {
+      //     users: {
+      //       admin: admins, // 管理员自行添加
+      //       blackList: [],
+      //       whiteList: []
+      //     },
+      //     eventFile: path.join(appDir, 'Plugins/exsper/osuerCalendar/osuercalendar-events.json') // __dirname为config文件夹
+      //   }
       }, {
         type: 'node_module',
         require: 'arilychan-radio',
@@ -113,33 +113,33 @@ module.exports = [
         }
       }
     ]
-  },
-  {
-    for: ContextBuilder((app) => app.group(1097526643), 'test-groups'),
-    use: [
-      // {
-      //   type: 'node_module',
-      //   require: 'koishi-plugin-mongo',
-      //   options: {
-      //     uri: process.env.DB_URI,
-      //     name: 'ArilyChan'
-      //   }
-      // },
-      // {
-      //   type: 'node_module',
-      //   require: 'koishi-plugin-eval-addons'
-      // },
-      {
-        type: 'node_module',
-        require: 'koishi-plugin-eval',
-        options: {
-          userFields: ['foo', 'id', 'authority'],
-          setupFiles: {
-            'fetch.js': `${appDir}/config/eval/fetch.js`,
-            'cqcode-builder': `${appDir}/config/eval/cqcode.js`
-          }
-        }
-      }
-    ]
   }
+  // {
+  //   for: ContextBuilder((app) => app.group(1097526643), 'test-groups'),
+  //   use: [
+  //     // {
+  //     //   type: 'node_module',
+  //     //   require: 'koishi-plugin-mongo',
+  //     //   options: {
+  //     //     uri: process.env.DB_URI,
+  //     //     name: 'ArilyChan'
+  //     //   }
+  //     // },
+  //     // {
+  //     //   type: 'node_module',
+  //     //   require: 'koishi-plugin-eval-addons'
+  //     // },
+  //     {
+  //       type: 'node_module',
+  //       require: 'koishi-plugin-eval',
+  //       options: {
+  //         userFields: ['foo', 'id', 'authority'],
+  //         setupFiles: {
+  //           'fetch.js': `${appDir}/config/eval/fetch.js`,
+  //           'cqcode-builder': `${appDir}/config/eval/cqcode.js`
+  //         }
+  //       }
+  //     }
+  //   ]
+  // }
 ]

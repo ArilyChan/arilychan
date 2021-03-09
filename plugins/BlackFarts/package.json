@@ -12,7 +12,6 @@
     "console.table": "^0.10.0",
     "cqcode-builder": "github:ArilyChan/node-cqcode-builder",
     "ewc-api": "github:arily/ewc-api",
-    "ewc-matchmaking": "github:arily/ewc-matchmaking#master",
     "express": "^4.17.1",
     "express-react-views": "^0.11.0",
     "glob": "^7.1.6",

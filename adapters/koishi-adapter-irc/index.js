@@ -48,7 +48,7 @@ class IRCBot extends Bot {
     // this.app.logger('adapter-irc:bot').info(s.parse(content))
     const parsed = s.parse(content)
     const message = parsed.map(this.transformSegment)
-    bot.app.logger('adapter-irc:bot').debug('sending message', { channelId, content })
+    this.app.logger('adapter-irc:bot').debug('sending message', { channelId, content })
     return this.client.say(channelId, message.join(''))
   }
 

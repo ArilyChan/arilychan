@@ -19,20 +19,25 @@ class IRCBot extends Bot {
         return `@${target} ` // usually there's no trailing space after reply. Add it for readibility
       }
       case 'image': {
-        if (!seg.data.url) return '[Image(not available)]'
-        return `[${seg.data.url} Image]`
+        const file = seg.data.url || seg.data.file
+        if (!file) return '[Image(not available)]'
+        return `[${file} Image]`
       }
+      case 'record':
       case 'audio': {
-        if (!seg.data.url) return '[Audio(not available)]'
-        return `[${seg.data.url} Audio]`
+        const file = seg.data.url || seg.data.file
+        if (!file) return '[Audio(not available)]'
+        return `[${file} Audio]`
       }
       case 'video': {
-        if (!seg.data.url) return '[Video(not available)]'
-        return `[${seg.data.url} Video]`
+        const file = seg.data.url || seg.data.file
+        if (!file) return '[Video(not available)]'
+        return `[${file} Video]`
       }
       case 'file': {
-        if (!seg.data.url) return '[File(not available)]'
-        return `[${seg.data.url} File]`
+        const file = seg.data.url || seg.data.file
+        if (!file) return '[File(not available)]'
+        return `[${file} File]`
       }
       case 'face': {
         return `[动画表情(${seg.data.name}.jpg)]`
@@ -47,7 +52,7 @@ class IRCBot extends Bot {
   async sendMessage (channelId, content, isPrivate = false) {
     // this.app.logger('adapter-irc:bot').info(s.parse(content))
     const parsed = s.parse(content)
-    const message = parsed.map(this.transformSegment)
+    const message = parsed.map(this.transformSegment.bind(this))
     this.app
       .logger('adapter-irc:bot')
       .debug('sending message', { channelId, content })
@@ -85,10 +90,23 @@ class IRCBot extends Bot {
       get () {
         return {
           toString () {
-            return `${to}:${nick}`
+            return `${session.channelId}:${session.userId}`
           },
-          channelId: to,
-          nickname: nick
+          channelId: session.channelId,
+          nickname: session.userId
+        }
+      },
+      enumerable: true
+    })
+    Object.defineProperty(session, 'sender', {
+      get () {
+        this.app
+          .logger('adapter-irc:bot')
+          .warn(Error('Session.sender is removed in v3.').stack)
+        return {
+          userId: session.userId,
+          channelId: session.channelId,
+          nickname: session.userId
         }
       },
       enumerable: true

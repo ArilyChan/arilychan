@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node --enable-source-maps --trace-warnings bot/index.js",
-    "start": "NODE_ENV=production node --enable-source-maps --trace-warnings bot/index.js"
+    "start": "NODE_ENV=production node --enable-source-maps --trace-warnings bot/index.js --debug"
   },
   "devDependencies": {
     "eslint": "^7.11.0",

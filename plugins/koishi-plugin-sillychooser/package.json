@@ -1,0 +1,12 @@
+{
+  "name": "koishi-plugin-sillychooser",
+  "version": "1.0.0",
+  "description": "sillychooser",
+  "main": "index.js",
+  "author": {
+    "name": "Exsper"
+  },
+  "dependencies": {
+    "segment": "^0.1.3"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "koishi-plugin-ppysb-query",
+  "version": "1.0.4",
+  "main": "index.js",
+  "dependencies": {
+    "glob": "^7.1.6",
+    "nedb": "^1.8.0",
+    "node-fetch": "^2.6.1",
+    "ojsama": "^1.2.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Exsper",
+  "license": "MIT"
+}

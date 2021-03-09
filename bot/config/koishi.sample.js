@@ -1,4 +1,6 @@
-module.exports = {
+let logLevel
+if (process.env.NODE_ENV !== 'production') logLevel = 0
+module.exports = [{
   type: 'cqhttp:ws',
   port: 7070,
   server: 'http://localhost:6700',
@@ -6,7 +8,6 @@ module.exports = {
   commandPrefix: ['!', '！'],
   logFilter: {
     CabbageReaction: 3
-  }
-  // selfId: 1840567854
-  // 在这里加上其他配置信息
-}
+  },
+  logLevel
+}]

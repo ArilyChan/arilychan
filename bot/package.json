@@ -6,7 +6,6 @@
   "dependencies": {
     "@babel/preset-react": "^7.12.1",
     "arilychan-radio": "github:ArilyChan/arilychan-radio",
-    "blackfarts": "file:Plugins/arily/BlackFarts",
     "cqcode-builder": "github:ArilyChan/node-cqcode-builder",
     "dotenv": "^8.2.0",
     "koishi-adapter-cqhttp": "^1.0.8",
@@ -16,11 +15,6 @@
     "koishi-plugin-mongo": "^1.1.0",
     "koishi-plugin-osuercalendar": "github:ArilyChan/koishi-plugin-osuercalendar",
     "koishi-plugin-sillychooser": "github:ArilyChan/koishi-plugin-sillychooser",
-    "sb-bot-message-recorder": "file:Plugins/arily/recorder",
-    "sb-plugin-auth": "github:ArilyChan/sb-plugin-auth",
-    "sb-plugin-osu-stat-screenshot": "github:ArilyChan/sb-plugin-osu-stat-screenshot",
-    "sb-prompt-filter": "github:ArilyChan/sb-prompt-filter",
-    "sb-qq-bot-framework": "github:ArilyChan/sb-qq-bot-framework",
     "socket.io": "^2.4.1"
   },
   "devDependencies": {

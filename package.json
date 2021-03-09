@@ -10,7 +10,6 @@
   "author": "",
   "license": "MIT",
   "workspaces": [
-    "koishi-prompt-fix",
     "adapters/koishi-adapter-irc",
     "plugins/koishi-plugin-blame",
     "plugins/koishi-plugin-osuexstat",
@@ -18,6 +17,7 @@
     "plugins/BlackFarts",
     "plugins/recorder",
     "plugins/sb-plugin-osu-stat-screenshot",
+    "utils/sb-prompt-filter",
     "utils/sb-qq-bot-framework"
   ]
 }

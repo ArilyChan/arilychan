@@ -1,0 +1,3 @@
+[submodule "sites/arilychan-radio"]
+	path = sites/arilychan-radio
+	url = https://github.com/ArilyChan/mini-player.git

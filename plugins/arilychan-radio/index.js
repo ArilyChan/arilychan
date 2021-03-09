@@ -106,10 +106,7 @@ module.exports.apply = (ctx, options, storage) => {
               }))
             } else {
               // 删除自己上传的所有该sid曲目
-              p = await storage.database.collection.aggregate([
-                ...aggeregations.newerThan(expiredDate),
-                { $match: { sid }, uploader: { id: userId } }
-              ]).toArray()
+              p = p.filter(record => record.uploader.id === userId)
               if (p.length <= 0) throw new Error('非上传者无法删除该曲目')
               await Promise.all(p.map((song) => {
                 storage.delete(song, { id: userId, nickname: meta.sender.nickname })

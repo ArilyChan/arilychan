@@ -1,0 +1,18 @@
+{
+  "name": "koishi-plugin-ppysh-query",
+  "version": "1.0.5",
+  "main": "index.js",
+  "dependencies": {
+    "glob": "^7.1.6",
+    "nedb": "^1.8.0",
+    "node-fetch": "^2.6.1",
+    "ojsama": "github:LeaPhant/ojsama",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Exsper",
+  "license": "MIT"
+}

@@ -76,7 +76,7 @@ class IRCBot extends Bot {
   async getChannelList () {
     if (this.list) return this.list
     this.client.list()
-    const list = await pEvent(this.client, 'channellist')
+    const list = await pEvent(this.client, 'channellist', { timeout: this.timeout || 10 })
     this.list = list.map((channel) => ({
       channelId: channel.name,
       channelName: channel.name,
@@ -169,7 +169,7 @@ class IRCAdapter extends Adapter {
       bot.client.addListener('error', function (message) {
         bot.app.logger('adapter-irc:bot').error('error: ', message)
       })
-      await pEvent(bot.client, 'registered')
+      await pEvent(bot.client, 'registered', { timeout: bot.timeout || 10 })
 
       const channels = await bot.getChannelList()
       channels.map((channel) => bot.client.join(channel.channelId))

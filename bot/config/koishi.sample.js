@@ -1,5 +1,5 @@
 let logLevel
-if (process.env.NODE_ENV !== 'production') logLevel = 0
+if (process.env.NODE_ENV !== 'production') logLevel = 3
 module.exports = {
   port: 7070,
   bots: [{

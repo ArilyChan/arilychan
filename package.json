@@ -23,6 +23,7 @@
     "plugins/koishi-plugin-ppysb-query",
     "plugins/koishi-plugin-ppysh-query",
     "plugins/koishi-plugin-sillychooser",
+    "plugins/koishi-plugin-osuercalendar",
     "utils/sb-prompt-filter",
     "utils/sb-qq-bot-framework",
     "sites/koishi-chat-web"

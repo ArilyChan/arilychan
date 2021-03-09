@@ -1,0 +1,19 @@
+{
+  "name": "koishi-v3-qq-bot",
+  "version": "3.0.0",
+  "description": "",
+  "main": "qq-bot/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "workspaces": [
+    "adapters/koishi-adapter-irc",
+    "plugins/koishi-plugin-blame",
+    "plugins/koishi-plugin-osuexstat",
+    "plugins/sb-plugin-auth",
+    "plugins/sb-plugin-osu-stat-screenshot",
+    "plugins/sb-qq-bot-framework"
+  ]
+}

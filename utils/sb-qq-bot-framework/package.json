@@ -7,7 +7,7 @@
     "cqcode-builder": "github:ArilyChan/node-cqcode-builder",
     "express": "^4.17.1",
     "glob": "^7.1.6",
-    "koishi": "^3.0.1",
+    "koishi": "^3.1.0",
     "koishi-plugin-mongo": "^1.1.0",
     "runtime-npm-install": "^5.0.0",
     "slugify": "^1.4.5"

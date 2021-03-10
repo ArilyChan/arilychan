@@ -5,8 +5,8 @@
   "main": "bot/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node --enable-source-maps --trace-warnings bot/index.js",
-    "start": "NODE_ENV=production node --enable-source-maps --trace-warnings bot/index.js --debug"
+    "dev": "node --enable-source-maps --trace-warnings ./bot/index.js",
+    "start": "NODE_ENV=production node --enable-source-maps --trace-warnings ./bot/index.js"
   },
   "devDependencies": {
     "eslint": "^7.11.0",
@@ -35,6 +35,7 @@
     "plugins/koishi-plugin-osuercalendar",
     "utils/sb-prompt-filter",
     "utils/sb-qq-bot-framework",
+    "utils/sb-plugin-wrapper",
     "sites/koishi-chat-web"
   ]
 }

@@ -76,7 +76,7 @@ class IRCBot extends Bot {
   async getChannelList () {
     if (this.list) return this.list
     this.client.list()
-    const list = await pEvent(this.client, 'channellist', { timeout: this.timeout || 10 })
+    const list = await pEvent(this.client, 'channellist', { timeout: this.timeout || 10 * 1000 })
     this.list = list.map((channel) => ({
       channelId: channel.name,
       channelName: channel.name,
@@ -85,64 +85,64 @@ class IRCBot extends Bot {
     return list
   }
 
-  supportV2PluginSession (session) {
-    Object.defineProperty(session, 'messageId', {
-      get () {
-        return {
-          toString () {
-            return `${session.channelId}:${session.userId}`
-          },
-          channelId: session.channelId,
-          nickname: session.userId
-        }
-      },
-      enumerable: true
-    })
-    Object.defineProperty(session, 'sender', {
-      get () {
-        this.app
-          .logger('adapter-irc:bot')
-          .warn(Error('Session.sender is removed in v3.').stack)
-        return {
-          userId: session.userId,
-          channelId: session.channelId,
-          nickname: session.userId
-        }
-      },
-      enumerable: true
-    })
-    Object.defineProperty(session, 'message', {
-      get () {
-        this.app
-          .logger('adapter-irc:bot')
-          .warn(Error('please use session.content in v3.\nStack Trace:').stack)
-        return session.content
-      },
-      set (newValue) {
-        session.content = newValue
-      },
-      enumerable: true,
-      configurable: true
-    })
-    Object.defineProperty(session, '$parsed', {
-      get () {
-        this.app
-          .logger('adapter-irc:bot')
-          .warn(Error('Session.$parsed is removed in v3.').stack)
-        return {
-          message: session.content.trim()
-        }
-      },
-      enumerable: true,
-      configurable: true
-    })
-    session.$send = (...args) => {
-      this.app
-        .logger('adapter-irc:bot')
-        .warn(Error('please use session.send() in v3.\nStack Trace:').stack)
-      return session.send(...args)
-    }
-  }
+  // supportV2PluginSession (session) {
+  //   Object.defineProperty(session, 'messageId', {
+  //     get () {
+  //       return {
+  //         toString () {
+  //           return `${session.channelId}:${session.userId}`
+  //         },
+  //         channelId: session.channelId,
+  //         nickname: session.userId
+  //       }
+  //     },
+  //     enumerable: true
+  //   })
+  //   Object.defineProperty(session, 'sender', {
+  //     get () {
+  //       this.app
+  //         .logger('adapter-irc:bot')
+  //         .warn(Error('Session.sender is removed in v3.').stack)
+  //       return {
+  //         userId: session.userId,
+  //         channelId: session.channelId,
+  //         nickname: session.userId
+  //       }
+  //     },
+  //     enumerable: true
+  //   })
+  //   Object.defineProperty(session, 'message', {
+  //     get () {
+  //       this.app
+  //         .logger('adapter-irc:bot')
+  //         .warn(Error('please use session.content in v3.\nStack Trace:').stack)
+  //       return session.content
+  //     },
+  //     set (newValue) {
+  //       session.content = newValue
+  //     },
+  //     enumerable: true,
+  //     configurable: true
+  //   })
+  //   Object.defineProperty(session, '$parsed', {
+  //     get () {
+  //       this.app
+  //         .logger('adapter-irc:bot')
+  //         .warn(Error('Session.$parsed is removed in v3.').stack)
+  //       return {
+  //         message: session.content.trim()
+  //       }
+  //     },
+  //     enumerable: true,
+  //     configurable: true
+  //   })
+  //   session.$send = (...args) => {
+  //     this.app
+  //       .logger('adapter-irc:bot')
+  //       .warn(Error('please use session.send() in v3.\nStack Trace:').stack)
+  //     return session.send(...args)
+  //   }
+  // }
 }
 
 class IRCAdapter extends Adapter {
@@ -160,6 +160,7 @@ class IRCAdapter extends Adapter {
           // bot.client = undefined
         } catch (error) {}
       }
+      const logger = bot.app.logger('adapter-irc:bot')
       bot.client = new irc.Client(bot.host, bot.nickname, {
         ...bot,
         userName: bot.username || bot.userName
@@ -167,18 +168,20 @@ class IRCAdapter extends Adapter {
       bot.selfId = bot.nickname
       bot.client.connect()
       bot.client.addListener('error', function (message) {
-        bot.app.logger('adapter-irc:bot').error('error: ', message)
+        logger.error('error: ', message)
       })
-      await pEvent(bot.client, 'registered', { timeout: bot.timeout || 10 })
+      await pEvent(bot.client, 'registered', { timeout: this.timeout || 10 * 1000 }).catch(error => {
+        // logger.error('error on logging in', error)
+        throw error
+      })
+      logger.debug('logged in')
 
       const channels = await bot.getChannelList()
-      channels.map((channel) => bot.client.join(channel.channelId))
       console.table(channels)
-
+      channels.map((channel) => bot.client.join(channel.channelId, () => logger.debug('joined', channel.channelId)))
+      logger.debug('joined all channels')
       bot.client.on('message', (nick, to, text, message) => {
-        bot.app
-          .logger('adapter-irc:bot')
-          .debug('received message', { nick, to, text })
+        logger.debug('received message', { nick, to, text })
         const data = {
           type: 'message',
           platform: bot.platform,
@@ -190,7 +193,7 @@ class IRCAdapter extends Adapter {
           userId: nick
         }
         const session = new Session(bot.app, data)
-        bot.supportV2PluginSession(session)
+        // bot.supportV2PluginSession(session)
         this.dispatch(session)
       })
       bot.status = 0

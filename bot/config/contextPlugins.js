@@ -39,10 +39,6 @@ module.exports = [
         type: 'node_modules',
         path: 'sb-plugin-message-recorder',
         subPlugin: 'slipper',
-        filter: [
-          // meta => !meta.message.startsWith('*'),
-          // meta => !meta.message.startsWith('今日运势')
-        ],
         priority: -1
       }, {
         type: 'node_module',
@@ -70,18 +66,18 @@ module.exports = [
           database: path.join(appDir, 'Plugins/exsper/ppyshQuery/storage/database.db'),
           prefixs: ['?', '？']
         }
-      // }, {
-      //   type: 'node_module',
-      //   require: 'koishi-plugin-osuercalendar',
-      //   priority: 3,
-      //   options: {
-      //     users: {
-      //       admin: admins, // 管理员自行添加
-      //       blackList: [],
-      //       whiteList: []
-      //     },
-      //     eventFile: path.join(appDir, 'Plugins/exsper/osuerCalendar/osuercalendar-events.json') // __dirname为config文件夹
-      //   }
+      }, {
+        type: 'node_module',
+        require: 'koishi-plugin-osuercalendar',
+        priority: 3,
+        options: {
+          users: {
+            admin: admins, // 管理员自行添加
+            blackList: [],
+            whiteList: []
+          },
+          eventFile: path.join(appDir, 'Plugins/exsper/osuerCalendar/osuercalendar-events.json') // __dirname为config文件夹
+        }
       }, {
         type: 'node_module',
         require: 'arilychan-radio',
@@ -104,13 +100,13 @@ module.exports = [
       //       private: [879724291]
       //     }
       //   }
-      }, {
-        type: 'node_module',
-        require: 'sb-plugin-auth',
-        priority: -3,
-        options: {
-          role: 'auth'
-        }
+      // }, {
+      //   type: 'node_module',
+      //   require: 'sb-plugin-auth',
+      //   priority: -3,
+      //   options: {
+      //     role: 'auth'
+      //   }
       }
     ]
   }

@@ -29,7 +29,7 @@ module.exports.apply = function (app, options, storage) {
   const gamble = new CabbageReaction(gambleReaction)
   const recipe = new CabbageReaction(recipeReaction)
 
-  app.middleware(async (meta, next) => {
+  app.middleware((meta, next) => {
     let reacted = false
     if (meta.content[0] === '!' || meta.content[0] === '！') {
       reacted = Object.entries({ cabbage, explosive, gamble, recipe }).some(([name, reaction]) => {

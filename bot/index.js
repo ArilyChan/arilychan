@@ -40,7 +40,7 @@ pluginLoader(app, config.contextPlugins)
 //   }
 // })()
 
-app.start()
+app.start()https://github.com/ArilyChan/arilychan.git
 
 // setTimeout(() => Promise.resolve().then(() => {
 //   throw new Error('reject!')

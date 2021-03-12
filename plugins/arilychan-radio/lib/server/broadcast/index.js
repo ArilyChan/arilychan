@@ -8,13 +8,13 @@ const broadcast = (...args) => emitter.emit(...args)
 
 const pushSong = (song) => {
   const lastSong = lastBroadcasted || database.lastAddedSong || undefined
-  if (lastSong && lastSong.sid === song.sid) return
+  if (lastSong?.sid === song.sid) return
   broadcast('search-result', song)
   lastBroadcasted = song
 }
 
 const removeSong = (song) => {
-  if (lastBroadcasted && lastBroadcasted.sid === song.sid) lastBroadcasted = undefined
+  if (lastBroadcasted?.sid === song.sid) lastBroadcasted = undefined
   broadcast('remove-track', song)
 }
 

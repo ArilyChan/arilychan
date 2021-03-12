@@ -171,7 +171,7 @@ const store = new Vuex.Store({
     initData: ({ commit, state, dispatch }) => {
       try {
         const joinedSessions = JSON.parse(localStorage.getItem('vue-chat-session'))
-        if (joinedSessions && joinedSessions.length) {
+        if (joinedSessions?.length) {
           joinedSessions.forEach(async joined => {
             const messages = await lastMessagesFromRoom(joined.id)
             joined.messages = messages.map(rec => rec.message)

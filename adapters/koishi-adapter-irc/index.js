@@ -7,40 +7,40 @@ class IRCBot extends Bot {
   transformSegment (seg) {
     switch (seg.type) {
       case 'text': {
-        return seg.data.content
+        return seg.data?.content
       }
       case 'at':
       case 'sharp': {
-        const target = seg.data.name || seg.data.id || seg.data.qq
+        const target = seg.data?.name || seg.data?.id || seg.data?.qq
         return `@${target}`
       }
       case 'reply': {
-        const [, target] = seg.data.id.split(':')
+        const [, target] = seg.data?.id.split(':')
         return `@${target} ` // usually there's no trailing space after reply. Add it for readibility
       }
       case 'image': {
-        const file = seg.data.url || seg.data.file
+        const file = seg.data?.url || seg.data?.file
         if (!file) return '[Image(not available)]'
         return `[${file} Image]`
       }
       case 'record':
       case 'audio': {
-        const file = seg.data.url || seg.data.file
+        const file = seg.data?.url || seg.data?.file
         if (!file) return '[Audio(not available)]'
         return `[${file} Audio]`
       }
       case 'video': {
-        const file = seg.data.url || seg.data.file
+        const file = seg.data?.url || seg.data?.file
         if (!file) return '[Video(not available)]'
         return `[${file} Video]`
       }
       case 'file': {
-        const file = seg.data.url || seg.data.file
+        const file = seg.data?.url || seg.data?.file
         if (!file) return '[File(not available)]'
         return `[${file} File]`
       }
       case 'face': {
-        return `[动画表情(${seg.data.name}.jpg)]`
+        return `[动画表情(${seg.data?.name}.jpg)]`
       }
 
       default:
@@ -190,7 +190,13 @@ class IRCAdapter extends Adapter {
           groupId: to,
           channelId: to,
           content: text,
-          userId: nick
+          userId: nick,
+          get author () {
+            return {
+              userId: nick,
+              nnickanme: nick
+            }
+          }
         }
         const session = new Session(bot.app, data)
         Object.defineProperty(session, 'messageId', {

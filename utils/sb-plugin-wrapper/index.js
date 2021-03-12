@@ -133,10 +133,10 @@ class PluginWrapper {
           session.app
             .logger('plugin-wrapper')
             .warn(new ObsoleteReminder('Session.sender is removed in v3.', this).stack)
-          return {
+          return session.author || {
             userId: session.userId,
             channelId: session.channelId,
-            nickname: session.userId
+            nickname: session.nickname || session.userId
           }
         },
         enumerable: true

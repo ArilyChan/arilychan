@@ -44,6 +44,17 @@ class WrappedPlugin {
   }
 }
 class RuntimeError extends Error {}
+
+function ObsoleteReminder (message, ctx) {
+  this.name = 'ObsoleteReminder'
+
+  this.message = message || ''
+
+  Error.captureStackTrace(this, ObsoleteReminder)
+  Error.stackTraceLimit = 2
+}
+require('util').inherits(ObsoleteReminder, Error)
+
 class PluginWrapper {
   constructor (plugin, { filter, prependFilter, subPlugin, useFilter = true, useV2Adapt = true, ...others }) {
     if (isFunction(filter)) filter = [filter]
@@ -114,28 +125,14 @@ class PluginWrapper {
   }
 
   v2BCMeta (session) {
-    if (session && session.v2Wrap) return session
+    if (session?.v2Wrap) return session
     session = Object.assign(session, {})
-    if (!session.messageId) {
-      Object.defineProperty(session, 'messageId', {
-        get () {
-          return {
-            toString () {
-              return `${session.channelId}:${session.userId}`
-            },
-            channelId: session.channelId,
-            nickname: session.userId
-          }
-        },
-        enumerable: true
-      })
-    }
     if (!session.sender) {
       Object.defineProperty(session, 'sender', {
         get () {
           session.app
             .logger('plugin-wrapper')
-            .warn(Error('Session.sender is removed in v3.').stack)
+            .warn(new ObsoleteReminder('Session.sender is removed in v3.', this).stack)
           return {
             userId: session.userId,
             channelId: session.channelId,
@@ -150,7 +147,7 @@ class PluginWrapper {
         get () {
           session.app
             .logger('plugin-wrapper')
-            .warn(Error('please use session.content in v3.\nStack Trace:').stack)
+            .warn(new ObsoleteReminder('please use session.content in v3.', this).stack)
           return session.content
         },
         set (newValue) {
@@ -165,7 +162,7 @@ class PluginWrapper {
         get () {
           session.app
             .logger('plugin-wrapper')
-            .warn(Error('Session.$parsed is removed in v3.').stack)
+            .warn(new ObsoleteReminder('Session.$parsed is removed in v3.', this).stack)
           return {
             message: session.content.trim()
           }
@@ -178,7 +175,7 @@ class PluginWrapper {
       session.$send = (...args) => {
         session.app
           .logger('plugin-wrapper')
-          .warn(Error('please use session.send() in v3.\nStack Trace:').stack)
+          .warn(new ObsoleteReminder('please use session.send() in v3.', this).stack)
         return session.send(...args)
       }
     }

@@ -193,6 +193,18 @@ class IRCAdapter extends Adapter {
           userId: nick
         }
         const session = new Session(bot.app, data)
+        Object.defineProperty(session, 'messageId', {
+          get () {
+            return {
+              toString () {
+                return `${session.channelId}:${session.userId}`
+              },
+              channelId: session.channelId,
+              nickname: session.userId
+            }
+          },
+          enumerable: true
+        })
         // bot.supportV2PluginSession(session)
         this.dispatch(session)
       })

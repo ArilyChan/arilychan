@@ -28,7 +28,7 @@ module.exports = async (option) => {
     },
     async songlistRemove ({ uuid }) {
       const result = await collection.findOne({ uuid })
-      if (lastAddedSong && lastAddedSong.uuid === result.uuid) lastAddedSong = undefined
+      if (lastAddedSong?.uuid === result.uuid) lastAddedSong = undefined
       return collection.deleteOne({ uuid: result.uuid })
     },
     async toPlaylist () {

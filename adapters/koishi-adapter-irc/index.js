@@ -184,10 +184,11 @@ class IRCAdapter extends Adapter {
         logger.debug('received message', { nick, to, text })
         const data = {
           type: 'message',
+          timestamp: new Date(),
           platform: bot.platform,
           selfId: bot.selfId,
           messageType: to.startsWith('#') ? 'group' : 'private',
-          groupId: to,
+          groupId: null,
           channelId: to,
           content: text,
           userId: nick,
@@ -203,10 +204,9 @@ class IRCAdapter extends Adapter {
           get () {
             return {
               toString () {
-                return `${session.channelId}:${session.userId}`
+                return `${session.channelId}:${session.userId}#${data.timestamp.getTime()}`
               },
-              channelId: session.channelId,
-              nickname: session.userId
+              data
             }
           },
           enumerable: true

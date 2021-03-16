@@ -4,7 +4,7 @@ function RollReaction ({ exclusive = [] } = {}) {
 RollReaction.prototype.reactTo = function ({ command, meta }) {
   if (this.exclusive.includes(meta.groupId)) return false
   const message = []
-  if (meta.contentType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`)
+  if (meta.contentType !== 'private') message.push(`[CQ:at,id=${meta.userId}]`)
   try {
     const rand = Math.round(Math.random())
     const words = command.join(' ').trim()
@@ -25,7 +25,7 @@ RollReaction.prototype.reactTo = function ({ command, meta }) {
       let title = matches[1] === undefined ? '' : matches[1]
       // remove () and ,
       title = title.replace(/[(（）)，,]/g, '')
-      title = title.replace('[CQ:atqq=', '[CQ:at,qq=')
+      title = title.replace('[CQ:atid=', '[CQ:at,id=')
       let cond = matches[4]
       if (title.startsWith('我')) {
         title = cond.replace('我', '你')

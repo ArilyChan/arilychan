@@ -24,7 +24,7 @@ class SillyChooser {
   apply (botId, qqId, message) {
     try {
       if (!message.length || message.length < 2) return ''
-      const atBot = `[CQ:at,qq=${botId}]`
+      const atBot = `[CQ:at,id=${botId}]`
       if (message.substring(0, atBot.length) === atBot) message = message.substring(atBot.length).trim()
       else if (this.prefixs.indexOf(message.substring(0, 1)) >= 0) message = message.substring(1).trim()
       else return ''
@@ -63,8 +63,8 @@ module.exports.apply = (ctx, options) => {
       const replyMessage = []
       if (meta.messageType !== 'private') replyMessage.push(`[CQ:reply,id=${meta.messageId}]`)
       replyMessage.push(reply)
-      // if (reply) return meta.$send(`[CQ:at,qq=${userId}]` + '\n' + reply)
-      await meta.$send(replyMessage.join(''))
+      // if (reply) return meta.send(`[CQ:at,id=${userId}]` + '\n' + reply)
+      await meta.send(replyMessage.join(''))
     } catch (ex) {
       console.log(ex)
       return next()

@@ -7,7 +7,7 @@ function req (req, def = {}) {
   }
 }
 
-// require('koishi-adapter-cqhttp')
+require('koishi-adapter-onebot')
 require('koishi-adapter-irc')
 
 exports.koishi = req('./koishi')

@@ -141,7 +141,7 @@ const uploadElo = async ({ command, meta, app }) => {
 // const findRival = async function({ command, meta, app}) {
 //     const logger = app.logger('CabbageReaction');
 //     let message = [];
-//     if (meta.contentType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
+//     if (meta.contentType !== 'private') message.push(`[CQ:at,id=${meta.userId}]`);
 //     try {
 //         let search = await matchapi.getPlayer({ handle: `qq.${meta.userId}` });
 //         if (search.length <= 0) throw new UserNotInMatchmakingError();
@@ -181,7 +181,7 @@ const uploadElo = async ({ command, meta, app }) => {
 // const listPlayers = async function({ command, meta, app}) {
 //     const logger = app.logger('CabbageReaction');
 //     let message = [];
-//     if (meta.contentType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
+//     if (meta.contentType !== 'private') message.push(`[CQ:at,id=${meta.userId}]`);
 //     try {
 //         // let all = match.list();
 //         let all = await matchapi.getAll();
@@ -218,7 +218,7 @@ const uploadElo = async ({ command, meta, app }) => {
 // const joinMatch = async function({ command, meta, app}) {
 //     const logger = app.logger('CabbageReaction');
 //     let message = [];
-//     if (meta.contentType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
+//     if (meta.contentType !== 'private') message.push(`[CQ:at,id=${meta.userId}]`);
 //     try {
 //         // let search = match.findByHandle(`qq.${meta.userId}`);
 //         let search = await matchapi.getPlayer({ handle: `qq.${meta.userId}` });
@@ -254,7 +254,7 @@ const uploadElo = async ({ command, meta, app }) => {
 // const quitMatch = async function({ command, meta, app}) {
 //     const logger = app.logger('CabbageReaction');
 //     let message = [];
-//     if (meta.contentType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
+//     if (meta.contentType !== 'private') message.push(`[CQ:at,id=${meta.userId}]`);
 //     try {
 //         let search = await matchapi.getPlayer({ handle: `qq.${meta.userId}` });
 //         if (search.length > 0) {
@@ -278,7 +278,7 @@ const uploadElo = async ({ command, meta, app }) => {
 // const joinTeam = async function({ command, meta, app}) {
 //     const logger = app.logger('CabbageReaction');
 //     let message = [];
-//     if (meta.contentType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
+//     if (meta.contentType !== 'private') message.push(`[CQ:at,id=${meta.userId}]`);
 //     try {
 //         let userTeam = command.slice(1).join(" ").trim();
 //         let [user, ...team] = userTeam.split('#');
@@ -305,7 +305,7 @@ const uploadElo = async ({ command, meta, app }) => {
 // const quitTeam = async function({ command, meta, app}) {
 //     const logger = app.logger('CabbageReaction');
 //     let message = [];
-//     if (meta.contentType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
+//     if (meta.contentType !== 'private') message.push(`[CQ:at,id=${meta.userId}]`);
 //     try {
 //         let userTeam = command.slice(1).join(" ").trim();
 //         let [user, ...team] = userTeam.split('#');
@@ -332,7 +332,7 @@ const uploadElo = async ({ command, meta, app }) => {
 // const registerTeam = async function({ command, meta, app}) {
 //     const logger = app.logger('CabbageReaction');
 //     let message = [];
-//     if (meta.contentType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
+//     if (meta.contentType !== 'private') message.push(`[CQ:at,id=${meta.userId}]`);
 //     try {
 //         let team = command.slice(1).join(" ").trim();
 //         if (team === '') throw new NeedHelps();
@@ -360,7 +360,7 @@ const uploadElo = async ({ command, meta, app }) => {
 // const findTeam = async function({ command, meta, app}) {
 //     const logger = app.logger('CabbageReaction');
 //     let message = [];
-//     if (meta.contentType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
+//     if (meta.contentType !== 'private') message.push(`[CQ:at,id=${meta.userId}]`);
 //     try {
 //         let team = command.slice(1).join(" ").trim();
 //         if (team === '') throw new NeedHelps();
@@ -388,7 +388,7 @@ const uploadElo = async ({ command, meta, app }) => {
 // const findTeamsByRank = async function({ command, meta, app}) {
 //     const logger = app.logger('CabbageReaction');
 //     let message = [];
-//     if (meta.contentType !== 'private') message.push(`[CQ:at,qq=${meta.userId}]`);
+//     if (meta.contentType !== 'private') message.push(`[CQ:at,id=${meta.userId}]`);
 //     try {
 //         let team = command.slice(1).join(" ").trim();
 //         if (team === '') throw new NeedHelps();

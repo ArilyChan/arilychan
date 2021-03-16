@@ -36,8 +36,8 @@ class WrappedPlugin {
   getWrappedPlugin (app, options, storage) {
     try {
       this.wrapper.wrap(app, options, storage)
-      if (this.wrapper.realPrependMiddleware.length) this.wrapper.realPrependMiddleware.map(async middleware => app.prependMiddleware(await this.wrapper.wrapSinglePrependMiddleware(middleware)))
-      if (this.wrapper.realMiddleware.length) this.wrapper.realMiddleware.map(async middleware => app.middleware(await this.wrapper.wrapSinglePrependMiddleware(middleware)))
+      if (this.wrapper.realPrependMiddleware.length) this.wrapper.realPrependMiddleware.map(middleware => app.prependMiddleware(this.wrapper.wrapSinglePrependMiddleware(middleware)))
+      if (this.wrapper.realMiddleware.length) this.wrapper.realMiddleware.map(middleware => app.middleware(this.wrapper.wrapSinglePrependMiddleware(middleware)))
     } catch (error) {
       console.warn(error)
     }
@@ -171,8 +171,8 @@ class PluginWrapper {
         configurable: true
       })
     }
-    if (!session.$send) {
-      session.$send = (...args) => {
+    if (!session.send) {
+      session.send = (...args) => {
         session.app
           .logger('plugin-wrapper')
           .warn(new ObsoleteReminder('please use session.send() in v3.', this).stack)
@@ -183,19 +183,19 @@ class PluginWrapper {
     return session
   }
 
-  async wrapSinglePrependMiddleware (middleware) {
+  wrapSinglePrependMiddleware (middleware) {
     return async (meta, next) => {
       if (this.useV2Adapt) meta = this.v2BCMeta(meta)
       if (this.useFilter && !await this.prependFiltering(meta)) return next()
-      return middleware(meta, next)
+      return await middleware(meta, next)
     }
   }
 
-  async wrapSingleMiddleware (middleware) {
+  wrapSingleMiddleware (middleware) {
     return async (meta, next) => {
       if (this.useV2Adapt) meta = this.v2BCMeta(meta)
       if (this.useFilter && !await this.filtering(meta)) return next()
-      return middleware(meta, next)
+      return await middleware(meta, next)
     }
   }
 

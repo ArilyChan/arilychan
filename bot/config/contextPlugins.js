@@ -11,20 +11,22 @@ module.exports = [
     use: [
       {
         type: 'node_module',
-        require: 'sb-plugin-osu-stat-screenshot',
-        priority: 8
-      },
-      {
-        type: 'node_module',
         require: 'blackfarts',
         priority: 1,
         filter: [
           meta => recipeFilter(263668213)(meta).then(result => {
-            if (!result) meta.$send('去别的群试试吧.').catch(e => console.error.bind(console))
+            if (!result) meta.send('去别的群试试吧.').catch(e => console.error.bind(console))
             return result
           }),
           require('./filters/group.blackFarts.recipe.restrictHours')([{ from: 9, to: 11 }, { from: 14, to: 17 }, { from: 20, to: 24 }], 738401694)
         ]
+      }, {
+        type: 'node_module',
+        require: 'sb-plugin-osu-stat-screenshot',
+        priority: 0,
+        options: {
+          base: 'http://info.osustuff.ri.mk/cn'
+        }
       }, {
         type: 'node_modules',
         path: 'sb-plugin-message-recorder',
@@ -91,22 +93,22 @@ module.exports = [
             return admins.includes(meta.userId)
           }
         }
-      // }, {
-      //   type: 'node_module',
-      //   require: 'koishi-plugin-blame',
-      //   priority: -2,
-      //   options: {
-      //     send: {
-      //       private: [879724291]
-      //     }
-      //   }
-      // }, {
-      //   type: 'node_module',
-      //   require: 'sb-plugin-auth',
-      //   priority: -3,
-      //   options: {
-      //     role: 'auth'
-      //   }
+      }, {
+        type: 'node_module',
+        require: 'koishi-plugin-blame',
+        priority: -2,
+        options: {
+          send: {
+            private: ['onebot:879724291']
+          }
+        }
+      }, {
+        type: 'node_module',
+        require: 'sb-plugin-auth',
+        priority: -3,
+        options: {
+          role: 'auth'
+        }
       }
     ]
   }

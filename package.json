@@ -36,6 +36,11 @@
     "utils/sb-prompt-filter",
     "utils/sb-qq-bot-framework",
     "utils/sb-plugin-wrapper",
-    "sites/koishi-chat-web"
-  ]
+    "sites/koishi-chat-web",
+    "utils/cqcode-builder"
+  ],
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "koishi-adapter-onebot": "^3.0.0"
+  }
 }

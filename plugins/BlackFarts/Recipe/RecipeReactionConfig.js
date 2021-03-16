@@ -67,7 +67,7 @@ const recipeToString = function (order) {
 
 const echoRecipe = function (meta, req, menu = compiledMenu) {
   const message = []
-  if (meta.contentType !== 'private') message.push(new CQ.Reply().id(meta.contentId))
+  if (meta.contentType !== 'private') message.push(new CQ.Reply().id(meta.messageId))
   if (!req) {
     // const order = random(compiledMenu)
     // message.push(recipeToString(order))

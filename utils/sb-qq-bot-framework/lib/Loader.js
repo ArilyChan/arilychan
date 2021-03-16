@@ -45,10 +45,10 @@ class Loader {
   async installToContext (app) {
     const { normal, after } = this.plugins.reduce(
       (acc, cur) => {
-        // if (cur.config.filter || cur.config.prependFilter) {
-        //   cur.module = Wrapper(cur.module, cur.config)
-        // }
-        cur.module = Wrapper(cur.module, cur.config)
+        if (cur.config.useV2Adapt) {
+          cur.module = Wrapper(cur.module, cur.config)
+        }
+        // cur.module = Wrapper(cur.module, cur.config)
         if (!cur.config.priority) cur.config.priority = 0
         if (cur.config.priority >= 0) {
           acc.normal.push(cur)

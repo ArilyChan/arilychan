@@ -46,7 +46,7 @@ export default {
       const type = line.slice(4).split(',')[0]
       switch (type) {
         case 'at':
-          return `@${line.split('qq=')[1].split(',')[0].slice(0, -1)}`
+          return `@${line.split('id=')[1].split(',')[0].slice(0, -1)}`
 
         default:
           break

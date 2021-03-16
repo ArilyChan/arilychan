@@ -11,7 +11,7 @@ module.exports.apply = (ctx) => {
             try {
                 let str = ask.substring(4).trim();
                 let reply = await api.search(str);
-                meta.$send(reply);
+                meta.send(reply);
             } catch (ex) {
                 console.log(ex);
             }

@@ -9,12 +9,12 @@ async function run (meta, eventPath) {
     fs.readFile(eventPath, async (err, data) => {
       if (err) {
         console.log(err)
-        return await meta.$send('一些不好的事情发生了')
+        return await meta.send('一些不好的事情发生了')
       }
       const events = JSON.parse(data.toString())
       const activity = new Activity(qqId, events)
       const statList = activity.getStatList()
-      let output = `[CQ:at,qq=${qqId}]` + '\n'
+      let output = `[CQ:at,id=${qqId}]` + '\n'
       output = output + '今日运势：' + statList.luck + '\n'
       output = output + '今日mod：' + statList.mod
       if (statList.specialMod) output = output + ', ' + statList.specialMod + '（？\n'
@@ -25,11 +25,11 @@ async function run (meta, eventPath) {
       statList.badList.map((item) => {
         output = output + '忌：' + item.name + '\n\t' + item.bad + '\n'
       })
-      return await meta.$send(output)
+      return await meta.send(output)
     })
   } catch (ex) {
     console.log(ex)
-    return await meta.$send('一些不好的事情发生了')
+    return await meta.send('一些不好的事情发生了')
   }
 }
 

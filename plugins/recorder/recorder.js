@@ -7,7 +7,7 @@ exports.apply = (ctx, options, storage) => {
 
     // const prefix = () => ctx.options.commandPrefix.some(start => meta.content.startsWith(start))
     // const nickname = () => meta.content.startsWith(ctx.options.name)
-    // const atMe = () => meta.content.startsWith(`[CQ:at,qq=${meta.selfId}]`)
+    // const atMe = () => meta.content.startsWith(`[CQ:at,id=${meta.selfId}]`)
     try {
       // if (prefix() || nickname() || atMe()) {
       // if (meta.content.includes('recorder.print')) return console.log(storage)

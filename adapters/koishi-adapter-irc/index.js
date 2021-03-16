@@ -136,7 +136,7 @@ class IRCBot extends Bot {
   //     enumerable: true,
   //     configurable: true
   //   })
-  //   session.$send = (...args) => {
+  //   session.send = (...args) => {
   //     this.app
   //       .logger('adapter-irc:bot')
   //       .warn(Error('please use session.send() in v3.\nStack Trace:').stack)

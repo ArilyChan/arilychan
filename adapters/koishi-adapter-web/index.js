@@ -50,7 +50,7 @@ Context.prototype.broadcast = async function (...args) {
   return broadcast.apply(this, args)
 }
 
-Session.prototype.$send = async function $send (message, autoEscape = false) {
+Session.prototype.send = async function $send (message, autoEscape = false) {
   if (!message) return
   let ctxId
 

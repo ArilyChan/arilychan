@@ -1,5 +1,5 @@
 const UserObject = require('../api/objects/UserObject')
-const GetUserData = require('../api/GetUserData')
+const GetUserData = require('../api/getUserData')
 const utils = require('../api/utils')
 
 // 记录内容：

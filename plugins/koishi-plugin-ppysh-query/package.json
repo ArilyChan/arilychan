@@ -1,6 +1,6 @@
 {
   "name": "koishi-plugin-ppysh-query",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "main": "index.js",
   "dependencies": {
     "glob": "^7.1.6",

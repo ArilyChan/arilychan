@@ -3,7 +3,7 @@
 ### 使用
 ```javascript
 options = {
-    admin: [123456], // 管理员列表，必要
+    admin: ["123456"], // 管理员列表，必要
     // 以下都可省略
     host: "osu.ppy.sb", // ripple网址，默认为"osu.ppy.sb"
     database: "./Opsbot-Ripple-v1.db", // 数据库路径，默认为根目录下的Opsbot-Ripple-v1.db

@@ -87,9 +87,9 @@ class UserInfo {
             if (res2) {
                 if (res2.qqId) {
                     // 正在绑定其他QQ
-                    // output = output + "警告：自动解除该玩家与QQ " + res2.qqId + " 的绑定\n";
+                    output = output + "警告：自动解除该玩家与QQ " + res2.qqId + " 的绑定\n";
                     // 防止恶意抢绑，禁止绑定
-                    return "错误：该账号已与QQ " + res2.qqId + " 绑定，如绑定错误请联系管理员\n";
+                    // return "错误：该账号已与QQ " + res2.qqId + " 绑定，如绑定错误请联系管理员\n";
                 }
                 await nedb.update({ userId: userId }, { $set: { qqId: qqId } });
                 output = output + "绑定账号" + userObject.username + "成功";

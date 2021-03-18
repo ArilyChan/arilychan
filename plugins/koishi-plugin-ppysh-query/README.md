@@ -3,7 +3,7 @@
 ### 使用
 ```javascript
 config = {
-    admin: [123456], // 管理员列表，必要
+    admin: ["123456"], // 管理员列表，必要
     apiKey: "把你的apiKey放这里", // osu Api token，必要
     // 以下都可省略
     host: "osu.ppy.sh", // osu网址，默认为"osu.ppy.sh"

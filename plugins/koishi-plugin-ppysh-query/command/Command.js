@@ -7,7 +7,7 @@ const UserInfo = require("../user/UserInfo");
 
 class Command {
     /**
-     * @param {Number} qqId 发送者Id
+     * @param {String} qqId 发送者Id
      * @param {String} message 消息
      * @param {Object} globalConstant 
      * @param {Array<Number>} globalConstant.admin 管理员列表

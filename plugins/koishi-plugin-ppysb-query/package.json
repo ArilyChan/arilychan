@@ -1,6 +1,6 @@
 {
   "name": "koishi-plugin-ppysb-query",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "main": "index.js",
   "dependencies": {
     "glob": "^7.1.6",

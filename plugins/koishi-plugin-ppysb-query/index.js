@@ -6,7 +6,7 @@ const Command = require('./command/Command')
 class PpysbQuery {
   /**
      * @param {Object} params
-     * @param {Array<Number>} params.admin 管理员列表，必要
+     * @param {Array<String>} params.admin 管理员列表，必要
      * @param {String} [params.host] osu网址，默认为"osu.ppy.sb"
      * @param {String} [params.database] 数据库路径，默认为根目录下的Opsbot-Ripple-v1.db
      * @param {Array<String>} [params.prefixs] 指令前缀，必须为单个字符，默认为[*]
@@ -33,7 +33,7 @@ class PpysbQuery {
 
   /**
      * 获得返回消息
-     * @param {Number} qqId
+     * @param {String} qqId
      * @param {String} message 输入的消息
      */
   async apply (qqId, message) {

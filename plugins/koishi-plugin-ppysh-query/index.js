@@ -6,7 +6,7 @@ const Command = require('./command/Command')
 class PpyshQuery {
   /**
      * @param {Object} params
-     * @param {Array<Number>} params.admin 管理员列表，必要
+     * @param {Array<String>} params.admin 管理员列表，必要
      * @param {String} params.apiKey osu apiKey，必要
      * @param {String} [params.host] osu网址，默认为"osu.ppy.sh"
      * @param {String} [params.database] 数据库路径，默认为根目录下的Opsbot-v1.db
@@ -33,7 +33,7 @@ class PpyshQuery {
 
   /**
      * 获得返回消息
-     * @param {Number} qqId
+     * @param {String} qqId
      * @param {String} message 输入的消息
      */
   async apply (qqId, message) {

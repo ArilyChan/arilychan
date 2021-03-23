@@ -1,6 +1,6 @@
 "use strict";
 
-const ppyshQuery = require("./index").ppyshQuery;
+const ppyshQuery = require("./index").PpyshQuery;
 
 let psq = new ppyshQuery({
     admin: ["2","3"],

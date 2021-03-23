@@ -1,6 +1,6 @@
 "use strict";
 
-const ppysbQuery = require("./index").ppysbQuery;
+const ppysbQuery = require("./index").PpysbQuery;
 
 let psq = new ppysbQuery({
     admin: ["2","3"],

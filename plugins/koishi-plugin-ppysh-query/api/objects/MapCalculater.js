@@ -17,6 +17,9 @@ class MapCalculater {
         (options.mods) ? this.mods = options.mods : 0;
         if (options.combo) this.combo = options.combo;
         (options.nmiss) ? this.nmiss = options.nmiss : 0;
+        (options.n300) ? this.n300 = options.n300 : 0;
+        (options.n100) ? this.n100 = options.n100 : 0;
+        (options.n50) ? this.n50 = options.n50 : 0;
         (options.acc) ? this.acc = options.acc : 100;
     }
 
@@ -41,13 +44,19 @@ class MapCalculater {
                 stars: this.stars,
                 combo: this.combo,
                 nmiss: this.nmiss,
-                acc_percent: this.acc,
+                n300: this.n300,
+                n100: this.n100,
+                n50: this.n50,
+                //acc_percent: this.acc,
             });
             this.fcpp = ojsama.ppv2({
                 stars: this.stars,
                 combo: this.maxcombo,
                 nmiss: 0,
-                acc_percent: this.acc,
+                n300: this.n300,
+                n100: this.n100,
+                n50: this.n50 + this.nmiss,
+                //acc_percent: this.acc,
             });
             this.sspp = ojsama.ppv2({
                 stars: this.stars,

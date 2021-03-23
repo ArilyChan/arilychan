@@ -108,7 +108,16 @@ class ScoreObject {
 
     async extendScore() {
         if (this.mode === 0) {
-            let mapCalculater = await new MapCalculater(this.beatmap.beatmapId, { mods: this.mods, combo: this.maxcombo, nmiss: this.countmiss, acc: this.acc }).init(this.mode);
+            let ppv2Options = {
+                mods: this.mods,
+                combo: this.maxcombo,
+                nmiss: this.countmiss,
+                n50: this.count50,
+                n100: this.count100,
+                n300: this.count300,
+                acc: this.acc,
+            }
+            let mapCalculater = await new MapCalculater(this.beatmap.beatmapId, ppv2Options).init(this.mode);
             const map = mapCalculater.map;
             const ar = map.ar;
             const od = map.od;

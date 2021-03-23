@@ -6,7 +6,7 @@
     "glob": "^7.1.6",
     "nedb": "^1.8.0",
     "node-fetch": "^2.6.1",
-    "ojsama": "^1.2.5"
+    "ojsama": "^2.2.0"
   },
   "devDependencies": {},
   "scripts": {

@@ -6,7 +6,7 @@
     "glob": "^7.1.6",
     "nedb": "^1.8.0",
     "node-fetch": "^2.6.1",
-    "ojsama": "github:LeaPhant/ojsama",
+    "ojsama": "^2.2.0",
     "path": "^0.12.7"
   },
   "devDependencies": {},

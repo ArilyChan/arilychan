@@ -124,7 +124,16 @@ class ScoreObject {
 
     async extendScore(mode) {
         // 获取谱面信息
-        let mapCalculater = await new MapCalculater(this.beatmap_id, { mods: this.mods, combo: this.maxcombo, nmiss: this.countmiss, acc: this.acc }).init(mode);
+        let ppv2Options = {
+            mods: this.mods,
+            combo: this.maxcombo,
+            nmiss: this.countmiss,
+            n50: this.count50,
+            n100: this.count100,
+            n300: this.count300,
+            acc: this.acc,
+        }
+        let mapCalculater = await new MapCalculater(this.beatmap_id, ppv2Options).init(mode);
         const map = mapCalculater.map;
         if (map.artist_unicode == "") map.artist_unicode = map.artist;
         if (map.title_unicode == "") map.title_unicode = map.title;

@@ -64,6 +64,7 @@ class Arg {
      * @param {String} beatmapString 1234567 或 artist - title(mapper)[diff_name]
      */
   getBeatmapInfo (beatmapString) {
+    beatmapString = beatmapString.trim();
     if (this.checkInt(beatmapString)) this.beatmapId = parseInt(beatmapString)
     else {
       let s = beatmapString

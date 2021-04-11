@@ -10,6 +10,9 @@ class MapCalculater {
      * @param {Number} [options.mods=0]
      * @param {Number} [options.combo]
      * @param {Number} [options.nmiss=0]
+     * @param {Number} [options.n50=0]
+     * @param {Number} [options.n100=0]
+     * @param {Number} [options.n300=0]
      * @param {Number} [options.acc=100]
      */
     constructor(beatmapId, options) {
@@ -24,6 +27,7 @@ class MapCalculater {
     }
 
     async getMap() {
+        // console.log("下载谱面:" +`https://osu.ppy.sh/osu/${this.beatmapId}`);
         const rawBeatmap = await fetch(`https://osu.ppy.sh/osu/${this.beatmapId}`, { credentials: 'include' }).then(res => res.text());
         const { map } = new ojsama.parser().feed(rawBeatmap);
         return map;
@@ -31,6 +35,19 @@ class MapCalculater {
 
     calculateStatWithMods(values, mods) {
         return new ojsama.std_beatmap_stats(values).with_mods(mods);
+    }
+
+    async initFullPP() {
+        this.map = await this.getMap();
+        this.maxcombo = this.map.max_combo();
+        this.stars = new ojsama.diff().calc({ map: this.map, mods: this.mods });
+        this.sspp = ojsama.ppv2({
+            stars: this.stars,
+            combo: this.maxcombo,
+            nmiss: 0,
+            acc_percent: 100,
+        });
+        return this;
     }
 
     async init(mode) {

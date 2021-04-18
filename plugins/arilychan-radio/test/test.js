@@ -19,7 +19,7 @@ rl.on("line", async (line) => {
             let arg = command.slice(1).join(' ');
             let beatmapInfo = await new Arg(arg).getBeatmapInfo();
             console.log("sid:" + beatmapInfo.sid);
-            console.log("duration: "+ beatmapInfo.duration);
+            console.log("mp3: "+ beatmapInfo.fullMp3);
         }
     }
     catch (ex) {

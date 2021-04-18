@@ -29,6 +29,13 @@ module.exports.apply = (ctx, options, storage) => {
       const act = command[0].substring(1)
       const argString = (command.length > 1) ? utils.unescapeSpecialChars(command.slice(1).join(' ')) : ''
       switch (act) {
+        case '试听':
+          try {
+            const beatmapInfo = await storage.search(argString)
+            return await meta.send(`[CQ:record,file=${beatmapInfo.previewMp3}`)
+          } catch (ex) {
+            return await meta.send(`[CQ:at,qq=${userId}]\n` + ex)
+          }
         case '点歌':
         case 'radio.queue':
         case 'radio.add':

@@ -4,7 +4,7 @@ const querystring = require('querystring')
 const fetch = require('node-fetch')
 
 class BeatmapInfo {
-  constructor (data) {
+  constructor (data, SpecDiff = "") {
     this.artist = data.artist
     this.artistU = (data.artistU) ? data.artistU : data.artist
     this.title = data.title
@@ -13,7 +13,16 @@ class BeatmapInfo {
     this.creator = data.creator
     this.creator_id = data.creator_id
     this.source = data.source
-    this.beatmap = data.bid_data.pop()
+    if (!SpecDiff) this.beatmap = data.bid_data.pop()
+    else {
+      data.bid_data.map((bdata) => {
+        const version = bdata.version.toLowerCase();
+        const diff = SpecDiff.toLowerCase();
+        if (version.indexOf(diff) >= 0) this.beatmap = bdata
+      })
+      if (!this.beatmap) this.beatmap = data.bid_data.pop()
+    }
+    // this.bid = this.beatmap.bid
     this.duration = this.beatmap.length
     this.audioFileName = this.beatmap.audio // 无音频则为""
     this.bgFileName = this.beatmap.bg // 无背景图则为""
@@ -31,10 +40,10 @@ class BeatmapInfo {
 }
 
 class SearchResult {
-  constructor (result) {
+  constructor (result, SpecDiff) {
     this.status = result.status
     if (this.status === 0) {
-      this.beatmapInfo = new BeatmapInfo(result.data)
+      this.beatmapInfo = new BeatmapInfo(result.data, SpecDiff)
     }
   }
 
@@ -58,14 +67,15 @@ class SayabotApi {
   /**
      * sayabot搜索谱面信息
      * @param {Number} sid setId
+     * @param {String} diffName 难度名，为了获取指定难度的音频
      * @returns {BeatmapInfo|{code, message}} 返回BeatmapInfo，出错时返回 {code: "error"} 或 {code: 404}
      */
-  static async search (sid) {
+  static async search (sid, diffName) {
     const params = { K: sid, T: 0 } // T=1 匹配bid
     try {
       const result = await this.apiRequestV2(params)
       if (!result) return { code: 'error', message: '获取谱面详情失败' }
-      const searchResult = new SearchResult(result)
+      const searchResult = new SearchResult(result, diffName)
       if (!searchResult.success()) return { code: 404, message: '查不到该谱面信息（谱面setId：' + sid + '）' }
       return searchResult.beatmapInfo
     } catch (ex) {

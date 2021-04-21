@@ -32,7 +32,7 @@ module.exports.apply = (ctx, options, storage) => {
         case '试听':
           try {
             const beatmapInfo = await storage.search(argString)
-            return await meta.send(`[CQ:record,file=${beatmapInfo.previewMp3}`)
+            return await meta.send(`[CQ:record,file=${beatmapInfo.previewMp3}]`)
           } catch (ex) {
             return await meta.send(`[CQ:at,qq=${userId}]\n` + ex)
           }

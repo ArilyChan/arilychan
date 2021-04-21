@@ -38,6 +38,13 @@ class Arg {
     const data = {}
     // 检测unicode字符，如果有则使用sayabot搜索
     if (this.checkUnicode(s)) {
+      // 取diff_name
+      let diffStart = s.lastIndexOf("[");
+      let diffEnd = s.lastIndexOf("]");
+      if (diffStart >= 0 && diffEnd >= 0 && diffEnd - diffStart > 1) {
+        data.diff_name = s.substring(diffStart + 1, diffEnd).trim();
+        s = s.substring(0, diffStart) + s.substring(diffEnd + 1);
+      }
       data.sayoTitle = s
       return data
     }
@@ -84,7 +91,8 @@ class Arg {
     if (JSON.stringify(searchData) === '{}') throw '请输入正确格式：artist - title(mapper)[diff_name] 或直接给出beatmapSetId，参数只有纯数字title请在前后加上双引号'
 
     let beatmapSetId
-
+    let diffName = searchData.diff_name || "";
+    
     // 直接给出setId
     if (searchData.beatmapSet) beatmapSetId = searchData.beatmapSet
 
@@ -106,7 +114,7 @@ class Arg {
     }
 
     // 用sayobot获取谱面信息
-    const beatmapInfo = await sayobot.search(beatmapSetId)
+    const beatmapInfo = await sayobot.search(beatmapSetId, diffName)
     if (beatmapInfo.code) {
       throw beatmapInfo.message
     }

@@ -9,7 +9,7 @@ class api {
     static apiRequest(keyWord) {
         return new Promise((resolve, reject) => {
             const reqData = {
-                limit: '1',
+                limit: '10',
                 offset: '0',
                 total: 'true',
                 type: '1',
@@ -55,7 +55,7 @@ class api {
             try {
                 let data = null;
                 let res = JSON.parse(d);
-                if (res.code !== 200) return "not found";
+                if (res.code !== 200) return "服务器错误";
                 if (res.abroad) {
                     // 搜索url解密key为'fuck~#$%^&*(458'
                     const key = 'fuck~#$%^&*(458';
@@ -63,7 +63,17 @@ class api {
                 } else {
                     data = res.result;
                 }
-                return data.songCount > 0 ? `[CQ:music,id=${data.songs[0].id},type=163]` : "not found";
+                if (data.songCount <= 0) return "找不到歌曲";
+                let songs = data.songs;
+                // 完全匹配
+                let bestIndex = songs.findIndex((song)=> {return song.name === keyWord});
+                // 完全包含
+                let incIndex = songs.findIndex((song)=> {return song.name.indexOf(keyWord) >= 0});
+                let songIndex;
+                if (bestIndex >= 0) songIndex = bestIndex;
+                else if (incIndex >= 0) songIndex = incIndex;
+                else songIndex = 0;
+                return `[CQ:music,id=${data.songs[songIndex].id},type=163]`;
             }
             catch (ex) {
                 console.log(ex);

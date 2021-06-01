@@ -3,6 +3,7 @@
 const run = require('./run')
 const path = require('path')
 const EventsJson = require('./eventsJson')
+const RandomRecordCollection = require("./RandomRecordCollection")
 const thisPath = __dirname
 
 // Koishi插件名
@@ -14,12 +15,14 @@ module.exports.apply = (ctx, options) => {
 
   const eventsJson = new EventsJson()
 
+  let rrc = new RandomRecordCollection();
+
   ctx.middleware(async (meta, next) => {
     try {
       const command = meta.message.trim().split(' ').filter(item => item !== '')
       if (command.length < 1) return next()
       if (command[0] === '今日运势') {
-        return await run(meta, eventPath)
+        return await run(meta, eventPath, rrc)
       }
       if (command[0].substring(0, 1) !== '!' && command[0].substring(0, 1) !== '！') return next()
       if (command[0].length < 2) return next()

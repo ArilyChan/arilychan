@@ -1,11 +1,8 @@
 'use strict'
 
 class Activity {
-  constructor (qqId, events) {
-    this.qqId = qqId
-    this.today = new Date()
-    this.iday = this.today.getFullYear() * 10000 + (this.today.getMonth() + 1) * 100 + this.today.getDate()
-    this.seed = (this.qqId + this.iday) * this.today.getDate()
+  constructor (seed, events) {
+    this.seed = seed
 
     this.luck = events.luck
     this.mods = events.mods
@@ -22,8 +19,8 @@ class Activity {
     // 如果够幸运还有特殊mod
     if (this.random(this.seed / 100, 100) <= 10) statList.specialMod = this.getRandomArray(this.modsSpecial)
     // 随机事件
-    const numGood = this.random(this.seed / 9, 114) % 2 + 1
-    const numBad = this.random(this.seed / 6, 514) % 2 + 1
+    const numGood = this.random(this.seed / 9, 1611) % 2 + 1
+    const numBad = this.random(this.seed / 6, 6266) % 2 + 1
     const randomActivities = this.getRandomArray(this.activities, numGood + numBad)
     statList.goodList = randomActivities.slice(0, numGood)
     statList.badList = randomActivities.slice(numGood)
@@ -50,7 +47,6 @@ class Activity {
   }
 
   random (seed, max) { // int [1,max]
-    this.seed = this.seed + this.iday
     seed = (seed * 9301 + 49297) % 233280
     return Math.ceil(seed / 233280.0 * max)
   }

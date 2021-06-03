@@ -33,6 +33,7 @@
     "plugins/koishi-plugin-ppysh-query",
     "plugins/koishi-plugin-sillychooser",
     "plugins/koishi-plugin-osuercalendar",
+    "plugins/koishi-plugin-puppeteer-cluster",
     "utils/sb-prompt-filter",
     "utils/sb-qq-bot-framework",
     "utils/sb-plugin-wrapper",
@@ -41,6 +42,6 @@
   ],
   "dependencies": {
     "dotenv": "^8.2.0",
-    "koishi-adapter-onebot": "^3.0.0"
+    "koishi-adapter-onebot": "^3.0.8"
   }
 }

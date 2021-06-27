@@ -1,0 +1,15 @@
+{
+  "name": "koishi-plugin-puppeteer-cluster",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@types/puppeteer": "^5.4.3",
+    "puppeteer-cluster": "^0.22.0"
+  }
+}

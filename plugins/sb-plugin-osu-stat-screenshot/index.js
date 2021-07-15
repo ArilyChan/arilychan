@@ -26,8 +26,13 @@ module.exports.apply = async (app, options, storage) => {
   const cluster = await Cluster.launch({
     concurrency: Cluster.CONCURRENCY_CONTEXT,
     maxConcurrency: 2,
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
-
+    puppeteerOptions: {
+      headless: true,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox'
+      ]
+    }
   })
   console.log('cluster started')
   cluster.task(async ({ page, data: { url, meta } }) => {

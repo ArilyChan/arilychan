@@ -65,7 +65,7 @@ const recipeToString = function (order) {
   return message.join('').trim()
 }
 
-const echoRecipe = function (meta, req, menu = compiledMenu) {
+function echoRecipe (meta, req, menu = compiledMenu) {
   const message = []
   if (meta.contentType !== 'private') message.push(new CQ.Reply().id(meta.messageId))
   if (!req) {
@@ -95,11 +95,11 @@ const nsfwRecipe = async ({ command, meta, storage }) => {
   if (!menuCompiled) await compileMenu({ storage })
   echoRecipe(meta, req, compiledMenu)
 }
-const randomRecipe = function (menu = compiledMenu, filter = () => true) {
+function randomRecipe (menu = compiledMenu, filter = () => true) {
   const filteredRecipes = menu.filter(filter)
   if (filteredRecipes.length <= 0) {
     return {
-      toString: () => '没东西'
+      toString: () => '没东西(用 "！吃点刺激的" 可以查询nsfw菜单。也许有。)'
     }
   }
   const order = random(filteredRecipes)
@@ -164,7 +164,7 @@ const addRecipe = async ({ command, meta, storage }, consumptionMethod = '吃') 
       })
     })
   } catch (error) {
-    meta.send('出了点问题。。。希望你能帮我把这份报错发给阿日').catch(e => console.error.bind(console))
+    meta.send('出了点问题。。。希望你能把这份报错发给阿日').catch(e => console.error.bind(console))
     meta.send(error.stack).catch(e => console.error.bind(console))
   }
 }

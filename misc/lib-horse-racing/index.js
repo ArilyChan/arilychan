@@ -279,3 +279,14 @@ round()
 round()
 round()
 console.log('1号的赌博', state.gamblers.get(1).history)
+
+module.exports = {
+  state,
+  models,
+  initHorses,
+  createGambler,
+  createMatch,
+  createPool,
+  bet,
+  settleMatch
+}

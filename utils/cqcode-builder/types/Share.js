@@ -1,22 +1,22 @@
-const URL = require('url').URL;
+const URL = require('url').URL
 const Base = require('./Base')
-module.exports = class Share extends Base{
-  constructor(attr){
+module.exports = class Share extends Base {
+  constructor (attr) {
     super(attr)
     this.type = 'share'
   }
-  
-  title(title){
+
+  title (title) {
     this.attrtibutes.title = title
     return this
   }
 
-  url(url){
+  url (url) {
     this.attrtibutes.url = url
     return this
   }
 
-  testRequiredFields(){
+  testRequiredFields () {
     if (!this.attrtibutes.title) throw new Error('need titles')
     try {
       new URL(this.attrtibutes.url)

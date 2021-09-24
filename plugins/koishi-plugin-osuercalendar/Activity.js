@@ -1,54 +1,43 @@
 'use strict'
+const XorShift = require('xorshift').constructor
+const seedrandom = require('seedrandom')
+const shuffleSeed = require('shuffle-seed');
 
 class Activity {
-  constructor (seed, events) {
-    this.seed = seed
-
+  constructor(qqId = "unknown", events, day = new Date()) {
+    this.qq = qqId.toString()
+    this.today = day
+    this.iday = (this.today.getFullYear() * 10000 + (this.today.getMonth() + 1) * 100 + this.today.getDate()).toString()
+    this.seed = Math.ceil(seedrandom(this.qq + this.iday)() * 1000000);
+    this.rng = new XorShift([this.seed, 0, 1, 0]);
+    this.rng.random(); // 第一次随机数一般不怎么随机，取后续随机数
     this.luck = events.luck
     this.mods = events.mods
     this.modsSpecial = events.modsSpecial
     this.activities = events.activities
   }
 
-  getStatList () {
+  getStatList() {
     const statList = {}
     // 随机吉凶
     statList.luck = this.getRandomArray(this.luck)
     // 随机mod
     statList.mod = this.getRandomArray(this.mods)
     // 如果够幸运还有特殊mod
-    if (this.random(this.seed / 100, 100) <= 10) statList.specialMod = this.getRandomArray(this.modsSpecial)
+    if (this.rng.random() <= 0.1) statList.specialMod = this.getRandomArray(this.modsSpecial)
     // 随机事件
-    const numGood = this.random(this.seed / 9, 1611) % 2 + 1
-    const numBad = this.random(this.seed / 6, 6266) % 2 + 1
-    const randomActivities = this.getRandomArray(this.activities, numGood + numBad)
-    statList.goodList = randomActivities.slice(0, numGood)
-    statList.badList = randomActivities.slice(numGood)
+    const randomActivities = this.getRandomArray(this.activities, 4)
+    statList.goodList = randomActivities.slice(0, 2)
+    statList.badList = randomActivities.slice(2)
 
     return statList
   }
 
   getRandomArray (array, size = 1) {
-    const arrLength = array.length
-    const temp = new Array(arrLength)
-    for (let i = 0; i < arrLength; ++i) {
-      temp[i] = i
-    }
+    let resp = shuffleSeed.shuffle(array, this.rng.random())
+    if (size === 1) return resp[0]
+    else return resp.slice(0,size)
 
-    const result = []
-    for (let i = size; i > 0; --i) {
-      let index = this.random(this.seed * i, temp.length) - 1
-      if (index < 0) index = 0
-      result.push(array[temp[index]])
-      temp.splice(index, 1)
-    }
-    if (size === 1) return result[0]
-    else return result
-  }
-
-  random (seed, max) { // int [1,max]
-    seed = (seed * 9301 + 49297) % 233280
-    return Math.ceil(seed / 233280.0 * max)
   }
 }
 module.exports = Activity

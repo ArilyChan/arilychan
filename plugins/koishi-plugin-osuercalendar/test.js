@@ -1,10 +1,7 @@
 "use strict";
 
 const run = require('./run');
-const RandomRecordCollection = require("./RandomRecordCollection");
 const eventPath = './osuercalendar-events.json';
-
-let rrc = new RandomRecordCollection();
 
 // 模拟meta
 class Meta {
@@ -33,5 +30,5 @@ rl.on("line", (line) => {
         meta = new Meta(myQQ);
         console.log("你的QQ号是"+myQQ+"了");
     }
-    else run(meta, eventPath, rrc);
+    else run(meta, eventPath, new Date());
 });

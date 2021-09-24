@@ -115,20 +115,17 @@ const uploadElo = async ({ command, meta, app }) => {
     params.append('tourney_name', matchName)
 
     const response = await E.matchesPost({ body: params })
-    setImmediate(async (response, meta) => {
-      if (response.code === 10001) {
-        const updateResult = await E.matches.calculateElo({ signal: timeoutSignal(20) })
-        meta.send(`${new CQCode.At().qq(meta.userId)} ${updateResult.message}`).catch(e => console.error.bind(console))
-        const message = []
-        if (meta.contentType !== 'private') message.push(new CQCode.At().qq(meta.userId))
-        try {
-          message.push(await (await getMatchEloChangeWithOsuUser(matchID)).toString())
-          await meta.send(message.join('\n'))
-        } catch (Error) {
-          console.error(Error)
-        }
-      }
-    }, response, meta)
+
+    if (response.code === 10001) {
+      const { signal, clear } = timeoutSignal(20)
+      const updateResult = await E.matches.calculateElo({ signal })
+      clear()
+      meta.send(`${new CQCode.At().qq(meta.userId)} ${updateResult.message}`).catch(e => console.error.bind(console))
+      const message = []
+      if (meta.contentType !== 'private') message.push(new CQCode.At().qq(meta.userId))
+      message.push(await getMatchEloChangeWithOsuUser(matchID).then(res => res.toString()))
+      await meta.send(message.join('\n'))
+    }
     message.push(response.message)
   } catch (Error) {
     const append = handleErrorMessage(Error, 'elo.upload') || ''
@@ -499,14 +496,15 @@ const elo = async ({ command, meta, app }) => {
     }
 
     const userId = user.id
-
+    const { signal, clear } = timeoutSignal(20)
     const [
       elo,
       recentPlay
     ] = await Promise.all([
-      E.users.elo(userId, { signal: timeoutSignal(20) }),
-      E.users.recentPlay(userId, { signal: timeoutSignal(20) })
+      E.users.elo(userId, { signal }),
+      E.users.recentPlay(userId, { signal })
     ])
+    clear()
     // let recentMatch = await E.matches(recentPlay.match_id, { signal: timeoutSignal(20) }).catch(err => {
     //     return {
     //         damage: [{

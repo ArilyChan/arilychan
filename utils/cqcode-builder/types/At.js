@@ -1,12 +1,13 @@
 const Base = require('./Base')
-module.exports = class At extends Base{
-  constructor(attr){
+module.exports = class At extends Base {
+  constructor (attr) {
     super(attr)
     this.type = 'at'
   }
 
-  qq(qq){
+  qq (qq) {
     this.attrtibutes.qq = qq
+    this.attrtibutes.id = qq
     return this
   }
 }

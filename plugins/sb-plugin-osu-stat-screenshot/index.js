@@ -44,13 +44,13 @@ module.exports.apply = async (app, options, storage) => {
     // await wait(1000);
     // await page.goto(url);
     const screen = await page.screenshot({
-      type: 'png',
+      type: 'jpeg',
       encoding: 'base64',
       fullPage: true
     })
     // Store screenshot, do something else
     const cqcode = `[CQ:image,file=base64://${screen}]`
-    meta.send(cqcode).catch(err => console.warn(err))
+    meta.send(cqcode).catch(_ => meta.send('发送图片失败。'))
   })
   cluster.on('taskerror', (err, data, willRetry) => {
     if (willRetry) {

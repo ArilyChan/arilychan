@@ -10,7 +10,14 @@ module.exports.apply = async (ctx, {
   cluster: {
     launch = {
       concurrency: Cluster.CONCURRENCY_CONTEXT,
-      maxConcurrency: 10
+      maxConcurrency: 10,
+      puppeteerOptions: {
+        headless: true,
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox'
+        ]
+      }
     }
   }, viewport, navigation
 } = {

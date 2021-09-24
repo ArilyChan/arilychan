@@ -21,36 +21,35 @@ pluginLoader(app, config.contextPlugins)
   })
   .catch(error => console.log(error))
 
-// ;(async () => {
-//   let count = 0
-//   const maxTries = 3
-//   try {
-//     while (count++ <= maxTries) {
-//       try {
-//         await app.start()
-//       } catch (e) {
-//         console.log('⚠️Uncatched Exception!!')
-//         console.log(e.stack)
-//         if (count >= maxTries) throw e
-//       }
-//     }
-//   } catch (e) {
-//     console.log('Max retries exceed. Quit now.')
-//     console.log(e)
-//   }
-// })()
+app.middleware(async (session, next) => {
+  if (!session?.content?.startsWith('~s')) return next()
+  const url = session.content.slice(2).trim()
+  try {
+    const screen = await app.puppeteerCluster.screenshot.base64(url && new URL(url).toString() || 'https://google.com')
+    session.send(`[CQ:image,file=base64://${screen}]`)
+  } catch (error) {
+    session.send(error.stack)
+  }
+})
+app.middleware(async (session, next) => {
+  if (!session?.content?.startsWith('~t')) return next()
+  const url = session.content.slice(2).trim()
+  try {
+    const screen = await app.puppeteerCluster.instance.execute({url: url && new URL(url).toString() || 'https://google.com'})
+    session.send(`[CQ:image,file=base64://${screen}]`)
+  } catch (error) {
+    session.send(error.stack)
+  }
+})
+app.middleware(async (session, next) => {
+  if (!session?.content?.startsWith('~c')) return next()
+  const url = session.content.slice(2).trim()
+  try {
+    const screen = await app.puppeteerCluster.screenshot.save(url && new URL(url).toString() || 'https://google.com', './test.png')
+    session.send('saved')
+  } catch (error) {
+    session.send(error.stack)
+  }
+})
 
 app.start()
-
-// setTimeout(() => Promise.resolve().then(() => {
-//   throw new Error('reject!')
-// }), 5000)
-// process.on('unhandledRejection', async (error) => {
-//   try {
-//     const bot = app.bots.find(bot => bot)
-//     if (!bot) return
-//     await bot.sendPrivateMsg(879724291, `${error.stack}`)
-//   } catch (err) {
-//     console.log(error)
-//   }
-// })

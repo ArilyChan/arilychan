@@ -113,7 +113,7 @@ module.exports = [
     ]
   }
   // {
-  //   for: ContextBuilder((app) => app.group(1097526643), 'test-groups'),
+  //   for: ContextBuilder((app) => app, 'any'),
   //   use: [
   //     // {
   //     //   type: 'node_module',
@@ -123,21 +123,21 @@ module.exports = [
   //     //     name: 'ArilyChan'
   //     //   }
   //     // },
-  //     // {
-  //     //   type: 'node_module',
-  //     //   require: 'koishi-plugin-eval-addons'
-  //     // },
   //     {
   //       type: 'node_module',
-  //       require: 'koishi-plugin-eval',
-  //       options: {
-  //         userFields: ['foo', 'id', 'authority'],
-  //         setupFiles: {
-  //           'fetch.js': `${appDir}/config/eval/fetch.js`,
-  //           'cqcode-builder': `${appDir}/config/eval/cqcode.js`
-  //         }
-  //       }
-  //     }
+  //       require: 'koishi-plugin-puppeteer-cluster'
+  //     },
+  //     // {
+  //     //   type: 'node_module',
+  //     //   require: 'koishi-plugin-eval',
+  //     //   options: {
+  //     //     userFields: ['foo', 'id', 'authority'],
+  //     //     setupFiles: {
+  //     //       'fetch.js': `${appDir}/config/eval/fetch.js`,
+  //     //       'cqcode-builder': `${appDir}/config/eval/cqcode.js`
+  //     //     }
+  //     //   }
+  //     // }
   //   ]
   // }
 ]

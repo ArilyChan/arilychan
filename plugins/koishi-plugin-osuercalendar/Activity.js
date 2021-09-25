@@ -27,7 +27,9 @@ class Activity {
   }
 
   get result () {
-    const statList = {}
+    const statList = {
+      date: this.today
+    }
     // 随机吉凶
     statList.luck = this.getRandomArray(this.luck)
     // 随机mod

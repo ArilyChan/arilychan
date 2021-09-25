@@ -19,7 +19,7 @@ module.exports.apply = (ctx, options) => {
       const command = meta.message.trim().split(' ').filter(item => item !== '')
       if (command.length < 1) return next()
       if (command[0] === '今日运势') {
-        return await run(meta, eventPath, new Date())
+        return await run.koishiHandler(meta, eventPath, new Date())
       }
       if (command[0].substring(0, 1) !== '!' && command[0].substring(0, 1) !== '！') return next()
       if (command[0].length < 2) return next()

@@ -34,7 +34,7 @@ class Activity {
     // 随机mod
     statList.mod = this.getRandomArray(this.mods)
     // 如果够幸运还有特殊mod
-    if (this.rng.random() <= 0.1) statList.specialMod = this.getRandomArray(this.modsSpecial)
+    if (this.rng.random() <= 0.15) statList.specialMod = this.getRandomArray(this.modsSpecial)
     // 随机事件
     const randomActivities = this.getRandomArray(this.activities, 4)
     statList.goodList = randomActivities.slice(0, 2)

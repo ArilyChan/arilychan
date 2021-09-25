@@ -1,23 +1,23 @@
 'use strict'
 const XorShift = require('xorshift').constructor
 const seedrandom = require('seedrandom')
-const shuffleSeed = require('shuffle-seed');
+const shuffleSeed = require('shuffle-seed')
 
 class Activity {
-  constructor(qqId = "unknown", events, day = new Date()) {
+  constructor (qqId = 'unknown', events, day = new Date()) {
     this.qq = qqId.toString()
     this.today = day
     this.iday = (this.today.getFullYear() * 10000 + (this.today.getMonth() + 1) * 100 + this.today.getDate()).toString()
-    this.seed = Math.ceil(seedrandom(this.qq + this.iday)() * 1000000);
-    this.rng = new XorShift([this.seed, 0, 1, 0]);
-    this.rng.random(); // 第一次随机数一般不怎么随机，取后续随机数
+    this.seed = Math.ceil(seedrandom(this.qq + this.iday)() * 1000000)
+    this.rng = new XorShift([this.seed, 0, 1, 0])
+    this.rng.random() // 第一次随机数一般不怎么随机，取后续随机数
     this.luck = events.luck
     this.mods = events.mods
     this.modsSpecial = events.modsSpecial
     this.activities = events.activities
   }
 
-  getStatList() {
+  getStatList () {
     const statList = {}
     // 随机吉凶
     statList.luck = this.getRandomArray(this.luck)
@@ -34,10 +34,9 @@ class Activity {
   }
 
   getRandomArray (array, size = 1) {
-    let resp = shuffleSeed.shuffle(array, this.rng.random())
+    const resp = shuffleSeed.shuffle(array, this.rng.random())
     if (size === 1) return resp[0]
-    else return resp.slice(0,size)
-
+    else return resp.slice(0, size)
   }
 }
 module.exports = Activity

@@ -3,7 +3,7 @@
 const Activity = require('./Activity')
 const fs = require('fs')
 
-async function run (meta, eventPath, rrc) {
+async function run (meta, eventPath, day) {
   try {
     const qqId = meta.userId
     fs.readFile(eventPath, async (err, data) => {
@@ -12,8 +12,7 @@ async function run (meta, eventPath, rrc) {
         return await meta.send('一些不好的事情发生了')
       }
       const events = JSON.parse(data.toString())
-      const seed = rrc.getSeed(qqId)
-      const activity = new Activity(seed, events)
+      const activity = new Activity(qqId, events, day)
       const statList = activity.getStatList()
       let output = `[CQ:at,id=${qqId}]` + '\n'
       output = output + '今日运势：' + statList.luck + '\n'

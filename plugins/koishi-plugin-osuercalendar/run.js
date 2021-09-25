@@ -35,13 +35,13 @@ class FortuneBinding {
     from = new Date(from) // de-bind the date from
     from.setUTCHours(0, 0, 0, 0)
     const self = this
-    return {
+    return new (class FortuneBindingPeriodCursor {
       to (to) {
         to = new Date(to)
         to.setUTCHours(0, 0, 0, 0)
         return getDaysArray(from, to).map(date => self.when(date))
       }
-    }
+    })()
   }
 }
 

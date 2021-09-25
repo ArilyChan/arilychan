@@ -6,7 +6,7 @@ const shuffleSeed = require('shuffle-seed')
 class Activity {
   constructor (qqId = 'unknown', events, day = new Date()) {
     this.qq = qqId.toString()
-    // this.today = day
+    this.today = day
     // this.iday = (this.today.getFullYear() * 10000 + (this.today.getMonth() + 1) * 100 + this.today.getDate()).toString()
     // this.seed = Math.ceil(seedrandom(this.qq + this.iday)() * 1000000)
     this.seed = Math.ceil(seedrandom(this.qq)() * 1000000)

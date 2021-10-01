@@ -9,10 +9,10 @@ exports.addPlus = (num) => {
 exports.timeoutSignal = (timeout = 5) => {
   const controller = new AbortController()
   const signal = controller.signal
-  setTimeout(() => {
+  const t = setTimeout(() => {
     controller.abort()
   }, timeout * 1000)
-  return signal
+  return { signal, clear: () => clearTimeout(t) }
 }
 
 exports.calculateBP = function (account, limit = 100) {

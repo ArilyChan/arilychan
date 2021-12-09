@@ -6,7 +6,6 @@ const next = require('next')
 let site = null
   const nextBuild = require('next/dist/build')
   // const nextExport = require('next/dist/server/export')
-// console.log(`${path.relative(process.cwd(), __dirname)}/.next`)
 const rootPath = `${path.relative(process.cwd(), __dirname)}`
 
 

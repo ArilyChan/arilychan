@@ -7,5 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Exsper",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "seedrandom": "^3.0.5",
+    "shuffle-seed": "^1.1.6",
+    "xorshift": "^1.2.0"
+  }
 }

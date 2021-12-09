@@ -1,14 +1,4 @@
 const Activity = require('./Activity')
-class Fortune {
-  constructor (events = {}) {
-    this.events = events
-  }
-
-  binding (who) {
-    return new FortuneBinding(who, this)
-  }
-}
-
 class FortuneBinding {
   constructor (me, fortune) {
     this.me = me
@@ -41,4 +31,4 @@ class FortuneBinding {
   }
 }
 
-module.exports = { Fortune, FortuneBinding }
+module.exports = FortuneBinding

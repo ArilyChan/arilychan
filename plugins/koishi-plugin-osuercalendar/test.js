@@ -34,7 +34,7 @@ rl.on('line', (line) => {
 })
 
 async function period (id) {
-  const { Fortune, FortuneBinding } = run
+  const { Fortune } = run
   const start = new Date()
   start.setDate(start.getDate() - 10)
   const end = new Date()
@@ -42,9 +42,7 @@ async function period (id) {
   const json = await fsP.readFile(eventPath)
   const events = JSON.parse(json)
 
-  const fortuneTelling = new Fortune(events)
-
-  const fortuneTeller = new FortuneBinding(id, fortuneTelling)
+  const fortuneTeller = new Fortune(events).bind(id)
   const result = fortuneTeller.from(start).to(end)
   console.log(result.map(r => r.result))
 }

@@ -5,8 +5,7 @@ module.exports = {
     es2020: true
   },
   extends: [
-    'standard',
-    'plugin:react/recommended'
+    'standard'
   ],
   parserOptions: {
     ecmaVersion: 12

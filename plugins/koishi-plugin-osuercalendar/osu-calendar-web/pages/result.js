@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { Fortune, FortuneBinding } from '../../lib'
+import Fortune from '../../lib/Fortune'
 const events = require('../../osuercalendar-events.json')
 
 

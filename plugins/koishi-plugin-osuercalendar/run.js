@@ -3,7 +3,9 @@
 // const fs = require('fs')
 // const fsP = require('fs').promises
 
-const { Fortune, FortuneBinding } = require('./lib')
+const Fortune = require('./lib/Fortune')
+// const Activity = require('./lib/Activity')
+// const fs = require('fs')
 
 async function koishiHandler (meta, eventPath, day) {
   try {
@@ -14,9 +16,9 @@ async function koishiHandler (meta, eventPath, day) {
     // const events = JSON.parse(json)
     const events = require(eventPath)
 
-    const fortuneTelling = new Fortune(events)
+    // const fortuneTelling = new Fortune(events)
 
-    const fortuneTeller = new FortuneBinding(qqId, fortuneTelling)
+    const fortuneTeller = new Fortune(events).binding(qqId)
     const activity = fortuneTeller.today
 
     // fs.readFile(eventPath, async (err, data) => {
@@ -26,7 +28,7 @@ async function koishiHandler (meta, eventPath, day) {
     //   }
     //   const events = JSON.parse(data.toString())
     //   const activity = new Activity(qqId, events, day)
-    const statList = activity.getStatList()
+    const statList = activity.result
     let output = `[CQ:at,id=${qqId}]` + '\n'
     output = output + '今日运势：' + statList.luck + '\n'
     output = output + '今日mod：' + statList.mod
@@ -46,4 +48,4 @@ async function koishiHandler (meta, eventPath, day) {
   }
 }
 
-module.exports = { koishiHandler, Fortune, FortuneBinding }
+module.exports = { koishiHandler, Fortune }

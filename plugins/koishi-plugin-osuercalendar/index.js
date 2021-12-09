@@ -2,7 +2,7 @@
 
 const run = require('./run')
 const path = require('path')
-const EventsJson = require('./eventsJson')
+const EventsJson = require('./lib/eventsJson')
 const thisPath = __dirname
 
 // Koishi插件名

@@ -20,6 +20,11 @@ module.exports = [
           eventFile: path.join(appDir, 'Plugins/exsper/osuerCalendar/osuercalendar-events.json') // __dirname为config文件夹
         }
       },
+      {
+        type: 'node_module',
+        require: 'koishi-plugin-puppeteer-cluster',
+        priority: 0,
+      },
     ]
   }
 ]

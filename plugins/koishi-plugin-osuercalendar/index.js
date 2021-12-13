@@ -8,7 +8,7 @@ const thisPath = __dirname
 // Koishi插件名
 module.exports.name = 'koishi-plugin-osuercalendar'
 // 插件处理和输出
-module.exports.webPath = require('./osu-calendar-web/next.config.js').basePath
+module.exports.webPath = '/'
 module.exports.webView = require('./osu-calendar-web/export').webView
 module.exports.apply = (ctx, options) => {
   const users = options.users || { admin: [], blackList: [], whiteList: [] }

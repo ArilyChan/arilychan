@@ -7,14 +7,14 @@ const SSR = typeof window === 'undefined'
 // dayOfWeekContainer.innerHTML = dayName
 // dateContainer.innerHTML = dayNumber
 
-export default function Calendar() {
+export default function Calendar(props) {
+    const date = props?.date ?? new Date()
     let monthName, dayName, dayNumber = undefined
+    const dayOfWeek = date.getDay();
+    const isWeekend = (dayOfWeek === 6) || (dayOfWeek  === 0); // 6 = Saturday, 0 = Sunday
     if (!SSR) {
-        // const lang = navigator?.language || 'zh-cn'
-        const lang = 'zh-cn'
-
-        let date = new Date()
-    
+        const lang = navigator?.language || 'zh-cn'
+        // const lang = 'zh-cn'
         monthName = date.toLocaleString(lang, { month: 'long' })
         dayName = date.toLocaleString(lang, { weekday: 'long' })
         dayNumber = date.getDate()
@@ -22,12 +22,12 @@ export default function Calendar() {
 
     return (
         <div className="flex-col justify-center items-center rounded-lg bg-white overflow-hidden shadow-md">
-            <div className="bg-blue-500 text-white py-1 px-4">
+            <div className="bg-red-700 text-white py-1 px-4">
                 <p className="text-m font-semibold text-white uppercase tracking-wide">{monthName}</p>
             </div>
             <div className="flex-col justify-center items-center">
-                <p className="text-sm text-gray-400 text-center pt-2 px-4 leading-none">{dayName}</p>
-                <p className="font-bold text-black text-center pb-2 px-4 leading-none" style={{"font-size": "40px"}}>{dayNumber}</p>
+                <p className={`text-sm ${isWeekend ? "text-red-300" : 'text-gray-400'} text-center pt-2 px-4 leading-none`}>{dayName}</p>
+                <p className={`font-bold text-center pb-2 px-4 leading-none ${isWeekend ? "text-red-800" : 'text-black'}`} style={{fontSize: "40px"}}>{dayNumber}</p>
             </div>
         </div>
     )

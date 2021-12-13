@@ -11,4 +11,4 @@ require('koishi-adapter-onebot')
 require('koishi-adapter-irc')
 
 exports.koishi = req('./koishi')
-exports.contextPlugins = req(process.env.PLUGIN_CONFIG || './contextPlugin.js', [])
+exports.contextPlugins = req(process.env.PLUGIN_CONFIG || './contextPlugins.js', [])

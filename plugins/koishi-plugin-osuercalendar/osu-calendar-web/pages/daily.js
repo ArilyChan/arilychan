@@ -12,7 +12,7 @@ const FortuneResult = ({ statList, displayName, seed }) => {
   statList.date = new Date(statList.date)
   return (
     <div className="hero min-h-screen bg-base-300">
-      <div className="stack">
+      <div className="stack p-4 mb-4">
         <div className="shadow-md card bg-base-200 ">
           <div className="card-body">
             <div className="absolute right-3 top-3"><Calendar date={statList.date} /></div>

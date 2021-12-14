@@ -15,7 +15,8 @@ export default function Calendar(props) {
     const isWeekend = (dayOfWeek === 6) || (dayOfWeek  === 0); // 6 = Saturday, 0 = Sunday
     if (!SSR) {
         const { query } = useRouter();
-        const lang = query.lang || navigator?.language || 'zh-cn'
+        // const lang = query.lang || navigator?.language || 'zh-cn'
+        const lang = 'zh-cn'
         monthName = date.toLocaleString(lang, { month: 'long' })
         dayName = date.toLocaleString(lang, { weekday: 'long' })
         dayNumber = date.getDate()

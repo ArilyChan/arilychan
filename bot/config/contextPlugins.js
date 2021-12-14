@@ -109,7 +109,12 @@ module.exports = [
         options: {
           role: 'auth'
         }
-      }
+      },
+      {
+        type: 'node_module',
+        require: 'koishi-plugin-puppeteer-cluster',
+        priority: 0,
+      },
     ]
   }
   // {

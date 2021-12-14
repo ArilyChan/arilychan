@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 // const monthContainer = document.querySelector(`[js-month]`)
 // const dayOfWeekContainer = document.querySelector(`[js-dayOfWeek]`)
 // const dateContainer = document.querySelector(`[js-date]`)
@@ -13,8 +14,8 @@ export default function Calendar(props) {
     const dayOfWeek = date.getDay();
     const isWeekend = (dayOfWeek === 6) || (dayOfWeek  === 0); // 6 = Saturday, 0 = Sunday
     if (!SSR) {
-        const lang = navigator?.language || 'zh-cn'
-        // const lang = 'zh-cn'
+        const { query } = useRouter();
+        const lang = query.lang || navigator?.language || 'zh-cn'
         monthName = date.toLocaleString(lang, { month: 'long' })
         dayName = date.toLocaleString(lang, { weekday: 'long' })
         dayNumber = date.getDate()

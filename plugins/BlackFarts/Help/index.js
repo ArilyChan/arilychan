@@ -11,9 +11,9 @@ async function helps ({ command, meta, app }) {
     if (!result) return meta.send('没有找到相关词条')
     return meta.send(result.renderAsString())
   }
-  if (new Date() - recent[meta.groupId]?.timestamp < 1000 * 60) return meta.send(`[CQ:reply,id=${recent[meta.groupId].messageId}] 刚刚发过，很长，往上面翻一翻`)
+  if (new Date() - recent[meta?.groupId || meta?.userId]?.timestamp < 1000 * 60) return meta.send(`[CQ:reply,id=${recent[meta?.groupId || meta?.userId].messageId}] 刚刚发过，很长，往上面翻一翻`)
   await meta.send(manual.renderAsString())
-  recent[meta.groupId] = {
+  recent[meta?.groupId || meta?.userId] = {
     messageId: meta.messageId,
     timestamp: new Date()
   }

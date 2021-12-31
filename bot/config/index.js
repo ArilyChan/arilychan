@@ -24,13 +24,11 @@ help
   .entry('!help')
 
   .usage('!help [查询关键字]')
-  .usage('！help [查询关键字]')
 
 help
   .entry('ppy.sh查询')
 
   .usage('?help')
-  .usage('？help')
 
 help
   .entry('ppy.sb查询')
@@ -52,5 +50,5 @@ fortune
   .usage('今日运势')
 
 fortune
-  .entry('！添加活动')
+  .entry('添加活动')
   .usage('！添加活动 <宜详情> <忌详情>')

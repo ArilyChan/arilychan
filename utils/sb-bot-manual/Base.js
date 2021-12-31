@@ -91,20 +91,35 @@ class Base {
 
     // search titles
     let hit = [this._id, this._name, this._description, this._detail].some(v => v?.includes?.(keyword))
-    if (hit) { return Object.assign(this, { reason: 'self-includes-keyword' }) }
+    if (hit) {
+      const rtn = Object.create(this)
+      rtn.reason = 'self-includes-keyword'
+      return rtn
+    }
 
     // search tags
     hit = this._tags?.some?.(v => v.includes?.(keyword))
-    if (hit) { return Object.assign(this, { reason: 'tag-includes-keyword' }) }
+    if (hit) {
+      const rtn = Object.create(this)
+      rtn.reason = 'tag-includes-keyword'
+      return rtn
+    }
 
     // search usages
     hit = this._usages?.some?.(v => v.includes?.(keyword))
-    if (hit) { return Object.assign(this, { reason: 'usage-includes-keyword' }) }
+    if (hit) {
+      const rtn = Object.create(this)
+      rtn.reason = 'usage-includes-keyword'
+      return rtn
+    }
 
     // search entries
     const hits = [...this._entries.entries()].filter(([id, entry]) => entry.filter(keyword))
     if (!hits.length) return
-    return Object.assign(this, { _entries: new Map(hits), reason: 'entry-includes-keyword' })
+    const rtn = Object.create(this)
+    rtn.reason = 'entry-includes-keyword'
+    rtn._entries = new Map(hits)
+    return rtn
   }
 }
 module.exports = Base

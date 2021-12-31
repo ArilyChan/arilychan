@@ -16,6 +16,7 @@ function unescapeSpecialChars (chars) {
 }
 
 const { Cluster } = require('puppeteer-cluster')
+const manual = require('sb-bot-manual')
 
 // const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -135,3 +136,43 @@ module.exports.apply = async (app, options, storage) => {
     })
   })
 }
+
+const osuScreenshot = manual
+  .section('osu-info-screenshot')
+  .name('ppy.sh 图片信息')
+
+  .description('返回info.osustuff.ri.mk相关网站的截图')
+
+osuScreenshot
+  .entry('info')
+  .description('osu玩家信息的图片')
+  .detail('https://info.osustuff.ri.mk/users/{osuid}/{mode}')
+
+  .usage('!!stat <osuid或用户名>')
+  .usage('!!stat@osu <osuid或用户名>')
+  .usage('!!stat@taiko <osuid或用户名>')
+  .usage('!!stat@fruit <osuid或用户名>')
+  .usage('!!stat@mania <osuid或用户名>')
+
+osuScreenshot
+  .entry('recent')
+  .name('最近成绩')
+  .description('返回最后上传至osu服务器的成绩')
+
+  .usage('!!recent <osuid或用户名>')
+  .usage('!!pr <osuid或用户名>')
+
+osuScreenshot
+  .entry('userpage')
+  .name('生成厕所读物（误）')
+
+  .usage('!!userpage <osuid或用户名>')
+
+osuScreenshot
+  .entry('best')
+  .name('查询bp')
+
+  .usage('!!best <osuid或用户名>')
+  .usage('!!best <osuid或用户名> @last:24 最近24h的成绩')
+  .usage('!!best <osuid或用户名> @from:2007-12-20 从2007-12-20到现在为止的bp')
+  .usage('!!best <osuid或用户名> @from:2021-12-31 @to:2045-12-31 从2021-12-31到2045-12-31的bp')

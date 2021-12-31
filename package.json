@@ -38,7 +38,8 @@
     "utils/sb-qq-bot-framework",
     "utils/sb-plugin-wrapper",
     "sites/koishi-chat-web",
-    "utils/cqcode-builder"
+    "utils/cqcode-builder",
+    "utils/sb-bot-manual"
   ],
   "dependencies": {
     "dotenv": "^8.2.0",

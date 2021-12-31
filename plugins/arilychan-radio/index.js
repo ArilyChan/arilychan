@@ -1,5 +1,5 @@
 'use strict'
-
+const manual = require('sb-bot-manual')
 const api = require('./lib/server/api')
 const server = require('./lib/server/server')
 const aggeregations = require('./lib/server/database/aggregations')
@@ -131,3 +131,45 @@ module.exports.apply = (ctx, options, storage) => {
     }
   })
 }
+
+const radio = manual.section('arilychan-radio')
+radio
+  .name('小阿日电台')
+  .description('可以和其他人一起听的串流电台')
+  .tag('广播').tag('调频').tag('中波')
+
+radio
+  .entry('试听')
+  .usage('!试听 <关键词 | osu beatmapset id>')
+
+radio
+  .entry('queue')
+  .name('点歌')
+  .description('点好的歌会在上一首歌播放完后播放')
+
+  .usage('!删歌 <关键词 | osu beatmapset id>')
+  .usage('!radio.delete <关键词 | osu beatmapset id>')
+  .usage('!radio.remove <关键词 | osu beatmapset id>')
+  .usage('!radio.cancel <关键词 | osu beatmapset id>')
+  .usage('!queue.delete <关键词 | osu beatmapset id>')
+  .usage('!queue.remove <关键词 | osu beatmapset id>')
+  .usage('!queue.cancel <关键词 | osu beatmapset id>')
+
+radio
+  .entry('delete-queue')
+  .name('删歌')
+  .description('取消点播（正在播放中会被强制切到下一首）')
+
+  .usage('!点歌 <关键词 | osu beatmapset id>')
+  .usage('!radio.queue <关键词 | osu beatmapset id>')
+  .usage('!radio.add <关键词 | osu beatmapset id>')
+  .usage('!queue.add <关键词 | osu beatmapset id>')
+
+radio
+  .entry('broadcast')
+  .name('广播')
+  .detail('[管理员权限功能]')
+  .description('向所有听众推送一条消息')
+
+  .usage('!广播 <...something>')
+  .usage('!radio.broadcast <...something>')

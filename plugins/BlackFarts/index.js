@@ -1,6 +1,7 @@
 const CabbageReaction = require('./Reaction')
 const Command = require('./Command')
 
+const Help = require('./Help')
 const cabbageReaction = require('./Cabbage/CabbageReactionConfig')
 const explosiveReaction = require('./Explosive/ExpolosiveReactionConfig')
 const gambleReaction = require('./EWC-Gamble/GambleReactionConfig')
@@ -28,11 +29,12 @@ module.exports.apply = function (app, options, storage) {
   const explosive = new CabbageReaction(explosiveReaction)
   const gamble = new CabbageReaction(gambleReaction)
   const recipe = new CabbageReaction(recipeReaction)
+  const help = new CabbageReaction(Help)
 
   app.middleware((meta, next) => {
     let reacted = false
     if (meta.content[0] === '!' || meta.content[0] === '！') {
-      reacted = Object.entries({ cabbage, explosive, gamble, recipe }).some(([name, reaction]) => {
+      reacted = Object.entries({ help, cabbage, explosive, gamble, recipe }).some(([name, reaction]) => {
         if (reaction.reactTo(new Command({ meta, app, storage }))) {
           // console.log(`${meta.content} Catched by subplugin: ${name}`);
           return true

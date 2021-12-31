@@ -27,22 +27,24 @@ module.exports = [
         options: {
           base: 'http://info.osustuff.ri.mk/cn'
         }
-      }, {
-        type: 'node_modules',
-        path: 'sb-plugin-message-recorder',
-        subPlugin: 'recorder',
-        options: {
-          db: {
-            uri: process.env.RECORDER_DB_URI
-          }
-        },
-        priority: 9999
-      }, {
-        type: 'node_modules',
-        path: 'sb-plugin-message-recorder',
-        subPlugin: 'slipper',
-        priority: -1
-      }, {
+      },
+      //  {
+      //   type: 'node_modules',
+      //   path: 'sb-plugin-message-recorder',
+      //   subPlugin: 'recorder',
+      //   options: {
+      //     db: {
+      //       uri: process.env.RECORDER_DB_URI
+      //     }
+      //   },
+      //   priority: 9999
+      // }, {
+      //   type: 'node_modules',
+      //   path: 'sb-plugin-message-recorder',
+      //   subPlugin: 'slipper',
+      //   priority: -1
+      // },
+       {
         type: 'node_module',
         require: 'koishi-plugin-sillychooser',
         priority: 2,

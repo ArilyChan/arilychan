@@ -2,7 +2,7 @@ module.exports = {
   reactStrictMode: true,
   generateBuildId: async () => {
     // You can, for example, get the latest git commit hash here
-    return '1'
+    return '2'
   },
   swcMinify: true,
   basePath: '/fortune',

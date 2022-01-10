@@ -1,15 +1,30 @@
-
+const admins = require('./admins')
+const path = require('path')
+const appDir = path.dirname(require.main.filename)
 const ContextBuilder = require('sb-qq-bot-framework/lib/contextBuilder')
 
 module.exports = [
   {
-    for: ContextBuilder((app) => app.group(559633343, 926872640), 'bocai'),
+    for: ContextBuilder(app => app, 'bocai'),
     use: [
       {
         type: 'node_module',
-        require: 'blackfarts',
-        priority: 1
-      }
+        require: 'koishi-plugin-osuercalendar',
+        priority: 3,
+        options: {
+          users: {
+            admin: [], // 管理员自行添加
+            blackList: [],
+            whiteList: []
+          },
+          eventFile: path.join(appDir, 'Plugins/exsper/osuerCalendar/osuercalendar-events.json') // __dirname为config文件夹
+        }
+      },
+      {
+        type: 'node_module',
+        require: 'koishi-plugin-puppeteer-cluster',
+        priority: 0,
+      },
     ]
   }
 ]

@@ -140,7 +140,7 @@ module.exports.v3 = {
 
     options.catch.map((c) => {
       process.on(c, (reason, origin) => {
-        console.log('catched', c)
+        console.log('catched', c, reason.stack)
         handler(`${reason.stack}`, sendPrivate)
         handler(`${reason.stack}`, sendGroup)
       })

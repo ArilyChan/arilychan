@@ -2,12 +2,14 @@
 
 const run = require('./run')
 const path = require('path')
-const EventsJson = require('./eventsJson')
+const EventsJson = require('./lib/eventsJson')
 const thisPath = __dirname
 
 // Koishi插件名
 module.exports.name = 'koishi-plugin-osuercalendar'
 // 插件处理和输出
+module.exports.webPath = '/'
+module.exports.webView = require('./osu-calendar-web/export').webView
 module.exports.apply = (ctx, options) => {
   const users = options.users || { admin: [], blackList: [], whiteList: [] }
   const eventPath = options.eventFile || path.join(thisPath, './osuercalendar-events.json')
@@ -18,8 +20,28 @@ module.exports.apply = (ctx, options) => {
     try {
       const command = meta.message.trim().split(' ').filter(item => item !== '')
       if (command.length < 1) return next()
+      // if (command[0] === '今日运势') {
+      //   return await run.koishiHandler(meta, eventPath, new Date())
+      // }
       if (command[0] === '今日运势') {
-        return await run(meta, eventPath, new Date())
+        if (!ctx.puppeteerCluster) {
+          console.error('got no cluster')
+          return await run.koishiHandler(meta, eventPath, new Date())
+        }
+        console.log('got cluster')
+        const cluster = ctx.puppeteerCluster.instance
+        cluster.queue(async ({ page }) => {
+          try {
+            await page.goto(`http://localhost:3005/fortune/daily?seed=${meta.userId}&lang=zh-cn&displayName=${meta.author?.nickname || meta.author?.username || '你'}`)
+            await page.setViewport({ width: 992, height: 100, deviceScaleFactor: 1.5 })
+            const e = await page.$('#__next > div > div > .stack')
+            const ss = await e.screenshot({ encoding: 'base64' })
+            const cqcode = `[CQ:image,file=base64://${ss}]`
+            meta.send(cqcode).catch(_ => meta.send('发送图片失败。'))
+          } catch (error) {
+            return await run.koishiHandler(meta, eventPath, new Date())
+          }
+        })
       }
       if (command[0].substring(0, 1) !== '!' && command[0].substring(0, 1) !== '！') return next()
       if (command[0].length < 2) return next()

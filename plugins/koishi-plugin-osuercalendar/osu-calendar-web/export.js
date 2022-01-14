@@ -16,7 +16,6 @@ const deleteCache = () => {
     const absRoot = path.resolve(rootPath + '/.next')
     Object.keys(require.cache).forEach(r => {
       if (r.startsWith(absRoot)) { 
-        console.log(r)
         delete require.cache[r] }
     })
 }

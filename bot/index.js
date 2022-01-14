@@ -21,35 +21,4 @@ pluginLoader(app, config.contextPlugins)
   })
   .catch(error => console.log(error))
 
-app.middleware(async (session, next) => {
-  if (!session?.content?.startsWith('~s')) return next()
-  const url = session.content.slice(2).trim()
-  try {
-    const screen = await app.puppeteerCluster.screenshot.base64(url && new URL(url).toString() || 'https://google.com')
-    session.send(`[CQ:image,file=base64://${screen}]`)
-  } catch (error) {
-    session.send(error.stack)
-  }
-})
-app.middleware(async (session, next) => {
-  if (!session?.content?.startsWith('~t')) return next()
-  const url = session.content.slice(2).trim()
-  try {
-    const screen = await app.puppeteerCluster.instance.execute({url: url && new URL(url).toString() || 'https://google.com'})
-    session.send(`[CQ:image,file=base64://${screen}]`)
-  } catch (error) {
-    session.send(error.stack)
-  }
-})
-app.middleware(async (session, next) => {
-  if (!session?.content?.startsWith('~c')) return next()
-  const url = session.content.slice(2).trim()
-  try {
-    const screen = await app.puppeteerCluster.screenshot.save(url && new URL(url).toString() || 'https://google.com', './test.png')
-    session.send('saved')
-  } catch (error) {
-    session.send(error.stack)
-  }
-})
-
 app.start()

@@ -28,13 +28,12 @@ module.exports.apply = (ctx, options) => {
           console.error('got no cluster')
           return await run.koishiHandler(meta, eventPath, new Date())
         }
-        console.log('got cluster')
         const cluster = ctx.puppeteerCluster.instance
         cluster.queue(async ({ page }) => {
           try {
             await page.goto(`http://localhost:3005/fortune/daily?seed=${meta.userId}&lang=zh-cn&displayName=${meta.author?.nickname || meta.author?.username || '你'}`)
             await page.setViewport({ width: 992, height: 100, deviceScaleFactor: 1.5 })
-            const e = await page.$('#__next > div > div > .stack')
+            const e = await page.$('#__next > div > div > div')
             const ss = await e.screenshot({ encoding: 'base64' })
             const cqcode = `[CQ:image,file=base64://${ss}]`
             meta.send(cqcode).catch(_ => meta.send('发送图片失败。'))

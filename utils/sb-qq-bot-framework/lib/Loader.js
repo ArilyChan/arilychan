@@ -28,6 +28,7 @@ class Loader {
       } catch (error) {
         console.warn('Error when loading Module!\n', error)
       }
+      return undefined
     })
     // this.initPluginsWrapper();
     this.options = options

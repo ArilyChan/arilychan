@@ -5,8 +5,8 @@
   "main": "bot/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node --enable-source-maps --trace-warnings ./bot/index.js",
-    "start": "NODE_ENV=production node --enable-source-maps --trace-warnings ./bot/index.js"
+    "dev": "node --enable-source-maps --trace-warnings -r dotenv -r esm-transform ./bot/index.js",
+    "start": "NODE_ENV=production node --enable-source-maps --trace-warnings -r dotenv -r esm-transform ./bot/index.js"
   },
   "devDependencies": {
     "eslint": "^7.11.0",
@@ -37,7 +37,8 @@
     "utils/sb-plugin-wrapper",
     "sites/koishi-chat-web",
     "utils/cqcode-builder",
-    "utils/sb-bot-manual"
+    "utils/sb-bot-manual",
+    "utils/esm-transform"
   ],
   "dependencies": {
     "dotenv": "^12.0.3",

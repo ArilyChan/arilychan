@@ -1,5 +1,5 @@
-var glob = require('glob')
-var path = require('path')
+const glob = require('glob')
+const path = require('path')
 const slugify = require('slugify')
 
 function getPlugins (selector = './lib/plugins/*/index.js') {

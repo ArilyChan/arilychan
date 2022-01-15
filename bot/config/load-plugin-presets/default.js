@@ -81,12 +81,6 @@ module.exports = [
             private: ['onebot:879724291']
           }
         }
-      }, {
-        type: 'node_module',
-        require: 'sb-plugin-auth',
-        options: {
-          role: 'auth'
-        }
       },
       {
         type: 'node_module',

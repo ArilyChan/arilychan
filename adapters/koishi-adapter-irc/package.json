@@ -10,7 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "irc": "github:SphereSoftware/node-irc",
-    "p-event": "^4.2.0"
+    "p-event": "4.2"
   },
   "peerDependencies": {
     "koishi-core": ">=3"

@@ -1,5 +1,5 @@
-var glob = require('glob')
-var path = require('path')
+const glob = require('glob')
+const path = require('path')
 
 function Fakeapp (app) {
   this.app = app

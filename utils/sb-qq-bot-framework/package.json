@@ -4,7 +4,6 @@
   "description": "",
   "main": "export.js",
   "dependencies": {
-    "cqcode-builder": "github:ArilyChan/node-cqcode-builder",
     "express": "^4.17.1",
     "glob": "^7.1.6",
     "koishi": "^3.9.2",

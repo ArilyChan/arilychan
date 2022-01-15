@@ -100,7 +100,7 @@ class PluginWrapper {
   /** Mixin apps with wrapper
      *  @var app Koish_JS context or app
      *  @var options options for plugin
-     *  @var storage shared-state for sb extended web views
+     *  @var storage shared-state for sb extended web appss
      *  @returns undefined
      */
   wrap (app, options, storage) {

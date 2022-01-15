@@ -18,7 +18,7 @@ module.exports.init = (options) => ({
 
 const web = require('./server')
 let webInited = false
-module.exports.webView = (options, storage, http) => {
+module.exports.webApp = (options, storage, http) => {
   if (webInited) return undefined
   webInited = true
   return web(storage, http)

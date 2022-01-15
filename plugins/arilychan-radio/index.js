@@ -15,7 +15,7 @@ const defaultOptions = {
 module.exports.name = 'arilychan-radio'
 module.exports.webPath = '/radio'
 module.exports.init = (option) => api({ ...defaultOptions, ...option })
-module.exports.webView = (option, storage, http) => server({ ...defaultOptions, ...option }, storage, http)
+module.exports.webApp = (option, storage, http) => server({ ...defaultOptions, ...option }, storage, http)
 
 module.exports.apply = (ctx, options, storage) => {
   options = { ...defaultOptions, ...options }

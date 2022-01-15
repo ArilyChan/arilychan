@@ -1,10 +1,10 @@
 const Loader = require('./Loader')
 
-class ContextPluginApply {
+class ApplyContextPlugin {
   constructor (config, options) {
     this.config = config
     this.options = options
-    this.webViews = []
+    this.webApps = []
   }
 
   apply (app) {
@@ -17,13 +17,13 @@ class ContextPluginApply {
       }
       console.info('install plugins for:', ctx.for.description)
       await loader.installToContext(ctx.for.getContextFromCtx(app))
-      this.webViews.push(...loader.webViews)
+      this.webApps.push(...loader.webApps)
     }))
   }
 }
 
 module.exports = async (app, config) => {
-  const Applier = new ContextPluginApply(config)
+  const Applier = new ApplyContextPlugin(config)
   await Applier.apply(app)
   return Applier
 }

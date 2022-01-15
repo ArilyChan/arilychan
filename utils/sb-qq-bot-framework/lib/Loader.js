@@ -3,23 +3,26 @@ const pluginApplier = require('./pluginLoader').usePlugins
 
 const path = require('path')
 const appDir = path.dirname(require.main.filename)
-const Wrapper = require('./Wrapper')
+// const Wrapper = require('./Wrapper')
 
 class Loader {
   constructor (plugins, options) {
     this.plugins = []
-    this.webViews = []
+    this.webApps = []
     plugins.map((plugin) => {
       try {
         switch (plugin.type) {
           case 'node_module':
-            this.loadModule(plugin)
+            this.loadPlugin(plugin)
             break
 
           case 'local':
-            this.loadLocalModule(plugin)
+            this.loadLocalPlugin(plugin)
             break
+          case 'module':
           default:
+            if (!plugin.module) throw new Error('undefined plugin')
+            this.loadModule(plugin.module, plugin)
             break
         }
       } catch (error) {
@@ -30,14 +33,14 @@ class Loader {
     this.options = options
   }
 
-  loadPlugin (plugin, config) {
-    switch (typeof plugin) {
+  loadModule (module, config) {
+    switch (typeof module) {
       case 'object':
       case 'function':
-        this.plugins.push({ module: plugin, config })
+        this.plugins.push({ module, config })
         break
       default: {
-        console.log(typeof plugin)
+        console.error(typeof module)
       }
     }
   }
@@ -45,10 +48,9 @@ class Loader {
   async installToContext (app) {
     const { normal, after } = this.plugins.reduce(
       (acc, cur) => {
-        if (cur.config.useV2Adapt) {
-          cur.module = Wrapper(cur.module, cur.config)
-        }
-        // cur.module = Wrapper(cur.module, cur.config)
+        // if (cur.config.useV2Adapt) {
+        //   cur.module = Wrapper(cur.module, cur.config)
+        // }
         if (!cur.config.priority) cur.config.priority = 0
         if (cur.config.priority >= 0) {
           acc.normal.push(cur)
@@ -62,28 +64,28 @@ class Loader {
         after: []
       }
     )
-    normal.sort((a, b) => b.config.priority - a.config.priority)
-    after.sort((a, b) => a.config.priority - b.config.priority)
+    // normal.sort((a, b) => b.config.priority - a.config.priority)
+    // after.sort((a, b) => a.config.priority - b.config.priority)
     const normalWebViews = await pluginApplier(app, normal)
     const afterWebViews = await pluginApplier(app, after)
-    this.webViews.push(...normalWebViews, ...afterWebViews)
+    this.webApps.push(...normalWebViews, ...afterWebViews)
   }
 
-  loadModule (plugin) {
+  loadPlugin (plugin) {
     try {
-      this.loadPlugin(require(plugin.require), plugin)
+      this.loadModule(require(plugin.require), plugin)
     } catch (error) {
       console.warn('error when loading node_module', plugin.require, error.stack)
     }
   }
 
-  loadLocalModule (plugin) {
+  loadLocalPlugin (plugin) {
     try {
-      this.loadPlugin(require(plugin.path), plugin)
+      this.loadModule(require(plugin.path), plugin)
     } catch (error) {
       if (error.code === 'MODULE_NOT_FOUND') {
         try {
-          this.loadPlugin(require(`${appDir}/${plugin.path}`), plugin)
+          this.loadModule(require(`${appDir}/${plugin.path}`), plugin)
         } catch (error) {
           console.warn(
             'make sure that you installed all the requirements in your main app'
@@ -91,7 +93,6 @@ class Loader {
           throw error
         }
       } else {
-        console.log('wtf')
         throw error
       }
     }

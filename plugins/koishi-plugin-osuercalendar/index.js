@@ -9,7 +9,7 @@ const thisPath = __dirname
 module.exports.name = 'koishi-plugin-osuercalendar'
 // 插件处理和输出
 module.exports.webPath = '/'
-module.exports.webView = require('./osu-calendar-web/export').webView
+module.exports.webApp = require('./osu-calendar-web/export').webApp
 module.exports.apply = (ctx, options) => {
   const users = options.users || { admin: [], blackList: [], whiteList: [] }
   const eventPath = options.eventFile || path.join(thisPath, './osuercalendar-events.json')

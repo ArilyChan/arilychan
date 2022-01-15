@@ -7,6 +7,6 @@ module.exports = {
     type: 'cqhttp:ws',
     server: 'http://localhost:6700',
     name: '小阿日',
-    commandPrefix: ['!', '！'],
+    commandPrefix: ['!', '！']
   }]
 }

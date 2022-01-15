@@ -23,11 +23,10 @@ const userCtx = contextBuilder((app) => app.users, 'user context')
   path: 'Path/to/plugin', // required when type is "local"
   require: 'my-commonJS-plugin', // required when type is "node_module"
   options: {}, // options for plugin. see options in koishi js
-  priority: Number, // this is for plugin loader to sort the plugins. Sort by desending when priority >=0, ascending when priotity < 0.
   filter: Function || Array[Function], // function takes (meta, storage) as parameter, returning a boolean or a promise that resolves as boolean. 
   // when Array is given, it stop executing and filtering out the message if one of elements returns false or a promise resolves as false.
   prependFilter: Function || Array[Function], // same as filter. For prependMiddleware()
-  webPath: String // for web views
+  webPath: String // for web appss
 }
 ```
 #### filter
@@ -66,18 +65,16 @@ module.exports = [
   use: [{
     type: 'node_module',
     require: 'my-plugin',
-    priority: 1,
     filter: [filter.blockUser(123456788)]
   },{
     type: 'local',
     path: 'manage-plugin',
-    priority: 99999,
     filter: [filter.exclusiveGroup(123456788), filter.onlyAdmin]
   }]
 ]
 ```
 
-## web view 和 shared state
+## web apps 和 shared state
 在koishi插件定义的基础上提供了扩展的api供您提供网页支持,以及通过shared state和网页共享数据
 
 ```javascript
@@ -85,6 +82,6 @@ module.exports = [
 module.exports.name = 'my-plugin'
 module.exports.webPath = 'web'
 module.exports.init = function(options) => Any // => initial shared state
-module.exports.webView = function(options, storage) => Express // express web view instance, storage is the return value of init()
+module.exports.webApp = function(options, storage) => Express // express web apps instance, storage is the return value of init()
 module.exports.apply = function(ctx, options, storage) // storage is the return value of init()
 ```

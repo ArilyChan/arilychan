@@ -9,7 +9,6 @@
   "author": "Exsper",
   "license": "MIT",
   "dependencies": {
-    "next": "^12.0.8",
     "seedrandom": "^3.0.5",
     "shuffle-seed": "^1.1.6",
     "xorshift": "^1.2.0"

@@ -15,7 +15,7 @@ module.exports.init = (options) => {
   if (!storage) storage = new Storage(options)
   return storage
 }
-module.exports.webView = (options, storage) => {
+module.exports.webApp = (options, storage) => {
   if (webInited) return undefined
   webInited = true
   return web(storage)

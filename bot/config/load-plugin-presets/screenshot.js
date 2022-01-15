@@ -7,8 +7,7 @@ module.exports = [
     use: [
       {
         type: 'node_module',
-        require: 'sb-plugin-osu-stat-screenshot',
-        priority: 1
+        require: 'sb-plugin-osu-stat-screenshot'
       }
     ]
   }

@@ -41,7 +41,7 @@ const prep = async (options) => {
   return handle
 }
 
-module.exports.webView = async (options, storage, httpServer) => {
+module.exports.webApp = async (options, storage, httpServer) => {
   if (site) return site
   const handle = await prep(options)
   deleteCache()

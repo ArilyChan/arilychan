@@ -1,4 +1,4 @@
-const admins = require('./admins')
+// const admins = require('../admins')
 const path = require('path')
 const appDir = path.dirname(require.main.filename)
 const ContextBuilder = require('sb-qq-bot-framework/lib/contextBuilder')
@@ -10,7 +10,6 @@ module.exports = [
       {
         type: 'node_module',
         require: 'koishi-plugin-osuercalendar',
-        priority: 3,
         options: {
           users: {
             admin: [], // 管理员自行添加
@@ -22,9 +21,8 @@ module.exports = [
       },
       {
         type: 'node_module',
-        require: 'koishi-plugin-puppeteer-cluster',
-        priority: 0,
-      },
+        require: 'koishi-plugin-puppeteer-cluster'
+      }
     ]
   }
 ]

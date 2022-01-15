@@ -14,7 +14,6 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-standard": "^4.0.1"
   },
   "author": "",
@@ -43,6 +42,6 @@
   ],
   "dependencies": {
     "dotenv": "^8.2.0",
-    "koishi-adapter-onebot": "^3.0.8"
+    "koishi-adapter-onebot": "^3.1.0"
   }
 }

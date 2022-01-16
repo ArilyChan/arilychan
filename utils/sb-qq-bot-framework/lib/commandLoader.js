@@ -21,7 +21,7 @@ module.exports = (app) => {
     }
   })
   app = new Fakeapp(app)
-  commands.map(({ module, file }) => {
+  commands.forEach(({ module, file }) => {
     try {
       module(app, module.name)
     } catch (Error) {

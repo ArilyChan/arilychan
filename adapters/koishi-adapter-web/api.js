@@ -10,8 +10,8 @@ Bot.prototype.sendGroupMsg = async function (groupId, message, autoEscape = fals
     userId: 'server',
     message
   })
-  // const { messageId } = await this.get('send_group_msg', { groupId, message: session.message, autoEscape })
-  // session.messageId = messageId
+  // const { messageId } = await this.get('send_group_msg', { groupId, message: session.content, autoEscape })
+  // session.contentId = messageId
   this.app.emit(session, 'send', session)
   return -1
 }

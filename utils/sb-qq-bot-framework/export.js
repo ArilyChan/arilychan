@@ -1,7 +1,7 @@
 const bot = require('./lib/Bot')
 const commandLoader = require('./lib/commandLoader')
 const contextBuilder = require('./lib/contextBuilder')
-const applyContextPlugin = require('./lib/applyContextPlugin')
+const InstallContextPlugin = require('./lib/InstallContextPlugin')
 const Loader = require('./lib/Loader')
 const pluginLoader = require('./lib/pluginLoader')
 // const runtimeModuleInstaller = require('./lib/runtimeModuleInstaller')
@@ -13,7 +13,7 @@ module.exports = {
   bot,
   commandLoader,
   contextBuilder,
-  applyContextPlugin,
+  InstallContextPlugin,
   Loader,
   pluginLoader,
   WebServer,

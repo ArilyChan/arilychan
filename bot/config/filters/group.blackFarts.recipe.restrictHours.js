@@ -17,7 +17,7 @@ const setUserTimezone = function (userId, currentHour) {
 module.exports = (restrict, ...groups) => {
   return meta => recipeFilter(...groups)(meta).then(result => {
     // if user is setting the timezone
-    if (isRestrictedTime(restrict) && meta.message.startsWith('我这现在')) {
+    if (isRestrictedTime(restrict) && meta.content.startsWith('我这现在')) {
       const firstNumber = meta.$parsed.message.match(/\d+/)[0]
       if (firstNumber) {
         setUserTimezone(meta.userId, firstNumber)

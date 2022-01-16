@@ -6,8 +6,14 @@ const { express, http } = require('sb-qq-bot-framework/lib/WebServer')
 const config = require(`${appDir}/config`)
 const app = require('sb-qq-bot-framework/lib/Bot')(config.koishi)
 
-const pluginLoader = require('sb-qq-bot-framework/lib/ApplyContextPlugin')
-pluginLoader(app, config.contextPlugins)
+const adapters = [require('./install-adapters/onebot')]
+adapters.map(cb => cb(app))
+
+const ApplyContextPlugin = require('sb-qq-bot-framework/lib/ApplyContextPlugin')
+;(async () => {
+  const Installer = new ApplyContextPlugin(config.contextPlugins)
+  return await Installer.apply(app)
+})()
   .then(LoadedPlugins => {
     LoadedPlugins.webApps.map(async v => {
       const middleware = await v.expressApp(v.options, await v.pluginData, http)

@@ -57,7 +57,7 @@ module.exports.apply = (ctx, options) => {
   const pbq = new PpysbQuery(options)
   ctx.middleware(async (meta, next) => {
     try {
-      const message = meta.message
+      const message = meta.content
       const userId = meta.userId
       const reply = await pbq.apply(userId, message)
       if (reply) {

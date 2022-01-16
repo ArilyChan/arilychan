@@ -8,8 +8,8 @@ function req (req, def = {}) {
   }
 }
 
-require('koishi-adapter-onebot')
-require('koishi-adapter-irc')
+// require('koishi-adapter-onebot')
+// require('koishi-adapter-irc')\
 
 require('./inject-manual.js')
 

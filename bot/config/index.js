@@ -8,9 +8,6 @@ function req (req, def = {}) {
   }
 }
 
-// require('koishi-adapter-onebot')
-// require('koishi-adapter-irc')\
-
 require('./inject-manual.js')
 
 const args = process.argv.slice(2)

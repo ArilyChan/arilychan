@@ -12,7 +12,7 @@ module.exports = [
           name: 'really works?',
           apply: (app) => {
             app.middleware((session, next) => {
-              console.log(session.send(123))
+              session.send(123)
             })
           }
         }

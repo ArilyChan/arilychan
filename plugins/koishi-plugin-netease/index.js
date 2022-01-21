@@ -5,7 +5,7 @@ module.exports.name = 'koishi-plugin-netease';
 // 插件处理和输出
 module.exports.apply = (ctx) => {
     ctx.middleware(async (meta, next) => {
-        let ask = meta.message;
+        let ask = meta.content;
         ask = ask.trim();
         if (ask.startsWith("!163") || ask.startsWith("！163")) {
             try {

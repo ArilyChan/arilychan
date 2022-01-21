@@ -65,7 +65,7 @@ Session.prototype.send = async function $send (message, autoEscape = false) {
   if (this._response) {
     const session = this.$bot.createSession(this.messageType, ctxType, ctxId, message)
     if (this.$app.bail(this, 'before-send', session)) return
-    return this._response({ reply: session.message, autoEscape, atSender: false })
+    return this._response({ reply: session.content, autoEscape, atSender: false })
   }
   return ctxType === 'group'
     ? this.$bot.sendGroupMsgAsync(ctxId, message, autoEscape)

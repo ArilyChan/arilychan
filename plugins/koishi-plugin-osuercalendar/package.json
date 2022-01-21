@@ -12,8 +12,5 @@
     "seedrandom": "^3.0.5",
     "shuffle-seed": "^1.1.6",
     "xorshift": "^1.2.0"
-  },
-  "workspaces": [
-    "osu-calendar-web"
-  ]
+  }
 }

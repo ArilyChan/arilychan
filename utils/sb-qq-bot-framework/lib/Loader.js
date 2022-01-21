@@ -46,6 +46,18 @@ class Loader {
     }
   }
 
+  getBuildFunctions () {
+    return this.plugins.reduce((acc, { module, config }) => {
+      if (module.build) {
+        acc.push(() => {
+          console.log('building', module.name, '...')
+          return module.build(config)
+        })
+      }
+      return acc
+    }, [])
+  }
+
   async installToContext (app) {
     const { normal, after } = this.plugins.reduce(
       (acc, cur) => {

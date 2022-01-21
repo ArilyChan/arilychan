@@ -3,14 +3,14 @@ const next = require('next')
 
 const router = require('express').Router()
 
-const nextBuild = require('next/dist/build')
-
 const rootPath = `${path.relative(process.cwd(), __dirname)}`
 let site = null
 
+const nextBuild = require('next/dist/build')
 const build = async () => {
-  await nextBuild.default(path.resolve(rootPath), require('./next.config.js'))
+    await nextBuild.default(path.resolve(rootPath), require('./next.config.js'))
 }
+
 const deleteCache = () => {
     // delete cache to reload .next
     const absRoot = path.resolve(rootPath + '/.next')
@@ -40,7 +40,7 @@ const prep = async (options) => {
   }
   return handle
 }
-
+exports.build = build
 module.exports.webApp = async (options, storage, httpServer) => {
   if (site) return site
   const handle = await prep(options)

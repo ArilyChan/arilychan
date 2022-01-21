@@ -13,10 +13,10 @@ module.exports = [
       },
       {
         module: {
+          name: 'use',
           apply (ctx) {
-            ctx.using(['ci'], (ctx) => {
-              console.log('ci installed')
-              ctx.useBuild(() => {
+            ctx.using(['ci'], async ({ ci }) => {
+              ci.useBuild(() => {
                 console.log('build')
               })
             })

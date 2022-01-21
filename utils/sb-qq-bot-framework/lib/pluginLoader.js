@@ -23,7 +23,7 @@ function getPlugins (selector = './lib/plugins/*/index.js') {
   return plugins
 }
 async function usePlugin (app, { module: plugin, config }, logger = console) {
-  const file = config.file
+  // const file = config.file
   try {
     let expressApp
     let pluginData
@@ -35,9 +35,12 @@ async function usePlugin (app, { module: plugin, config }, logger = console) {
       if (expressApp) logger.log('got web apps for', plugin.name)
     }
 
-    if (config.subPlugin && plugin[config.subPlugin]) {
-      plugin[config.subPlugin].apply(app, config.options, pluginData)
-    } else plugin.apply(app, config.options, pluginData)
+    // if (config.subPlugin && plugin[config.subPlugin]) {
+    //   plugin[config.subPlugin].apply(app, config.options, pluginData)
+    // } else plugin.apply(app, config.options, pluginData)
+    if (typeof plugin === 'function') app.plugin(plugin)
+    else plugin.apply(app, config.options, pluginData)
+    app.plugin()
     if (expressApp) {
       return {
         expressApp,
@@ -48,44 +51,44 @@ async function usePlugin (app, { module: plugin, config }, logger = console) {
       }
     }
   } catch (Error) {
-    if (Error.name === 'TypeError') {
-      try {
-        plugin(app, config.options)
-      } catch (Error) {
-        if (Error.name === 'TypeError') {
-          try {
-            plugin.default(app, config.options)
-          } catch (Error) {
-            if (Error.name === 'TypeError') {
-              try {
-                let expressApp, pluginData
-                if (plugin.default.init) {
-                  pluginData = plugin.default.init(
-                    config.options
-                  )
-                }
-                if (plugin.default.webApp) {
-                  expressApp = plugin.default.webApp(
-                    config.options,
-                    pluginData
-                  )
-                }
-                if (config.subPlugin && plugin.default[config.subPlugin]) { plugin.default[config.subPlugin].apply(app, config.options, pluginData) } else plugin.default.apply(app, config.options, pluginData)
-                if (expressApp) return { expressApp, name: plugin.name }
-              } catch (Error) {
-                if (Error.name !== 'TypeError') {
-                  logger.log(
-                    `unable to load plugin ${file}\n ${Error.stack}`
-                  )
-                }
-              }
-            }
-          }
-        }
-      }
-    } else logger.log(`unable to load plugin ${file}\n ${Error.stack}`)
+    // if (Error.name === 'TypeError') {
+    //   try {
+    //     plugin(app, config.options)
+    //   } catch (Error) {
+    //     if (Error.name === 'TypeError') {
+    //       try {
+    //         plugin.default(app, config.options)
+    //       } catch (Error) {
+    //         if (Error.name === 'TypeError') {
+    //           try {
+    //             let expressApp, pluginData
+    //             if (plugin.default.init) {
+    //               pluginData = plugin.default.init(
+    //                 config.options
+    //               )
+    //             }
+    //             if (plugin.default.webApp) {
+    //               expressApp = plugin.default.webApp(
+    //                 config.options,
+    //                 pluginData
+    //               )
+    //             }
+    //             if (config.subPlugin && plugin.default[config.subPlugin]) { plugin.default[config.subPlugin].apply(app, config.options, pluginData) } else plugin.default.apply(app, config.options, pluginData)
+    //             if (expressApp) return { expressApp, name: plugin.name }
+    //           } catch (Error) {
+    //             if (Error.name !== 'TypeError') {
+    //               logger.log(
+    //                 `unable to load plugin ${file}\n ${Error.stack}`
+    //               )
+    //             }
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    // } else logger.log(`unable to load plugin ${file}\n ${Error.stack}`)
   } finally {
-    logger.log(`Load plugin: ${plugin.name ? config.subPlugin === undefined ? plugin.name : `${plugin.name}(${plugin[config.subPlugin].name ? plugin[config.subPlugin].name : 'unnamed SubPlugin'})` : 'Unnamed'}`)
+    logger.log(`Loaded plugin: ${plugin.name ? config.subPlugin === undefined ? plugin.name : `${plugin.name}(${plugin[config.subPlugin].name ? plugin[config.subPlugin].name : 'unnamed SubPlugin'})` : 'Unnamed'}`)
   }
 }
 

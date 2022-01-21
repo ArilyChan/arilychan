@@ -9,7 +9,7 @@ module.exports = class KoishiCI extends Service {
 
   getState (plugin) {
     if (!plugin) return this[Context.current].state
-    plugin = typeof plugin === 'string' ? Modules.require(entry, true) : plugin
+    plugin = typeof plugin === 'string' ? Modules.require(plugin, true) : plugin
     return this.ctx.app.registry.get(plugin)
   }
 

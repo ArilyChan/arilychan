@@ -6,11 +6,11 @@ const { express, http } = require('sb-qq-bot-framework/lib/WebServer')
 const config = require(`${appDir}/config`)
 const app = require('sb-qq-bot-framework/lib/Bot')(config.koishi)
 
-const adapters = [require('./install-adapters/onebot')]
-adapters.map(cb => cb(app))
+// const adapters = [require('./install-adapters/onebot')]
+// adapters.map(cb => cb(app))
 
 const InstallContextPlugin = require('sb-qq-bot-framework/lib/InstallContextPlugin')
-;(async () => {
+module.exports = (async () => {
   const Installer = new InstallContextPlugin(config.contextPlugins)
   return await Installer.apply(app)
 })()
@@ -24,6 +24,5 @@ const InstallContextPlugin = require('sb-qq-bot-framework/lib/InstallContextPlug
     const port = process.env.PORT || 3005
     http.listen(port, () => console.log(`Bot web app listening on port ${port}!`))
   })
+  .then(() => app)
   .catch(error => console.log(error))
-
-module.exports = app

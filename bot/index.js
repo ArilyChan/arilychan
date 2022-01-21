@@ -1,2 +1,2 @@
 const app = require('./init')
-app.start()
+app.then(app => app.start())

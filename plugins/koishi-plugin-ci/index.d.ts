@@ -1,10 +1,13 @@
-export type builderFunction = CallableFunction | Promise<CallableFunction>
+export type BuildingFunction = CallableFunction | Promise<CallableFunction>
 declare module 'koishi' {
   namespace Context {
     interface ci {
-      builders?: Array<builderFunction>
+      builders?: Map<String, Array<BuildingFunction>>
+      getState: (plugin: Plugin) => Plugin.State
+      getStateRoot: (state: Plugin.State) => Plugin.State
+
+      useBuild: (builderFunction: BuildingFunction) => void
+      build: ({ only, except }: { only?: Array<Plugin>, except?: Array<Plugin> }) => Promise<void>
     }
-    type useBuild = (builderFunction: builderFunction) => void
-    type build = () => Promise<void>
   }
 }

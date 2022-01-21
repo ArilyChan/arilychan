@@ -9,6 +9,7 @@ on:
       - main
     paths:
       - 'plugins/koishi-plugin-blame/package.json'
+      - 'plugins/koishi-plugin-ci/package.json'
 
 jobs:
   publish-blame:

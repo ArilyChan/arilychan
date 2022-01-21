@@ -57,13 +57,13 @@ export default {
 </script>
 
 <template>
-<div class="message" v-scroll-bottom="session.messages">
+<div class="message" v-scroll-bottom="session.contents">
     <ul v-if="session">
-        <li v-for="(item,index) in session.messages" :key="index">
+        <li v-for="(item,index) in session.contents" :key="index">
             <p class="time" v-if="index === 0">
                 <span>{{ item.date | time }}</span>
             </p>
-            <p class="time" v-else-if="new Date(item.date).getMinutes() > new Date(session.messages[index - 1].date).getMinutes()">
+            <p class="time" v-else-if="new Date(item.date).getMinutes() > new Date(session.contents[index - 1].date).getMinutes()">
                 <span>{{ item.date | time }}</span>
             </p>
             <div class="main" :class="{ self: item.self }">

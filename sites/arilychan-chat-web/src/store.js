@@ -91,8 +91,8 @@ const store = new Vuex.Store({
     },
     LAST_1000_MESSAGE ({ sessions, currentSessionId }, id) {
       const session = sessions.find(item => id === currentSessionId)
-      if (session.messages.length < 1000) return
-      session.messages.slice(-1000, session.messages.length)
+      if (session.contents.length < 1000) return
+      session.contents.slice(-1000, session.contents.length)
     },
     // 发送消息
     SEND_MESSAGE ({ sessions, currentSessionId }, content) {
@@ -103,7 +103,7 @@ const store = new Vuex.Store({
         date: new Date(),
         self: true
       }
-      session.messages.push(m)
+      session.contents.push(m)
       collection.insert({
         room: currentSessionId,
         message: m
@@ -118,7 +118,7 @@ const store = new Vuex.Store({
         user: content.user,
         self: false
       }
-      session.messages.push(m)
+      session.contents.push(m)
       collection.insert({
         room: content.id,
         message: m

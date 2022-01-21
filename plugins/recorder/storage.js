@@ -25,7 +25,7 @@ class storage {
   record (meta) {
     switch (meta.postType) {
       case 'message': {
-        // this.messages.set(meta.messageId, meta)
+        // this.messages.set(meta.contentId, meta)
         // if (this.messages.size > this.maxEntries) {
         //   Array.from(this.messages.keys())
         //     .slice(0, 100)
@@ -34,14 +34,14 @@ class storage {
         this.cache.push({
           meta,
           timeout: setTimeout(() => {
-            const self = this.cache.findIndex(op => op.meta.messageId === meta.messageId)
+            const self = this.cache.findIndex(op => op.meta.contentId === meta.contentId)
             this.cache.splice(self, 1)
             if (!this.inited) return
             this.messages.insertOne(this.copy(meta))
-            // meta.send(`inserted ${meta.messageId}`)
+            // meta.send(`inserted ${meta.contentId}`)
           }, 1000)
         })
-        // meta.send(`schedule insert message ${meta.messageId} 1000ms later`)
+        // meta.send(`schedule insert message ${meta.contentId} 1000ms later`)
         break
       }
       case 'notice':
@@ -57,20 +57,20 @@ class storage {
   delete (meta) {
     switch (meta.postType) {
       case 'message': {
-        // meta.send(`cancelling insertion of ${meta.messageId}`)
-        const index = this.cache.findIndex(op => op.meta.messageId === meta.messageId)
+        // meta.send(`cancelling insertion of ${meta.contentId}`)
+        const index = this.cache.findIndex(op => op.meta.contentId === meta.contentId)
         if (index !== -1) {
           const cache = this.cache[index]
           clearTimeout(cache.timeout)
           this.cache.splice(index, 1)
-          // meta.send(`canceled the schedule of insertion ${meta.messageId}`)
+          // meta.send(`canceled the schedule of insertion ${meta.contentId}`)
         } else {
           if (!this.inited) return
           this.messages.deleteOne({
-            messageId: meta.messageId,
+            messageId: meta.contentId,
             time: meta.time
           })
-          // meta.send(`chain took too long, remove from db ${meta.messageId}`)
+          // meta.send(`chain took too long, remove from db ${meta.contentId}`)
         }
 
         break

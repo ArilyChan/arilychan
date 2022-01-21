@@ -142,7 +142,7 @@ class PluginWrapper {
         enumerable: true
       })
     }
-    if (!session.message) {
+    if (!session.content) {
       Object.defineProperty(session, 'message', {
         get () {
           session.app

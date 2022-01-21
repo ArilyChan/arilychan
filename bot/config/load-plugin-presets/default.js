@@ -81,8 +81,7 @@ module.exports = [
             private: ['onebot:879724291']
           }
         }
-      },
-      {
+      }, {
         type: 'node_module',
         require: 'koishi-plugin-puppeteer-cluster'
       }

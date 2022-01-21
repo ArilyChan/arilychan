@@ -4,10 +4,10 @@
   "description": "",
   "main": "export.js",
   "dependencies": {
-    "express": "^4.17.1",
-    "glob": "^7.1.6",
-    "koishi": "^3.9.2",
-    "slugify": "^1.4.5"
+    "express": "^4.17.2",
+    "glob": "^7.2.0",
+    "koishi": "^4.0.0",
+    "slugify": "^1.6.5"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -30,7 +30,7 @@ module.exports.v1 = {
         ctx.sender.sendGroupMsg(id, message.toString())
       )
 
-    options.catch.map((c) => {
+    options.catch.forEach((c) => {
       process.on(c, (reason, origin) => {
         handler(`${reason.stack}`, sendPrivate)
         handler(`${reason.stack}`, sendGroup)
@@ -59,7 +59,7 @@ module.exports.v2 = {
     const sendGroup = (message) =>
       options.send.group.map((id) => bot.sendGroupMsg(id, message.toString()))
 
-    options.catch.map((c) => {
+    options.catch.forEach((c) => {
       process.on(c, (reason, origin) => {
         handler(`${reason.stack}`, sendPrivate)
         handler(`${reason.stack}`, sendGroup)
@@ -75,17 +75,6 @@ module.exports.v3 = {
     if (installed) return
     const findSamePlatformBots = (platform) =>
       ctx.bots.filter((bot) => bot.platform === platform)
-    // let logger
-    // try {
-    //   logger = ctx.logger('blame')
-    // } catch (e) {
-    //   logger = console
-    // }
-    // // eslint-disable-next-line no-global-assign
-    // console = {
-    //   ...logger,
-    //   log: (...content) => logger.info(...content)
-    // }
 
     // merge options with default options
     options = { ...defaultOptions, ...options }
@@ -105,7 +94,7 @@ module.exports.v3 = {
     }
 
     const sendPrivate = (message) => {
-      options.send.private.map((ptId) => {
+      options.send.private.forEach((ptId) => {
         const [platform, id] = ptId.split(':')
         if (!id) throw new Error('v3 needs `platform:id` as a receiver id')
         const samePlatformBots = findSamePlatformBots(platform)
@@ -117,12 +106,12 @@ module.exports.v3 = {
             )
           ) || ctx.bots.find((bot) => bot.platform === platform) // find specified sender bot or choose a bot on same platform
 
-        bot.sendPrivateMessage(id.toString(), message.toString())
+        bot.sendPrivateMessage(id.toString(), message.toString()).catch(err => ctx.logger('blame').error('error when sending blame:', err))
       })
     }
 
     const sendGroup = (message) => {
-      concatGroupAndChannel().map((ptId) => {
+      concatGroupAndChannel().forEach((ptId) => {
         const [platform, id] = ptId.split(':')
         if (!id) throw new Error('v3 needs `platform:id` as a receiver id')
         const samePlatformBots = findSamePlatformBots(platform)
@@ -134,11 +123,81 @@ module.exports.v3 = {
             )
           ) || ctx.bots.find((bot) => bot.platform === platform) // find specified sender bot or choose a bot on same platform
 
-        bot.sendGroupMessage(id.toString(), message.toString())
+        bot.sendGroupMessage(id.toString(), message.toString()).catch(err => ctx.logger('blame').error('error when sending blame:', err))
       })
     }
 
-    options.catch.map((c) => {
+    options.catch.forEach((c) => {
+      process.on(c, (reason, origin) => {
+        console.log('catched', c, reason.stack)
+        handler(`${reason.stack}`, sendPrivate)
+        handler(`${reason.stack}`, sendGroup)
+      })
+    })
+    installed = true
+  }
+}
+
+module.exports.v4 = {
+  name: 'blame-koishi-v4',
+  apply (ctx, options) {
+    if (installed) return
+    const findSamePlatformBots = (platform) =>
+      ctx.bots.filter((bot) => bot.platform === platform)
+
+    // merge options with default options
+    options = { ...defaultOptions, ...options }
+    if (!options.send.private) options.send.private = []
+    if (!options.send.group) options.send.group = []
+    if (!options.send.channel) options.send.channel = []
+
+    const concatGroupAndChannel = () => [
+      ...options.send.group,
+      ...options.send.channel
+    ]
+
+    // notify api change
+    if (options.send.group.length) {
+      console.log(
+        'please use `options.send.channel` instead of `options.send.group`'
+      )
+    }
+
+    const sendPrivate = (message) => {
+      options.send.private.forEach((ptId) => {
+        const [platform, id] = ptId.split(':')
+        if (!id) throw new Error('v3 needs `platform:id` as a receiver id')
+        const samePlatformBots = findSamePlatformBots(platform)
+
+        const bot =
+          options.sender.find((sender) =>
+            samePlatformBots.find(
+              (bot) => `${bot.platform}:${bot.id}` === sender
+            )
+          ) || ctx.bots.find((bot) => bot.platform === platform) // find specified sender bot or choose a bot on same platform
+
+        bot.sendPrivateMessage(id.toString(), message.toString()).catch(err => ctx.logger('blame').error('error when sending blame:', err))
+      })
+    }
+
+    const sendGroup = (message) => {
+      concatGroupAndChannel().forEach((ptId) => {
+        const [platform, id] = ptId.split(':')
+        if (!id) throw new Error('v3 needs `platform:id` as a receiver id')
+        const samePlatformBots = findSamePlatformBots(platform)
+
+        const bot =
+          options.sender.find((sender) =>
+            samePlatformBots.find(
+              (bot) => `${bot.platform}:${bot.id}` === sender
+            )
+          ) || ctx.bots.find((bot) => bot.platform === platform) // find specified sender bot or choose a bot on same platform
+
+        bot.sendMessage(id.toString(), message.toString()).catch(err => ctx.logger('blame').error('error when sending blame:', err))
+      })
+    }
+
+    options.catch.forEach((c) => {
       process.on(c, (reason, origin) => {
         console.log('catched', c, reason.stack)
         handler(`${reason.stack}`, sendPrivate)

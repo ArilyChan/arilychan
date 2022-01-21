@@ -10,6 +10,9 @@
     "koishi",
     "ci"
   ],
+  "peerDependencies": {
+    "koishi": ">=4.0.0"
+  },
   "author": "arily",
   "license": "MIT"
 }

@@ -45,7 +45,6 @@
   ],
   "dependencies": {
     "@koishijs/plugin-adapter-onebot": "^4.0.0",
-    "dotenv": "^12.0.3",
-    "koishi-adapter-onebot": "^3.1.0"
+    "dotenv": "^12.0.3"
   }
 }

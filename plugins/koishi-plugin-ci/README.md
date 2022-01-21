@@ -45,7 +45,7 @@ app.plugin('plugin-that-requires-build', { buildOpt: { buildTime: new Date() }})
 app.ci.build()
   .then(() => process.exit(0))
 ```
-这样便可在 `plugin-that-requires-build` 插件目录下构建 `.builds/builds.json`
+这样便可在 `plugin-that-requires-build` 插件目录下构建 `.builds/build.json`
 ```json
 {"buildTime":"2022-01-21T11:22:04.383Z"}
 ```

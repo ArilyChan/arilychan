@@ -33,6 +33,7 @@
     "plugins/koishi-plugin-sillychooser",
     "plugins/koishi-plugin-osuercalendar",
     "plugins/koishi-plugin-osuercalendar/osu-calendar-web",
+    "plugins/koishi-plugin-ci",
     "plugins/koishi-plugin-puppeteer-cluster",
     "utils/sb-prompt-filter",
     "utils/sb-qq-bot-framework",

@@ -1,0 +1,15 @@
+{
+  "name": "koishi-plugin-ci",
+  "version": "4.0.0",
+  "description": "ci utils for koishi",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "koishi",
+    "ci"
+  ],
+  "author": "arily",
+  "license": "MIT"
+}

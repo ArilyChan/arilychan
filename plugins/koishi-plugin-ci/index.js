@@ -7,22 +7,22 @@ module.exports = class KoishiCI extends Service {
     this.builder = new Map()
   }
 
-  getState(plugin) {
+  getState (plugin) {
     if (!plugin) return this[Context.current].state
-    plugin = typeof plugin === 'string'? Modules.require(entry, true) : plugin
+    plugin = typeof plugin === 'string' ? Modules.require(entry, true) : plugin
     return this.ctx.app.registry.get(plugin)
   }
 
-  getStateRoot(state, ttl = 64) {
+  getStateRoot (state, ttl = 64) {
     let root = state
-    while(ttl && state.parent && state.parent.id !== ''){
+    while (ttl && state.parent && state.parent.id !== '') {
       ttl -= 1
       root = state.parent
     }
     return root
   }
 
-  useBuild(buildFunc) {
+  useBuild (buildFunc) {
     const id = this.getStateRoot(this.getState()).id
     // const id = this.getState().id
     if (!this.builder.has(id)) this.builder.set(id, [])
@@ -30,7 +30,7 @@ module.exports = class KoishiCI extends Service {
     current.push(buildFunc)
   }
 
-  async build ({only, except} = {}) {
+  async build ({ only, except } = {}) {
     let builder
     if (only) {
       only = only.map(plugin => this.getState(plugin).id)
@@ -42,7 +42,7 @@ module.exports = class KoishiCI extends Service {
     } else {
       builder = this.builder
     }
-    for(const [id, functions] of builder) {
+    for (const [, functions] of builder) {
       for await (const f of functions) {
         await f()
       }

@@ -11,7 +11,7 @@ on:
       - 'plugins/koishi-plugin-blame/package.json'
 
 jobs:
-  publish-npm:
+  publish-blame:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -23,3 +23,14 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
           
+  publish-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+          registry-url: https://registry.npmjs.org/
+      - run: npm publish './plugins/koishi-plugin-ci'
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}

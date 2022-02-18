@@ -8,16 +8,33 @@ module.exports = [
     for: ContextBuilder(app => app, 'bocai'),
     use: [
       {
-        type: 'node_module',
-        require: 'koishi-plugin-ci'
-      },
-      {
+        bypassLoader: true,
         module: {
-          name: 'use',
+          name: 'use-ci',
           apply (ctx) {
             ctx.using(['ci'], async ({ ci }) => {
-              ci.useBuild(() => {
+              ci.build.use(async () => {
                 console.log('build')
+                return {
+                  job: 'test-build',
+                  success: true
+                }
+              })
+              ci.update.use({
+                async check (updateOptions) {
+                  return {
+                    current: 0,
+                    latest: 1,
+                    hasUpdate: true
+                  }
+                },
+                async update (updateOptions) {
+                  return {
+                    before: 0,
+                    current: 1,
+                    successed: true
+                  }
+                }
               })
             })
           }

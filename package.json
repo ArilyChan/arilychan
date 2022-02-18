@@ -5,9 +5,11 @@
   "main": "bot/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node --enable-source-maps --trace-warnings -r dotenv -r esm-transform ./bot/index.js",
-    "start": "NODE_ENV=production node --enable-source-maps --trace-warnings -r dotenv -r esm-transform ./bot/index.js",
-    "build": "NODE_ENV=production node --enable-source-maps --trace-warnings -r dotenv -r esm-transform ./bot/build.js"
+    "dev": "node --enable-source-maps --trace-warnings -r dotenv -r esm-transform ./bot/commands/index.js",
+    "start": "NODE_ENV=production node --enable-source-maps --trace-warnings -r dotenv -r esm-transform ./bot/commands/index.js",
+    "build": "NODE_ENV=production node --enable-source-maps --trace-warnings -r dotenv -r esm-transform ./bot/commands/build.js",
+    "check-update": "NODE_ENV=production node --enable-source-maps --trace-warnings -r dotenv -r esm-transform ./bot/commands/update-check.js",
+    "update": "NODE_ENV=production node --enable-source-maps --trace-warnings -r dotenv -r esm-transform ./bot/commands/update.js"
   },
   "devDependencies": {
     "eslint": "^7.11.0",
@@ -45,6 +47,7 @@
   ],
   "dependencies": {
     "@koishijs/plugin-adapter-onebot": "^4.0.0",
+    "@koishijs/plugin-database-mongo": "^3.0.1",
     "dotenv": "^12.0.3"
   }
 }

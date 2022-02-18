@@ -12,6 +12,6 @@ require('./inject-manual.js')
 
 const args = process.argv.slice(2)
 const resolvePreset = () => args.join(' ') || process.env.PLUGIN_CONFIG || './default.js'
-exports.koishi = req('./koishi')
+exports.koishi = {}
 
 exports.contextPlugins = req(path.resolve(__dirname, path.join('./load-plugin-presets', resolvePreset())), [])

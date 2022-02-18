@@ -11,6 +11,12 @@ module.exports = [
     use: [
       {
         type: 'node_module',
+        require: '@koishijs/plugin-database-mongo',
+        options: {
+          uri: process.env.DB_URI || (() => { throw new Error('need mongo db uri') })()
+        }
+      }, {
+        type: 'node_module',
         require: 'blackfarts',
         filter: [
           meta => recipeFilter(263668213)(meta).then(result => {

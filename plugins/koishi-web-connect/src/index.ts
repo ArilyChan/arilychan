@@ -1,5 +1,6 @@
 import { App } from 'koishi'
 import * as express from 'express'
+
 export default function connect (app: App) {
   if (!app?._httpServer) throw new Error('web server not exists. Please check your configuration')
 

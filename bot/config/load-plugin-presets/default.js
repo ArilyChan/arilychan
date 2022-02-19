@@ -10,6 +10,7 @@ module.exports = [
     for: ContextBuilder((app) => app, 'any'),
     use: [
       {
+        bypassLoader: true,
         type: 'node_module',
         require: '@koishijs/plugin-database-mongo',
         options: {

@@ -45,6 +45,6 @@ jobs:
           node-version: 14
           registry-url: https://registry.npmjs.org/
       - run: npm run build
-      - run: npm publish './plugins/koishi-plugin-ci'
+      - run: npm publish './plugins/koishi-web-connect'
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}

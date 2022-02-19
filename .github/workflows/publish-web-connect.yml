@@ -11,18 +11,17 @@ on:
       - 'utils/koishi-web-connect/package.json'
 
 jobs:
-
   publish-web-connect:
     runs-on: ubuntu-latest
     steps:
+      - run: cd utils/koishi-web-connect
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
           node-version: 14
           registry-url: https://registry.npmjs.org/
-      - run: cd utils/koishi-web-connect
       - run: npm install && npm install --only=dev
       - run: npm run build
-      - run: npm publish './utils/koishi-web-connect'
+      - run: npm publish '.'
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}

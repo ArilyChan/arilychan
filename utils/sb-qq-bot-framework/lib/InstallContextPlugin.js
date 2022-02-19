@@ -6,8 +6,8 @@ class InstallContextPlugin {
     this.webApps = []
   }
 
-  apply (app) {
-    return Promise.all(this.config.map(async ctx => {
+  async apply (app) {
+    await Promise.all(this.config.map(async ctx => {
       let loader
       if (ctx.use instanceof Loader) {
         loader = ctx.use
@@ -18,6 +18,7 @@ class InstallContextPlugin {
       await loader.installToContext(ctx.for.getContextFromCtx(app))
       this.webApps.push(...loader.webApps)
     }))
+    return this
   }
 
   async build () {

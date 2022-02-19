@@ -24,7 +24,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
           
-  publish-koishi-web-connect:
+  publish-ci:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -36,7 +36,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
 
-  publish-ci:
+  publish-web-connect:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

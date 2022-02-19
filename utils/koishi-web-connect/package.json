@@ -18,8 +18,7 @@
     "css/",
     "dist/",
     "lib-commonjs/",
-    "lib/",
-    "scss/"
+    "lib/"
   ],
   "scripts": {
     "test": "run-script eslint && run-script tsc --noEmit && run-script jest",

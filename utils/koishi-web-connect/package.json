@@ -36,7 +36,7 @@
     "tsc": "tsc"
   },
   "peerDependencies": {
-    "@koishijs/core": "^2.0.0"
+    "@koishijs/core": ">=2.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.17.3",

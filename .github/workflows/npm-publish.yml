@@ -10,6 +10,7 @@ on:
     paths:
       - 'plugins/koishi-plugin-blame/package.json'
       - 'plugins/koishi-plugin-ci/package.json'
+      - 'utils/koishi-web-connect/package.json'
 
 jobs:
   publish-blame:

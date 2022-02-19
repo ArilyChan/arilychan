@@ -38,6 +38,7 @@
     "@koishijs/core": ">=2.0.0"
   },
   "devDependencies": {
+    "@koishijs/core": "^4.0.0",
     "@babel/cli": "^7.17.3",
     "@babel/core": "^7.17.5",
     "@babel/generator": "^7.17.3",

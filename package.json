@@ -43,7 +43,8 @@
     "sites/koishi-chat-web",
     "utils/cqcode-builder",
     "utils/sb-bot-manual",
-    "utils/esm-transform"
+    "utils/esm-transform",
+    "utils/koishi-web-connect"
   ],
   "dependencies": {
     "@koishijs/plugin-adapter-onebot": "^4.0.0",

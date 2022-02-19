@@ -1,7 +1,7 @@
 {
   "name": "koishi-web-connect",
   "description": "connect web backends for koishi",
-  "version": "4.0.0",
+  "version": "4.2.2",
   "license": "MIT",
   "author": {
     "name": "arily",
@@ -35,7 +35,7 @@
     "tsc": "tsc"
   },
   "peerDependencies": {
-    "@koishijs/core": ">=2.0.0"
+    "koishi": ">=4.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.17.3",
@@ -46,7 +46,6 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.17.3",
     "@babel/plugin-transform-typescript": "^7.16.8",
     "@babel/preset-env": "^7.16.11",
-    "@koishijs/core": "^4.0.0",
     "@types/jest": "^27.4.0",
     "@types/node": "^17.0.18",
     "@typescript-eslint/eslint-plugin": "^5.12.0",
@@ -57,14 +56,21 @@
     "babel-plugin-const-enum": "^1.2.0",
     "cross-env": "^7.0.3",
     "del-cli": "^4.0.1",
-    "eslint": "^8.9.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-react": "^7.28.0",
-    "express": ">=4.0.0",
+    "eslint": "^7.32.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-jest": "^26.1.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.2.0",
+    "express": "^4.17.3",
     "jest": "^27.5.1",
+    "koishi": ">=2.0.0",
     "prettier": "^2.5.1",
-    "typescript": "^4.5.5",
-    "koishi": ">=2.0.0"
+    "supertest": "^6.2.2",
+    "typescript": "^4.5.5"
+  },
+  "dependencies": {
+    "@types/express": "^4.17.13",
+    "p-event": "^4.2.0"
   }
 }

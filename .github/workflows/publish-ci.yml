@@ -11,7 +11,6 @@ on:
       - 'plugins/koishi-plugin-ci/package.json'
 
 jobs:
-          
   publish-ci:
     runs-on: ubuntu-latest
     steps:

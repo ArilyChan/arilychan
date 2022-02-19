@@ -1,5 +1,6 @@
 const admins = require('../admins')
 const path = require('path')
+const fs = require('fs')
 const appDir = path.dirname(require.main.filename)
 const recipeFilter = require('../filters/group.blackFarts.recipe')
 
@@ -65,7 +66,7 @@ module.exports = [
             blackList: [],
             whiteList: []
           },
-          eventFile: path.join(appDir, 'Plugins/exsper/osuerCalendar/osuercalendar-events.json') // __dirname为config文件夹
+          eventFile: fs.existsSync(path.join(appDir, 'Plugins/exsper/osuerCalendar/osuercalendar-events.json')) && path.resolve(path.join(appDir, 'Plugins/exsper/osuerCalendar/osuercalendar-events.json'))// __dirname为config文件夹
         }
       }, {
         type: 'node_module',

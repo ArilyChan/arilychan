@@ -56,4 +56,4 @@ module.exports = {
 
   // Indicates whether each individual test should be reported during the run
   verbose: true
-};
+}

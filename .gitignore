@@ -119,9 +119,9 @@ dist
 
 .vscode/
 .vs/
-Plugins/arily/BlackFarts/Cabbage/menu/config/db.js
+bot/Plugins/arily/BlackFarts/Cabbage/menu/config/db.js
 bot/config/adapters/*
-Plugins/exsper/ppysbQuery/storage/database.db
-Plugins/exsper/ppyshQuery/storage/database.db
-Plugins/exsper/osuerCalendar/osuercalendar-events.json
+bot/Plugins/exsper/ppysbQuery/storage/database.db
+bot/Plugins/exsper/ppyshQuery/storage/database.db
+bot/Plugins/exsper/osuerCalendar/osuercalendar-events.json
 *.code-workspace

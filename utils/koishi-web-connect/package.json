@@ -1,7 +1,7 @@
 {
   "name": "koishi-web-connect",
   "description": "connect web backends for koishi",
-  "version": "4.2.2",
+  "version": "4.0.0",
   "license": "MIT",
   "author": {
     "name": "arily",

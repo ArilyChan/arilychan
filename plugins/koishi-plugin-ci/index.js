@@ -1,16 +1,30 @@
 const { Service, Context, Modules } = require('koishi')
-Context.service('ci')
+const Build = require('./Build')
+const VersionControl = require('./VersionControl')
 
+Context.service('ci')
 module.exports = class KoishiCI extends Service {
-  constructor (ctx) {
+  constructor (ctx, options = {
+    update: {
+      channel: 'stable'
+    }
+  }) {
     super(ctx, 'ci', true)
-    this.builder = new Map()
+    this.build = new Build(this)
+    this.update = new VersionControl(this)
+    this.options = options
   }
 
-  getState (plugin) {
-    if (!plugin) return this[Context.current].state
+  getPluginState (plugin) {
+    if (!plugin) {
+      const state = this[Context.current].state
+      // this._addStateRef(state)
+      return state
+    }
     plugin = typeof plugin === 'string' ? Modules.require(plugin, true) : plugin
-    return this.ctx.app.registry.get(plugin)
+    const result = this.ctx.app.registry.get(plugin)
+    if (!result) return result
+    return result
   }
 
   getStateRoot (state, ttl = 64) {
@@ -20,32 +34,5 @@ module.exports = class KoishiCI extends Service {
       root = state.parent
     }
     return root
-  }
-
-  useBuild (buildFunc) {
-    const id = this.getStateRoot(this.getState()).id
-    // const id = this.getState().id
-    if (!this.builder.has(id)) this.builder.set(id, [])
-    const current = this.builder.get(id)
-    current.push(buildFunc)
-  }
-
-  async build ({ only, except } = {}) {
-    let builder
-    if (only) {
-      only = only.map(plugin => this.getState(plugin).id)
-      console.log(only, this.builder)
-      builder = new Map([...this.builder.entries()].filter(([id]) => only.includes(id)))
-    } else if (except) {
-      except = except.map(plugin => this.getState(plugin))
-      builder = new Map([...this.builder.entries()].filter(([id]) => !only.includes(id)))
-    } else {
-      builder = this.builder
-    }
-    for (const [, functions] of builder) {
-      for await (const f of functions) {
-        await f()
-      }
-    }
   }
 }

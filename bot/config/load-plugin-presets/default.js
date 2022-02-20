@@ -11,13 +11,27 @@ module.exports = [
     for: ContextBuilder((app) => app, 'any'),
     use: [
       {
-        bypassLoader: true,
         type: 'node_module',
-        require: '@koishijs/plugin-database-mongo',
+        require: 'koishi-plugin-ci',
+        bypassLoader: true
+      },
+      {
+        type: 'node_module',
+        require: 'koishi-plugin-express',
+        bypassLoader: true,
         options: {
-          uri: process.env.DB_URI || (() => { throw new Error('need mongo db uri') })()
+          koishiRoutes: 'use',
+          port: 8080
         }
-      }, {
+      },
+      {
+      //   bypassLoader: true,
+      //   type: 'node_module',
+      //   require: '@koishijs/plugin-database-mongo',
+      //   options: {
+      //     uri: process.env.DB_URI || (() => { throw new Error('need mongo db uri') })()
+      //   }
+      // }, {
         type: 'node_module',
         require: 'blackfarts',
         filter: [
@@ -60,7 +74,9 @@ module.exports = [
       }, {
         type: 'node_module',
         require: 'koishi-plugin-osuercalendar',
+        bypassLoader: true,
         options: {
+          basePath: '/fortune',
           users: {
             admin: admins, // 管理员自行添加
             blackList: [],
@@ -71,6 +87,7 @@ module.exports = [
       }, {
         type: 'node_module',
         require: 'arilychan-radio',
+        bypassLoader: true,
         options: {
           web: {
             host: 'https://bot.ri.mk',

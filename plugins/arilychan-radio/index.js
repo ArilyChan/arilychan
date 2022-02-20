@@ -9,16 +9,21 @@ const { v4: uuidv4 } = require('uuid')
 const defaultOptions = {
   duration: 60 * 10 + 1,
   expire: 7,
-  db: {}
+  db: {},
+  web: {
+    path: '/radio'
+  }
 }
 
-module.exports.name = 'arilychan-radio'
-module.exports.webPath = '/radio'
-module.exports.init = (option) => api({ ...defaultOptions, ...option })
-module.exports.webApp = (option, storage, http) => server({ ...defaultOptions, ...option }, storage, http)
 
-module.exports.apply = (ctx, options, storage) => {
+module.exports.name = 'arilychan-radio'
+
+module.exports.apply = async(ctx, options) => {
   options = { ...defaultOptions, ...options }
+  const storage = await api(options)
+  ctx.using(['express'], ({express, _expressHttpServer}) => {
+    express.use(options.web.path, server(options, storage, _expressHttpServer))
+  })
   ctx.middleware(async (meta, next) => {
     try {
       const userId = meta.userId

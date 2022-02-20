@@ -10,14 +10,32 @@ const web = require('./osu-calendar-web/export')
 // Koishi插件名
 module.exports.name = 'koishi-plugin-osuercalendar'
 // 插件处理和输出
-module.exports.webPath = '/'
-module.exports.webApp = web.webApp
-module.exports.build = web.build
+// module.exports.webPath = '/'
+// module.exports.webApp = web.webApp
+// module.exports.build = web.build
 module.exports.apply = (ctx, options) => {
   const users = options.users || { admin: [], blackList: [], whiteList: [] }
   const eventPath = options.eventFile || path.join(thisPath, './osuercalendar-events.json')
 
   const eventsJson = new EventsJson()
+  const logger = ctx.logger('osuercalendar')
+  ctx.using(['ci'], (ctx) => ctx.once('ci/build/register', () => ctx.ci.build.use(web.build)))
+  ctx.using(['express'], (ctx) => {
+    ctx.once('ready', async () => {
+      try {
+        ctx.express.use(options.basePath, await web.webApp(options))
+      } catch (_) {
+        logger.warn('You need to build. run `npm run build` in osu-calendar-web')
+        ctx.using(['ci'], async ({ ci: { build } }) => {
+          logger.info('You have ci plugin installed. tring auto-build...')
+          await build.run({ only: [exports.name] })
+          logger.info('Build finished, retry web service...')
+          ctx.express.use(options.basePath, await web.webApp(options))
+          logger.success('... Succeed! You are all set!')
+        })
+      }
+    })
+  })
 
   ctx.middleware(async (meta, next) => {
     try {
@@ -28,7 +46,7 @@ module.exports.apply = (ctx, options) => {
       // }
       if (command[0] === '今日运势') {
         if (!ctx.puppeteerCluster) {
-          console.error('got no cluster')
+          logger.error('got no cluster')
           return await run.koishiHandler(meta, eventPath, new Date())
         }
         const cluster = ctx.puppeteerCluster.instance
@@ -73,7 +91,7 @@ module.exports.apply = (ctx, options) => {
       }
       return next()
     } catch (ex) {
-      console.log(ex)
+      logger.log(ex)
       return next()
     }
   })

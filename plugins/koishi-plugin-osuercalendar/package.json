@@ -9,6 +9,7 @@
   "author": "Exsper",
   "license": "MIT",
   "dependencies": {
+    "express-urlrewrite": "^1.4.0",
     "seedrandom": "^3.0.5",
     "shuffle-seed": "^1.1.6",
     "xorshift": "^1.2.0"

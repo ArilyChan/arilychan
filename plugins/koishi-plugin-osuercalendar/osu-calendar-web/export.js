@@ -1,31 +1,38 @@
 const path = require('path')
+const url = require('url')
 const next = require('next')
+const rewrite = require('express-urlrewrite')
 
-const router = require('express').Router()
+const express = require('express')
+const router = express.Router()
 
 const rootPath = path.relative(process.cwd(), __dirname)
 let site = null
 
 const nextBuild = require('next/dist/build')
 const build = async () => {
-    await nextBuild.default(rootPath, require('./next.config.js'))
+    await nextBuild.default(__dirname, require('./next.config.js'))
+    return {
+      job: 'build-nextjs',
+      successed: true
+    }
 }
 
 const deleteCache = () => {
     // delete cache to reload .next
-    const absRoot = path.resolve(path.join(rootPath , './.next'))
+    const absRoot = path.resolve(rootPath , '.next')
     Object.keys(require.cache).forEach(r => {
       if (r.startsWith(absRoot)) { 
         delete require.cache[r] }
     })
 }
-const prep = async (options) => {
+const prep = async (options, doNotBuild = true) => {
   const dev = process.env.NODE_ENV !== 'production'
   const app = next({
     dev,
     conf: {
       distDir: path.join(rootPath, '.next'),
-      basePath: '/fortune',
+      basePath: options.basePath || '/fortune',
       serverRuntimeConfig: {
         fortunePath: options.eventFile || path.join(rootPath, '../osuercalendar-events.json')
       }
@@ -35,8 +42,12 @@ const prep = async (options) => {
   try {
     await app.prepare()
   } catch (error) {
+    if (doNotBuild){
+      throw new Error('you need to build. koishi-plugin-ci required')
+    }
     await build()
-    return prep(options) 
+    deleteCache()
+    return prep(options, true) 
   }
   return handle
 }
@@ -45,10 +56,11 @@ module.exports.webApp = async (options, storage, httpServer) => {
   if (site) return site
   const handle = await prep(options)
   deleteCache()
-  site = await handle 
-
-  // return await handle
-
-  router.use(site)
+  site = handle 
+  router.use(express.static('.next'))
+  router.use((req, res, next)=>{
+    req.url = req.originalUrl
+    return site(req, res)
+  })
   return router
 }

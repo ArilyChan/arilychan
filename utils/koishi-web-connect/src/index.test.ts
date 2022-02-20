@@ -72,7 +72,7 @@ describe('wait for server init', () => {
   it('should fail if waitForServer is false and koishi not started', async () => {
     expect(app.isActive).toEqual(false)
     if (!app._httpServer) {
-      expect(asExpressMiddleware(app, { waitForServer: false })).toThrow('Error')
+      expect((asExpressMiddleware(app, { waitForServer: false })).toThrow('Error')
     }
   })
   afterAll(() => {

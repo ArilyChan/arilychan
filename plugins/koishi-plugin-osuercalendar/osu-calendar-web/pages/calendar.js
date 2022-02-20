@@ -37,7 +37,7 @@ export async function getServerSideProps(context) {
   }
 }
 
-export default function ({ events }) {
+export default function Calendar ({ events }) {
   const router = useRouter()
   const { seed = 'guest', displayName = null } = router.query
 
@@ -53,7 +53,7 @@ export default function ({ events }) {
   const statList = fortuneTheDay()
   const children = <div className="btn-group mx-auto">
     <button className={["btn", "btn-wide", activity[index - 1] ? '' : 'btn-disabled'].join(' ')} onClick={() => activity[index - 1] && setIndex(index - 1)}>Yesterday</button>
-    <button class="btn btn-active">{statList.date.toLocaleDateString()}</button>
+    <button className="btn btn-active">{statList.date.toLocaleDateString()}</button>
     <button className={["btn btn-wide", activity[index + 1] ? '' : 'btn-disabled'].join(' ')} onClick={() => activity[index + 1] && setIndex(index + 1)}>Tomorrow</button>
   </div>
   return <Page statList={statList} displayName={displayName} seed={seed}>

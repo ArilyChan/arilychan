@@ -1,5 +1,5 @@
 const { express, http } = require('sb-qq-bot-framework/lib/WebServer')
-const { asExpressMiddleware: connect } = require('koishi-web-connect')
+// const { asExpressMiddleware: connect } = require('koishi-web-connect')
 
 module.exports = async (app) => {
   const config = require('./config')
@@ -8,7 +8,7 @@ module.exports = async (app) => {
   const Installer = new InstallContextPlugin(config.contextPlugins)
   await Installer.apply(app)
     .then(LoadedPlugins => {
-      express.use(connect(app))
+      // express.use(connect(app))
       LoadedPlugins.webApps?.map(async v => {
         const middleware = await v.expressApp(v.options, await v.pluginData, http)
         if (!middleware) return

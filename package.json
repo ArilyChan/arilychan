@@ -37,6 +37,7 @@
     "plugins/koishi-plugin-osuercalendar/osu-calendar-web",
     "plugins/koishi-plugin-ci",
     "plugins/koishi-plugin-puppeteer-cluster",
+    "plugins/koishi-plugin-express",
     "utils/sb-prompt-filter",
     "utils/sb-qq-bot-framework",
     "utils/sb-plugin-wrapper",

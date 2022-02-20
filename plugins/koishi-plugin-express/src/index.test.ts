@@ -98,3 +98,16 @@ describe('use koishi routes', () => {
     app._expressHttpServer.close()
   })
 })
+
+describe('error handling', () => {
+  it('should do nothing when ctx.app is falsy', () => {
+    expect(express.apply({} as Context)).toBeUndefined()
+  })
+  it('should throws error on unsupported koishiRoutes', () => {
+    expect(() => express.apply({
+      app: {}
+    } as Context, {
+      koishiRoutes: 'what?'
+    } as any)).toThrow(Error)
+  })
+})

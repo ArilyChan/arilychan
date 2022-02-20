@@ -17,6 +17,7 @@ module.exports = class Base {
   }
 
   async run () {
+    await this.ci.ctx.parallel('ci/build/register')
     const handlers = this._filter(...arguments)
     for (const [id, { name, items }] of handlers) {
       for await (const item of items) {

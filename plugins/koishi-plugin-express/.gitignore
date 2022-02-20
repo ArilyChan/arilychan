@@ -1,0 +1,9 @@
+
+**/node_modules/
+lib/
+lib-commonjs/
+dist/
+css/
+coverage/
+.vscode/
+.DS_Store

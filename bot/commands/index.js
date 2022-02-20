@@ -10,4 +10,6 @@ const app = require('sb-qq-bot-framework/lib/Bot')(config.koishi)
 
 const init = require('../init')
 init(app)
-  .then(() => app.start())
+  .then(() => {
+    app.start()
+  })

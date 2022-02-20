@@ -24,7 +24,7 @@ const existsSync = require('fs').existsSync
 module.exports = {
   apply(ctx, opt) {
     ctx.using(['ci'], ({ ci }) => {
-      ci.useBuild(() => {
+      ci.build.use(() => {
         const buildPath = path.resolve(path.join(__dirname, '.build'))
         if (existsSync(buildPath)) await fs.rm(buildPath, {recursive: true})
         await fs.mkdir(buildPath)
@@ -42,7 +42,7 @@ const app = new App()
 app.plugin('koishi-plugin-ci')
 app.plugin('plugin-that-requires-build', { buildOpt: { buildTime: new Date() }})
 
-app.ci.build()
+app.ci.build.run()
   .then(() => process.exit(0))
 ```
 这样便可在 `plugin-that-requires-build` 插件目录下构建 `.builds/build.json`
@@ -52,15 +52,15 @@ app.ci.build()
 
 ### API
 #### 工具
-##### KoishiCI.getState(plugin) 
-##### KoishiCI.getState() 
+##### KoishiCI.getPluginState(plugin) 
+##### KoishiCI.getPluginState() 
 返回已安装的插件或调用此函数的插件的State
 ##### KoishiCI.getStateRoot(state)
 返回嵌套中最上层的State
 
 #### 构建相关功能
-##### useBuild(callback)
-##### useBuild(Promise\<callback\>)
+##### build.use(callback)
+##### build.use(Promise\<callback\>)
 注册构建函数
 ##### `async` build({only: [Plugin]})
 ##### `async` build({except: [Plugin]})
@@ -70,13 +70,13 @@ app.ci.build()
 `build-only-some-plugins.js`
 ```javascript
 // ...
-app.ci.build({only: ['plugin-that-requires-build']})
+app.ci.build.run({only: ['plugin-that-requires-build']})
 ```
 只会构建 `plugin-that-requires-build` 插件
 
 `build-except-some-plugins.js`
 ```javascript
 // ...
-app.ci.build({except: ['plugin-that-requires-build']})
+app.ci.build.run({except: ['plugin-that-requires-build']})
 ```
 会跳过构建 `plugin-that-requires-build` 插件

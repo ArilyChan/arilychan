@@ -30,6 +30,6 @@ export async function getServerSideProps(context) {
   }
 }
 
-export default function (props) {
+export default function Daily(props) {
   return <Page {...props} />
 }

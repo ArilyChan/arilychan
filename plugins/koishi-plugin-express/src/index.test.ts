@@ -40,8 +40,8 @@ describe('install plugin (not handling defalut router)', () => {
     }
   })
 
-  it('should handle express routes', () => {
-    const res = request(app._expressHttpServer)
+  it('should handle express routes', async () => {
+    const res = await request(app._expressHttpServer)
       .get('/express')
     expect(res.text).toEqual('express')
   })

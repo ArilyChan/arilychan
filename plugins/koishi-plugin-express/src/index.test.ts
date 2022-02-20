@@ -94,4 +94,7 @@ describe('use koishi routes', () => {
       .get('/koa')
     expect(res.text).toEqual('koa')
   })
+  afterAll(() => {
+    app._expressHttpServer.close()
+  })
 })

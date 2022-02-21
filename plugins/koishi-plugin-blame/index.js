@@ -141,6 +141,7 @@ module.exports.v3 = {
 module.exports.v4 = {
   name: 'blame-koishi-v4',
   apply (ctx, options) {
+    const logger = ctx.logger('blame')
     if (installed) return
     const findSamePlatformBots = (platform) =>
       ctx.bots.filter((bot) => bot.platform === platform)
@@ -175,7 +176,7 @@ module.exports.v4 = {
               (bot) => `${bot.platform}:${bot.id}` === sender
             )
           ) || ctx.bots.find((bot) => bot.platform === platform) // find specified sender bot or choose a bot on same platform
-
+        if (!bot) { logger.error('unable to find bot') }
         bot.sendPrivateMessage(id.toString(), message.toString()).catch(err => ctx.logger('blame').error('error when sending blame:', err))
       })
     }
@@ -208,7 +209,15 @@ module.exports.v4 = {
   }
 }
 
-const { version } = require('koishi-core')
+// const { version } = require('koishi-core')
+let version
+try {
+  const k = require('koishi')
+  version = k.version
+} catch (err) {
+  const k = require('koishi-core')
+  version = k.version
+}
 const [major] = version.split('.')
 
 const availableVersions = Object.keys(module.exports).filter(k => k.startsWith('v'))

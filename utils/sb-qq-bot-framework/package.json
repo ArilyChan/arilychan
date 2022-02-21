@@ -4,9 +4,8 @@
   "description": "",
   "main": "export.js",
   "dependencies": {
-    "express": "^4.17.2",
     "glob": "^7.2.0",
-    "koishi": "^4.0.0",
+    "koishi": "^4.3.1",
     "slugify": "^1.6.5"
   },
   "scripts": {

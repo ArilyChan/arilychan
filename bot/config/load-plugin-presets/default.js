@@ -2,7 +2,7 @@ const admins = require('../admins')
 const path = require('path')
 const fs = require('fs')
 const appDir = path.dirname(require.main.filename)
-const recipeFilter = require('../filters/group.blackFarts.recipe')
+// const recipeFilter = require('../filters/group.blackFarts.recipe')
 
 const ContextBuilder = require('sb-qq-bot-framework/lib/contextBuilder')
 
@@ -17,6 +17,41 @@ module.exports = [
       },
       {
         type: 'node_module',
+        require: '@koishijs/plugin-console',
+        bypassLoader: true
+      },
+      {
+        type: 'node_module',
+        require: '@koishijs/plugin-chat',
+        bypassLoader: true
+      },
+      {
+        type: 'node_module',
+        require: '@koishijs/plugin-insight',
+        bypassLoader: true
+      },
+      {
+        type: 'node_module',
+        require: '@koishijs/plugin-logger',
+        bypassLoader: true
+      },
+      {
+        type: 'node_module',
+        require: '@koishijs/plugin-manager',
+        bypassLoader: true
+      },
+      {
+        type: 'node_module',
+        require: '@koishijs/plugin-status',
+        bypassLoader: true
+      },
+      {
+        type: 'node_module',
+        require: '@koishijs/plugin-sandbox',
+        bypassLoader: true
+      },
+      {
+        type: 'node_module',
         require: 'koishi-plugin-express',
         bypassLoader: true,
         options: {
@@ -25,22 +60,23 @@ module.exports = [
         }
       },
       {
-      //   bypassLoader: true,
-      //   type: 'node_module',
-      //   require: '@koishijs/plugin-database-mongo',
-      //   options: {
-      //     uri: process.env.DB_URI || (() => { throw new Error('need mongo db uri') })()
-      //   }
-      // }, {
+        bypassLoader: true,
         type: 'node_module',
-        require: 'blackfarts',
-        filter: [
-          meta => recipeFilter(263668213)(meta).then(result => {
-            if (!result) meta.send('去别的群试试吧.').catch(e => console.error.bind(console))
-            return result
-          }),
-          require('../filters/group.blackFarts.recipe.restrictHours')([{ from: 9, to: 11 }, { from: 14, to: 17 }, { from: 20, to: 24 }], 738401694)
-        ]
+        require: '@koishijs/plugin-database-mongo',
+        options: {
+          uri: process.env.KOISHI_DB_URI || (() => { throw new Error('need mongo db uri') })()
+        }
+      },
+      {
+        type: 'node_module',
+        require: 'blackfarts'
+        // filter: [
+        //   meta => recipeFilter(263668213)(meta).then(result => {
+        //     if (!result) meta.send('去别的群试试吧.').catch(e => console.error.bind(console))
+        //     return result
+        //   }),
+        //   require('../filters/group.blackFarts.recipe.restrictHours')([{ from: 9, to: 11 }, { from: 14, to: 17 }, { from: 20, to: 24 }], 738401694)
+        // ]
       }, {
         type: 'node_module',
         require: 'sb-plugin-osu-stat-screenshot',

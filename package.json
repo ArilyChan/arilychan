@@ -49,7 +49,15 @@
   ],
   "dependencies": {
     "@koishijs/plugin-adapter-onebot": "^4.0.0",
+    "@koishijs/plugin-chat": "^1.2.1",
+    "@koishijs/plugin-console": "^3.1.2",
     "@koishijs/plugin-database-mongo": "^3.0.1",
-    "dotenv": "^12.0.3"
+    "@koishijs/plugin-insight": "^1.2.0",
+    "@koishijs/plugin-logger": "^1.2.1",
+    "@koishijs/plugin-manager": "^1.5.3",
+    "@koishijs/plugin-sandbox": "^1.0.1",
+    "@koishijs/plugin-status": "^5.3.1",
+    "dotenv": "^12.0.3",
+    "koishi-plugin-gocqhttp": "^2.2.4"
   }
 }

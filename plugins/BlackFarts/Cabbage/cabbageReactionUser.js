@@ -1,4 +1,4 @@
-const managers = [879724291]
+const managers = ['onebot:879724291']
 const blackFartsEnabled = [
   940857703, // pr
   879724291,
@@ -7,9 +7,9 @@ const blackFartsEnabled = [
   976685185, // lsahi
   387820244, // crystal
   2227385902 // Miracle
-]
+].map(id => `onebot:${id}`)
 const enabled = {
-  say: [2038548858]
+  say: ['onebnot:2038548858']
 }
 
 exports.isManager = function (qq) {

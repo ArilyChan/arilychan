@@ -39,11 +39,11 @@ const compileMenu = async ({ storage }) => {
   const all = await RecipeModel.find({}).populate('menu').exec().then(results => results.map(result => result.toObject()))
   const mixin = all.reduce((acc, recipe) => {
     if (!recipe || !recipe.menu) {
-      console.log(recipe)
+      // console.log(recipe)
       return acc
     }
     if (!acc[recipe.menu.name]) acc[recipe.menu.name] = []
-    console.log('add', recipe.name, 'to', recipe.menu.name)
+    // console.log('add', recipe.name, 'to', recipe.menu.name)
     acc[recipe.menu.name].push(recipe.name)
     return acc
   }, {})

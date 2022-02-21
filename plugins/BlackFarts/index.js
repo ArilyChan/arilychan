@@ -9,27 +9,39 @@ const recipeReaction = require('./Recipe/RecipeReactionConfig')
 const { menu, models: menuModels } = require('./Recipe/menu')
 // const RollReaction = require('./Roll/RollReaction')
 // const ExsperReaction = require('./Exsper/ExsperReaction');
-module.exports.name = 'BlackFarts'
-module.exports.init = (options) => ({
-  originalMenu: menu,
-  menu: {},
-  menuModels
-})
+module.exports.name = 'blackfarts'
+// module.exports.init = (options) => ({
+//   originalMenu: menu,
+//   menu: {},
+//   menuModels
+// })
 
 const web = require('./server')
-let webInited = false
-module.exports.webApp = (options, storage, http) => {
-  if (webInited) return undefined
-  webInited = true
-  return web(storage, http)
-}
+// const webInited = false
+// module.exports.webApp = (options, storage, http) => {
+//   if (webInited) return undefined
+//   webInited = true
+//   return web(storage, http)
+// }
 
-module.exports.apply = function (app, options, storage) {
+module.exports.apply = function (app, options) {
   const cabbage = new CabbageReaction(cabbageReaction)
   const explosive = new CabbageReaction(explosiveReaction)
   const gamble = new CabbageReaction(gambleReaction)
   const recipe = new CabbageReaction(recipeReaction)
   const help = new CabbageReaction(Help)
+
+  const storage = {
+    originalMenu: menu,
+    menu: {},
+    menuModels
+  }
+
+  recipeReaction?.['recipe.init']?.({ storage })
+
+  app.using(['express'], ({ express, _expressHttpServer }) => {
+    express.use(options?.web?.prefix || '/blackfarts', web(storage, _expressHttpServer))
+  })
 
   app.middleware((meta, next) => {
     let reacted = false

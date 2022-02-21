@@ -274,6 +274,7 @@ module.exports = {
   'recipe.marknsfw': (input) => markNSFWRecipeBot(input, true),
   'menu.marksfw': (input) => markNSFWMenuBot(input, false),
   'recipe.marksfw': (input) => markNSFWRecipeBot(input, false),
+  'recipe.init': compileMenu,
   加个菜: addRecipe,
   加個菜: addRecipe,
   加个吃的: addMeal,

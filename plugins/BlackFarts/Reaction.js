@@ -1,6 +1,5 @@
-function CabbageReaction (reaction, storage) {
+function CabbageReaction (reaction) {
   this.reaction = reaction
-  this.storage = storage
 }
 
 CabbageReaction.prototype.reactTo = function (reaction) {

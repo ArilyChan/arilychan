@@ -39,7 +39,7 @@ async function usePlugin (app, { module: plugin, config }, logger = console) {
     //   plugin[config.subPlugin].apply(app, config.options, pluginData)
     // } else plugin.apply(app, config.options, pluginData)
     if (typeof plugin === 'function') app.plugin(plugin, config.options)
-    if (config.bypassLoader) app.plugin(plugin.apply ? plugin : plugin.default, config.options)
+    else if (config.bypassLoader) app.plugin(plugin.apply ? plugin : plugin.default, config.options)
     else {
       plugin.apply(app, config.options, pluginData)
     }

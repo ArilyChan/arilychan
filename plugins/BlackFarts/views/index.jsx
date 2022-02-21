@@ -1,6 +1,6 @@
 import propTypes from 'prop-types'
-var React = require('react')
-var DefaultLayout = require('./layouts/default.jsx')
+const React = require('react')
+const DefaultLayout = require('./layouts/default.jsx')
 
 function HelloMessage (props) {
   return (

@@ -1,1 +1,1 @@
-module.exports = { url: 'mongodb+srv://sb:lkoHp8mcBU0emQt8@free1-fvcem.gcp.mongodb.net/sb?retryWrites=true&w=majority' }
+module.exports = { url: process.env.RECIPE_DB_URI }

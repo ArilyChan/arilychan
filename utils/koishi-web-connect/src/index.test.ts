@@ -56,8 +56,7 @@ describe('accessibility (waitForServer: true)', () => {
 describe('accessibility (waitForServer: false)', () => {
   acc(false)
 })
-
-describe('wait for server init', () => {
+describe('edge case handling', () => {
   // create koishi instance
   const app = new App({
     port: ++port
@@ -69,12 +68,24 @@ describe('wait for server init', () => {
   const http = createServer(expressApp)
   http.listen(++port)
 
-  it('should fail if waitForServer is false and koishi not started', async () => {
+  const app2 = Object.create(app)
+  app2._httpServer = null
+
+  it('should fail if waitForServer is false and koishi not started', () => {
     expect(app.isActive).toEqual(false)
-    if (!app._httpServer) {
-      expect((asExpressMiddleware(app, { waitForServer: false })).toThrow('Error')
-    }
+    expect(() => asExpressMiddleware(app2, { waitForServer: false })).toThrow(Error)
   })
+
+  it('should wait for koishi start if wait for server is set to true', async () => {
+    expect(app.isActive).toEqual(false)
+    app.plugin((ctx) => ctx.router.get('/koa', ({ response }) => { response.body = 'koa' }))
+    expressApp.use(asExpressMiddleware(app2, { waitForServer: true }))
+    app2._httpServer = app._httpServer
+    await app.start()
+    const res = await request(http).get('/koa')
+    expect(res.text).toEqual('koa')
+  })
+
   afterAll(() => {
     http.close()
   })

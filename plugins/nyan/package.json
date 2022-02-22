@@ -1,0 +1,22 @@
+{
+  "name": "koishi-plugin-nyan",
+  "version": "1.0.0",
+  "description": "append nyan",
+  "main": "index.js",
+  "peerDependencies": {
+    "koishi": ">=3.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "koishi",
+    "plugin",
+    "nyan",
+    "cat",
+    "moe",
+    "nya"
+  ],
+  "author": "arily",
+  "license": "MIT"
+}

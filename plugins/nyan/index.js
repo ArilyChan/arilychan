@@ -5,8 +5,17 @@ const trailingChars = /(?<content>.*?)(?<trailing>[^\p{L}\d\s@#]+)?(?<trailingSp
 const transformToMoeTrailing = /[^.。][.。]$/
 
 const nyan = (message, noiseMaker, { appendTrailing, transformLastLineOnly }) => {
-  if (transformLastLineOnly) message = message?.trim() || message
-  return message?.split?.('\n').map((line, index, lines) => {
+  // preserve empty lines at the end of the message. It's totally useless but why not?
+  message = message?.split?.('\n')
+  const end = []
+  for (let i = message.length - 1; i >= 0; i--) {
+    const line = message[i]
+    if (line.trim() !== '') break
+    end.push(line)
+    message.pop()
+  }
+  // transform message
+  message = message.map((line, index, lines) => {
     if (transformLastLineOnly && index < lines.length - 1) { return line }
     if (line.trim() === '') return line
     if (nyaned.test(line)) return line
@@ -17,7 +26,10 @@ const nyan = (message, noiseMaker, { appendTrailing, transformLastLineOnly }) =>
     line = line.replace(transformToMoeTrailing, '~')
     return line
   })
+    // append trailing spaces
+    .concat(end.reverse())
     .join('\n') || message
+  return message
 }
 
 const shuffle = (arr) => {

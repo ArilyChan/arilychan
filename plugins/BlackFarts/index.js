@@ -39,7 +39,7 @@ module.exports.apply = function (app, options) {
 
   recipeReaction?.['recipe.init']?.({ storage })
 
-  app.using(['express'], ({ express, _expressHttpServer }) => {
+  app.using(['express'], function blackFartWebService ({ express, _expressHttpServer }) {
     express.use(options?.web?.prefix || '/blackfarts', web(storage, _expressHttpServer))
   })
 

@@ -23,7 +23,7 @@ module.exports = [
             app.router.all('/test', ({ request, response }, next) => {
               response.body = 'hi'
             })
-            app.using(['express'], (ctx) => {
+            app.using(['express'], function ExpressTester (ctx) {
               console.log('express installed')
               ctx.express.get('/express', (req, res, next) => {
                 res.send('express')

@@ -9,7 +9,11 @@ const blackFartsEnabled = [
   2227385902 // Miracle
 ].map(id => `onebot:${id}`)
 const enabled = {
-  say: ['onebnot:2038548858']
+  say: [
+    'onebnot:2038548858',
+    'telegram:535116380',
+    '535116380'
+  ]
 }
 
 exports.isManager = function (qq) {
@@ -19,5 +23,6 @@ exports.blackFartTo = function (qq) {
   return blackFartsEnabled.includes(qq)
 }
 exports.isEnabled = function (action, qq) {
+  console.log(qq)
   return enabled[action].includes(qq) || false
 }

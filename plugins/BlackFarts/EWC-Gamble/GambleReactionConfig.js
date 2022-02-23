@@ -71,13 +71,13 @@ const betOnMatch = async ({ command, meta, app }) => {
     [, match, target, amount] = command
     const matches = await matchList()
     matched = matches.find(m => m.name === match)
-    if (!matched) return meta.send('没有找到这个对局。（小阿日没找到）')
+    if (!matched) return '没有找到这个对局。（小阿日没找到）'
   } else {
-    await meta.send('对局名？')
+    '对局名？'
     match = await meta.$prompt()
     const matches = await matchList()
     matched = matches.find(m => m.name === match)
-    if (!matched) return meta.send('没有找到这个对局。（小阿日没找到）')
+    if (!matched) return '没有找到这个对局。（小阿日没找到）'
     await meta.send(`你可以下注给:\n${matched.member.map((t, index) => `  ${index + 1}: ${t}`).join('\n')}\n你可以提供序号或者名字`)
     target = await meta.$prompt()
     // eslint-disable-next-line eqeqeq
@@ -98,7 +98,7 @@ const betOnMatch = async ({ command, meta, app }) => {
     amount,
     target
   }).then(res => res.json())
-  if (result.message) return meta.send(result.message)
+  if (result.message) return result.message
   else meta.send(JSON.stringify(result))
 }
 
@@ -108,13 +108,13 @@ const endMatch = async ({ command, meta, app }) => {
     [, match, winner] = command
     const matches = await matchList()
     matched = matches.find(m => m.name === match)
-    if (!matched) return meta.send('没有找到这个对局。（小阿日没找到）')
+    if (!matched) return '没有找到这个对局。（小阿日没找到）'
   } else {
     await meta.send('对局名？')
     match = await meta.$prompt()
     const matches = await matchList()
     matched = matches.find(m => m.name === match)
-    if (!matched) return meta.send('没有找到这个对局。（小阿日没找到）')
+    if (!matched) return '没有找到这个对局。（小阿日没找到）'
     await meta.send(`赢方？你可以宣布:\n${matched.member.map((t, index) => `  ${index + 1}: ${t}`).join('\n')}\n你可以提供序号或者名字`)
     winner = await meta.$prompt()
     // eslint-disable-next-line eqeqeq
@@ -131,7 +131,7 @@ const endMatch = async ({ command, meta, app }) => {
     qq: meta.userId,
     winner
   }).then(res => res.json())
-  if (result.message) return meta.send(result.message)
+  if (result.message) return result.message
   else meta.send(JSON.stringify(result))
 }
 

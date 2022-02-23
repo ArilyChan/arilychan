@@ -7,10 +7,10 @@ module.exports.apply = async (app, options = {}) => {
       console.log(token)
       const tokenStat = await db.getStat(token)
       console.log(tokenStat)
-      if (!tokenStat) return meta.send('不存在这个token')
-      if (tokenStat.status === 'authenticated') return meta.send('已经认证过了，要换号先revoke (!revoke token)')
+      if (!tokenStat) return '不存在这个token'
+      if (tokenStat.status === 'authenticated') return '已经认证过了，要换号先revoke (!revoke token)'
       const result = await db.authenticateTokenToQQ(token, meta.userId)
-      if (result) return meta.send('done')
+      if (result) return 'done'
     } else if (meta.content.startsWith('!bindqq') && options.role === 'bind') {
       const token = await db.createAuth()
       meta.send(token.token)

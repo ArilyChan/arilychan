@@ -21,7 +21,7 @@ module.exports.name = 'arilychan-radio'
 module.exports.apply = async(ctx, options) => {
   options = { ...defaultOptions, ...options }
   const storage = await api(options)
-  ctx.using(['express'], ({express, _expressHttpServer}) => {
+  ctx.using(['express'], function arilychanRadioWebService({express, _expressHttpServer}) {
     express.use(options.web.path, server(options, storage, _expressHttpServer))
   })
   ctx.middleware(async (meta, next) => {
@@ -37,9 +37,9 @@ module.exports.apply = async(ctx, options) => {
         case '试听':
           try {
             const beatmapInfo = await storage.search(argString)
-            return await meta.send(`[CQ:record,file=${beatmapInfo.previewMp3}]`)
+            return `[CQ:record,file=${beatmapInfo.previewMp3}]`
           } catch (ex) {
-            return await meta.send(`[CQ:at,qq=${userId}]\n` + ex)
+            return `[CQ:at,qq=${userId}]\n` + ex
           }
         case '点歌':
         case 'radio.queue':
@@ -55,7 +55,7 @@ module.exports.apply = async(ctx, options) => {
             let reply = `[CQ:at,id=${userId}]\n`
             reply += '搜索到曲目：' + beatmapInfo.artistU + ' - ' + beatmapInfo.titleU + '\n'
             // 如果超出时长，则拒绝添加
-            if (!storage.withinDurationLimit(beatmapInfo)) return await meta.send(reply + '这首歌太长了，请选择短一些的曲目')
+            if (!storage.withinDurationLimit(beatmapInfo)) return reply + '这首歌太长了，请选择短一些的曲目'
             if (!beatmapInfo.audioFileName) reply += '小夜没给音频，只有试听\n'
             // 查重
             const now = new Date()
@@ -77,18 +77,18 @@ module.exports.apply = async(ctx, options) => {
             await storage.add(beatmapInfo)
             reply += '点歌成功！sid：' + beatmapInfo.sid + '，歌曲将会保存 ' + options.expire + ' 天'
             reply += '\n电台地址：' + options.web.host + options.web.path
-            return await meta.send(reply)
+            return reply
           } catch (ex) {
-            return await meta.send(`[CQ:at,id=${userId}]\n` + ex)
+            return `[CQ:at,id=${userId}]\n` + ex
           }
         case '广播':
         case 'radio.broadcast':
           try {
-            if (!options.isAdmin(meta)) return await meta.send(`[CQ:at,id=${userId}]\n只有管理员才能发送广播消息`)
+            if (!options.isAdmin(meta)) return `[CQ:at,id=${userId}]\n只有管理员才能发送广播消息`
             await storage.broadcast(userId, argString)
-            return await meta.send(`[CQ:at,id=${userId}]\n已发送广播`)
+            return `[CQ:at,id=${userId}]\n已发送广播`
           } catch (ex) {
-            return await meta.send(`[CQ:at,id=${userId}]\n` + ex)
+            return `[CQ:at,id=${userId}]\n` + ex
           }
         case '删歌':
         case 'radio.delete':
@@ -98,9 +98,9 @@ module.exports.apply = async(ctx, options) => {
         case 'queue.remove':
         case 'queue.cancel':
           try {
-            if (!argString) return await meta.send(`[CQ:at,id=${userId}]\n请指定sid`)
+            if (!argString) return `[CQ:at,id=${userId}]\n请指定sid`
             const sid = parseInt(argString)
-            if (!sid) return await meta.send(`[CQ:at,id=${userId}]\nsid应该是个正整数`)
+            if (!sid) return `[CQ:at,id=${userId}]\nsid应该是个正整数`
 
             const now = new Date()
             const expiredDate = new Date(now - options.removeAfterDays * 24 * 60 * 60 * 1000 || 7 * 24 * 60 * 60 * 1000)
@@ -124,9 +124,9 @@ module.exports.apply = async(ctx, options) => {
                 storage.delete(song, { id: userId, nickname: meta.sender.nickname })
               }))
             }
-            return await meta.send(`[CQ:at,id=${userId}]\n删除成功！`)
+            return `[CQ:at,id=${userId}]\n删除成功！`
           } catch (ex) {
-            return await meta.send(`[CQ:at,id=${userId}]\n` + ex.message)
+            return `[CQ:at,id=${userId}]\n` + ex.message
           }
         default: return next()
       }

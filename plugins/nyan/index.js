@@ -1,10 +1,27 @@
 const { Schema } = require('koishi')
+// const { Logger } = require('koishi')
 
 const nyaned = /喵([^\p{L}\d\s@#]+)?( +)?$/u
 const trailingChars = /(?<content>.*?)(?<trailing>[^\p{L}\d\s@#]+)?(?<trailingSpace> +)?$/u
-const transformToMoeTrailing = /[^.。][.。]$/
+const trailingURL = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{2,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/
 
-const nyan = (message, noiseMaker, { appendTrailing, transformLastLineOnly }) => {
+// const logger = new Logger('nyan')
+// logger.level = 3
+
+const _transform = (trailing, transforms) => {
+  // expect transforms is unempty
+  const last = trailing.slice(-1)
+  if (trailing.length > 1) {
+    const secondLast = trailing.slice(-2, -1)
+    if (last === secondLast) return trailing
+  }
+  for (const { occurrence, replaceWith } of transforms) {
+    if (last !== occurrence) continue
+    return trailing.slice(0, -1) + replaceWith
+  }
+}
+
+const nyan = (message, noiseMaker, { trailing: { append, transform }, transformLastLineOnly }) => {
   // preserve empty lines at the end of the message. It's totally useless but why not?
   message = message?.split?.('\n')
   const end = []
@@ -16,14 +33,29 @@ const nyan = (message, noiseMaker, { appendTrailing, transformLastLineOnly }) =>
   }
   // transform message
   message = message.map((line, index, lines) => {
-    if (transformLastLineOnly && index < lines.length - 1) { return line }
-    if (line.trim() === '') return line
-    if (nyaned.test(line)) return line
+    if (transformLastLineOnly && index < lines.length - 1) {
+      // logger.debug(line, 'unhandled due to `transformLastLineOnly`')
+      return line
+    }
+    if (line.trim() === '') {
+      // logger.debug(line, 'unhandled due to empty line')
+      return line
+    }
+    if (nyaned.test(line)) {
+      // logger.debug(line, 'unhandled due to \'nyaned\'')
+      return line
+    }
+    if (trailingURL.test(line)) {
+      // logger.debug(line, 'unhandled due to \'trailing with url\'')
+      return line
+    }
     const noise = noiseMaker()
-    const { groups: { content, trailing, trailingSpace } } = line.match(trailingChars)
+    // logger.debug('noise going to make this time:', noise)
+    let { groups: { content, trailing, trailingSpace } } = line.match(trailingChars)
+    // logger.debug('analyzed message:', { content, trailing, trailingSpace })
+    if (!trailing) trailing = append
+    else if (transform.length) trailing = _transform(trailing, transform)
     line = `${content ?? ''}${noise}${trailing ?? ''}${trailingSpace ?? ''}`
-    line = line.slice(-1) === noise ? line + appendTrailing : line
-    line = line.replace(transformToMoeTrailing, '~')
     return line
   })
     // append trailing spaces
@@ -49,8 +81,14 @@ const makeNoise = (noises) => {
 
 const schema = Schema.object({
   noises: Schema.array(String).default(['喵']).description('您的bot会在最后发出什么声音?'),
-  appendTrailing: Schema.string().default('').description('没有标点的句末后面会被加上这个，可以设置为比如`~`'),
-  transformLastLineOnly: Schema.boolean().default(false).description('只在最后一行卖萌，默认每行都卖。')
+  transformLastLineOnly: Schema.boolean().default(false).description('只在最后一行卖萌，默认每行都卖。'),
+  trailing: Schema.object({
+    append: Schema.string().default('').description('没有标点的句末后面会被加上这个，可以设置为比如`~`'),
+    transform: Schema.array(Schema.object({
+      occurrence: Schema.string().required().description('要被替换掉的标点符号'),
+      replaceWith: Schema.string().required().description('要替换为的标点符号')
+    })).default([{ occurrence: '.', replaceWith: '~' }, { occurrence: '。', replaceWith: '～' }]).description('替换掉据尾的标点符号，两个以上连在一起的标点符号不会被换掉。*只对标点符号有反应！*')
+  }).description('设置如何处理句尾')
 })
 module.exports = {
   name: 'nyan',

@@ -8,10 +8,10 @@ async function helps ({ command, meta, app }) {
   const kw = command.slice(1).join(' ').trim()
   if (kw) {
     const result = manual.filter(kw)
-    if (!result) return meta.send('没有找到相关词条')
-    return meta.send(result.renderAsString())
+    if (!result) return '没有找到相关词条'
+    return result.renderAsString()
   }
-  if (new Date() - recent[meta?.groupId || meta?.userId]?.timestamp < 1000 * 60) return meta.send(`[CQ:reply,id=${recent[meta?.groupId || meta?.userId].messageId}] 刚刚发过，很长，往上面翻一翻`)
+  if (new Date() - recent[meta?.groupId || meta?.userId]?.timestamp < 1000 * 60) return `[CQ:quote,id=${recent[meta?.groupId || meta?.userId].messageId}] 刚刚发过，很长，往上面翻一翻`
   await meta.send(manual.renderAsString())
   recent[meta?.groupId || meta?.userId] = {
     messageId: meta.contentId,

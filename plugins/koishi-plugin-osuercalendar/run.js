@@ -24,12 +24,14 @@ async function koishiHandler (meta, eventPath, day) {
     // fs.readFile(eventPath, async (err, data) => {
     //   if (err) {
     //     console.log(err)
-    //     return await meta.send('一些不好的事情发生了')
+    //     return '一些不好的事情发生了'
     //   }
     //   const events = JSON.parse(data.toString())
     //   const activity = new Activity(qqId, events, day)
     const statList = activity.result
-    let output = `[CQ:at,id=${qqId}]` + '\n'
+    let output = ''
+
+    if (meta.type === 'private') output += `[CQ:at,id=${qqId}]` + '\n'
     output = output + '今日运势：' + statList.luck + '\n'
     output = output + '今日mod：' + statList.mod
     if (statList.specialMod) output = output + ', ' + statList.specialMod + '（？\n'
@@ -40,11 +42,11 @@ async function koishiHandler (meta, eventPath, day) {
     statList.badList.map((item) => {
       output = output + '忌：' + item.name + '\n\t' + item.bad + '\n'
     })
-    return await meta.send(output)
+    return output
     // })
   } catch (ex) {
     console.log(ex)
-    return await meta.send('一些不好的事情发生了')
+    return '一些不好的事情发生了'
   }
 }
 

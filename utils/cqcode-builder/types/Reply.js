@@ -2,7 +2,7 @@ const Base = require('./Base')
 module.exports = class Reply extends Base {
   constructor (attr) {
     super(attr)
-    this.type = 'reply'
+    this.type = 'quote'
   }
 
   id (id) {

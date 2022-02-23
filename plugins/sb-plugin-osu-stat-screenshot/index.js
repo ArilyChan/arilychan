@@ -66,11 +66,11 @@ module.exports.apply = async (app, options, storage) => {
     let mode
     const command = meta.content.split(' ')
     const username = unescapeSpecialChars(command.slice(1).join(' ').trim())
-    if (!username) return meta.send('提供一下用户名。 !!stat(@模式:[osu, taiko, fruits, mania]) osuid\nex: !!stat arily, !!stat@mania arily')
+    if (!username) return '提供一下用户名。 !!stat(@模式:[osu, taiko, fruits, mania]) osuid\nex: !!stat arily, !!stat@mania arily'
 
     if (!command[0].includes('@')) mode = undefined
     mode = command[0].split('@')[1]
-    if (!['osu', 'taiko', 'fruits', 'mania', undefined].includes(mode)) return meta.send(`模式有 osu, taiko, fruits, mania. ${mode}不在其中。`)
+    if (!['osu', 'taiko', 'fruits', 'mania', undefined].includes(mode)) return `模式有 osu, taiko, fruits, mania. ${mode}不在其中。`
 
     await cluster.execute({
       url: `${options.base}/users/${username}/${mode || ''}`,
@@ -83,11 +83,11 @@ module.exports.apply = async (app, options, storage) => {
     let mode
     const command = meta.content.split(' ')
     const username = unescapeSpecialChars(command.slice(1).join(' ').trim())
-    if (!username) return meta.send('提供一下用户名。 !!pr(@模式:[osu, taiko, fruits, mania]) osuid\nex: !!pr arily, !!pr@mania arily')
+    if (!username) return '提供一下用户名。 !!pr(@模式:[osu, taiko, fruits, mania]) osuid\nex: !!pr arily, !!pr@mania arily'
 
     if (!command[0].includes('@')) mode = undefined
     mode = command[0].split('@')[1]
-    if (!['osu', 'taiko', 'fruits', 'mania', undefined].includes(mode)) return meta.send(`模式有 osu, taiko, fruits, mania. ${mode}不在其中。`)
+    if (!['osu', 'taiko', 'fruits', 'mania', undefined].includes(mode)) return `模式有 osu, taiko, fruits, mania. ${mode}不在其中。`
 
     await cluster.execute({
       url: `${options.base}/recent/${username}/${mode || ''}`,
@@ -99,7 +99,7 @@ module.exports.apply = async (app, options, storage) => {
     if (!meta.content.startsWith('!!userpage')) { return next() }
     const command = meta.content.split(' ')
     const username = unescapeSpecialChars(command.slice(1).join(' ').trim())
-    if (!username) return meta.send('提供一下用户名。 !!userpage osuid\nex: !!userpage arily')
+    if (!username) return '提供一下用户名。 !!userpage osuid\nex: !!userpage arily'
 
     await cluster.execute({
       url: `${options.base}/userpage/${username}`,
@@ -124,11 +124,11 @@ module.exports.apply = async (app, options, storage) => {
     reply.push('指定开始日期: @from:2011-01-01')
     reply.push('指定结束日期: @to:2031-01-01')
     reply.push('或者可以指定最近几个小时: @last:24')
-    if (!username) return meta.send(reply.join('\n'))
+    if (!username) return reply.join('\n')
 
     if (!command[0].includes('@')) mode = undefined
     mode = command[0].split('@')[1]
-    if (!['osu', 'taiko', 'fruits', 'mania', undefined].includes(mode)) return meta.send(`模式有 osu, taiko, fruits, mania. ${mode}不在其中。`)
+    if (!['osu', 'taiko', 'fruits', 'mania', undefined].includes(mode)) return `模式有 osu, taiko, fruits, mania. ${mode}不在其中。`
 
     await cluster.execute({
       url: `${options.base}/best/${username}/${mode || ''}?${new URLSearchParams(params)}`,

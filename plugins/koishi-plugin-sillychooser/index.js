@@ -61,9 +61,9 @@ module.exports.apply = (ctx, options) => {
       const reply = sc.apply(meta.selfId, userId, message)
       if (!reply) return next()
       const replyMessage = []
-      if (meta.contentType !== 'private') replyMessage.push(`[CQ:reply,id=${meta.contentId}]`)
+      if (meta.contentType !== 'private') replyMessage.push(`[CQ:quote,id=${meta.contentId}]`)
       replyMessage.push(reply)
-      // if (reply) return meta.send(`[CQ:at,id=${userId}]` + '\n' + reply)
+      // if (reply) return `[CQ:at,id=${userId}]` + '\n' + reply
       await meta.send(replyMessage.join(''))
     } catch (ex) {
       console.log(ex)

@@ -38,6 +38,7 @@
     "plugins/koishi-plugin-ci",
     "plugins/koishi-plugin-puppeteer-cluster",
     "plugins/koishi-plugin-express",
+    "plugins/nyan",
     "utils/sb-prompt-filter",
     "utils/sb-qq-bot-framework",
     "utils/sb-plugin-wrapper",
@@ -48,7 +49,9 @@
     "utils/koishi-web-connect"
   ],
   "dependencies": {
+    "@koishijs/client": "^3.1.2",
     "@koishijs/plugin-adapter-onebot": "^4.0.0",
+    "@koishijs/plugin-adapter-telegram": "^2.1.1",
     "@koishijs/plugin-chat": "^1.2.1",
     "@koishijs/plugin-console": "^3.1.2",
     "@koishijs/plugin-database-mongo": "^3.0.1",

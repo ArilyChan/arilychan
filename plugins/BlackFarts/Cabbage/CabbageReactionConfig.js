@@ -76,7 +76,7 @@ module.exports = {
   say: async ({ command, meta, app }) => {
     const message = command.slice(1).join(' ').trim()
     if (config.isManager(meta.userId)) meta.send(message).catch(e => console.error.bind(console))
-    else if (config.isEnabled('say', meta.userId)) meta.send(`${meta.sender.nickname}: ${message}`).catch(e => console.error.bind(console))
+    else if (config.isEnabled('say', meta.userId)) meta.send(`${meta.author?.nickname}: ${message}`).catch(e => console.error.bind(console))
   }
 }
 

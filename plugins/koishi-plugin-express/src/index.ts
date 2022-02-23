@@ -25,9 +25,12 @@ export interface Options {
   hostname: string | undefined
 }
 export const schema = Schema.object({
-  koishiRoutes: Schema.string().default('ignore'),
-  port: Schema.number(),
-  hostname: Schema.string()
+  koishiRoutes: Schema.union([
+    Schema.const('use').description('passthrough unhandled requests to koishi\'s web server'),
+    Schema.const('ignore').description('server will handle requests to express only')
+  ]).description('controls how express middleware handles requests.'),
+  port: Schema.number().description('an http server will be created when provided a number'),
+  hostname: Schema.string().description('listen to specific hostname')
 })
 
 export function apply (ctx: Context, options: Options = {

@@ -44,25 +44,25 @@ class eventsJsonUtils {
 
   async delPendingEvent (meta, file, name) {
     const events = this.readJson(file)
-    if (!events) return await meta.send('读取活动文件失败')
-    if (!events.pending) return await meta.send('找不到任何待审核活动')
+    if (!events) return '读取活动文件失败'
+    if (!events.pending) return '找不到任何待审核活动'
     const pendingActivityIndex = events.pending.findIndex((item) => {
       return (item.name === name)
     })
-    if (pendingActivityIndex < 0) return await meta.send('找不到该待审核活动')
+    if (pendingActivityIndex < 0) return '找不到该待审核活动'
     events.pending = events.pending.filter(item => item.name !== name)
     this.writeJson(file, events)
-    return await meta.send('已删除该待审核活动')
+    return '已删除该待审核活动'
   }
 
   async addEvent (meta, file, name, good, bad, fromPending = false) {
     const events = this.readJson(file)
-    if (!events) return await meta.send('读取活动文件失败')
+    if (!events) return '读取活动文件失败'
     if (fromPending) {
       const pendingActivityIndex = events.pending.findIndex((item) => {
         return (item.name === name)
       })
-      if (pendingActivityIndex < 0) return await meta.send('待审核活动中找不到该活动')
+      if (pendingActivityIndex < 0) return '待审核活动中找不到该活动'
       good = events.pending[pendingActivityIndex].good
       bad = events.pending[pendingActivityIndex].bad
       events.pending = events.pending.filter(item => item.name !== name)
@@ -73,30 +73,30 @@ class eventsJsonUtils {
     if (oldActivityIndex < 0) {
       events.activities.push({ name, good, bad })
       this.writeJson(file, events)
-      return await meta.send('添加成功')
+      return '添加成功'
     } else {
       events.activities[oldActivityIndex].good = good
       events.activities[oldActivityIndex].bad = bad
       this.writeJson(file, events)
-      return await meta.send('修改成功')
+      return '修改成功'
     }
   }
 
   async delEvent (meta, file, name, fromPending = false) {
     const events = this.readJson(file)
-    if (!events) return await meta.send('读取活动文件失败')
+    if (!events) return '读取活动文件失败'
     const oldActivityIndex = events.activities.findIndex((item) => {
       return (item.name === name)
     })
     if (oldActivityIndex < 0) {
-      return await meta.send('找不到该事件')
+      return '找不到该事件'
     } else {
       events.activities.splice(oldActivityIndex, 1)
       if (fromPending) {
         events.pending = events.pending.filter(item => item.name !== name)
       }
       this.writeJson(file, events)
-      return await meta.send('删除成功')
+      return '删除成功'
     }
   }
 
@@ -108,7 +108,7 @@ class eventsJsonUtils {
     if (users.blackList && users.blackList.indexOf(meta.userId) >= 0) atBlackList = true
     if (users.whiteList && users.whiteList.indexOf(meta.userId) >= 0) atWhiteList = true
     if (isAdmin || atWhiteList) return this.addEvent(meta, eventPath, name, good, bad)
-    else if (atBlackList) return await meta.send('抱歉，我讨厌你')
+    else if (atBlackList) return '抱歉，我讨厌你'
     else {
       const result = this.addPendingEvent(meta, eventPath, { act: 'add', name, good, bad })
       if (result) {
@@ -127,28 +127,28 @@ class eventsJsonUtils {
     if (users.admin && users.admin.indexOf(meta.userId) >= 0) isAdmin = true
     if (users.whiteList && users.whiteList.indexOf(meta.userId) >= 0) atWhiteList = true
     if (isAdmin || atWhiteList) return this.delEvent(meta, eventPath, name)
-    else return await meta.send('抱歉，您没有权限，无法删除活动')
+    else return '抱歉，您没有权限，无法删除活动'
   }
 
   async confirmPendingEvent (meta, eventPath, users, name) {
     if (users.admin && users.admin.indexOf(meta.userId) >= 0) {
       return this.addEvent(meta, eventPath, name, '', '', true)
-    } else return await meta.send('抱歉，您没有审核权限')
+    } else return '抱歉，您没有审核权限'
   }
 
   async refusePendingEvent (meta, eventPath, users, name) {
     if (users.admin && users.admin.indexOf(meta.userId) >= 0) {
       return this.delPendingEvent(meta, eventPath, name)
-    } else return await meta.send('抱歉，您没有审核权限')
+    } else return '抱歉，您没有审核权限'
   }
 
   async showPendingEvent (meta, eventPath) {
     const events = this.readJson(eventPath)
-    if (!events) return await meta.send('读取活动文件失败')
+    if (!events) return '读取活动文件失败'
     let output = ''
-    if (!events.pending) return await meta.send('当前没有待审核活动')
+    if (!events.pending) return '当前没有待审核活动'
     let length = events.pending.length
-    if (length < 1) return await meta.send('当前没有待审核活动')
+    if (length < 1) return '当前没有待审核活动'
     if (length > 10) {
       length = 10
       output = output + '待审核活动较多，只显示前10个'
@@ -157,18 +157,18 @@ class eventsJsonUtils {
       output = output + '活动：' + events.pending[i].name + ' 宜：' + events.pending[i].good + ' 忌：' + events.pending[i].bad + '\n'
     }
     output = output + '管理员输入 "确认/取消 待审核活动名称" 以审核活动'
-    return await meta.send(output)
+    return output
   }
 
   async showEvent (meta, eventPath, name) {
     const events = this.readJson(eventPath)
-    if (!events) return await meta.send('读取活动文件失败')
+    if (!events) return '读取活动文件失败'
     const activityIndex = events.activities.findIndex((item) => {
       return (item.name === name)
     })
-    if (activityIndex < 0) return await meta.send('找不到该活动')
+    if (activityIndex < 0) return '找不到该活动'
     const output = '宜详情：' + events.activities[activityIndex].good + ' \t忌详情：' + events.activities[activityIndex].bad
-    return await meta.send(output)
+    return output
   }
 }
 

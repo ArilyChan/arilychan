@@ -14,7 +14,7 @@ koishi机器人变猫娘工具
 ```javascript
 const nyanOption = {
     noises: ['喵'],
-    transformLastLineOnly: 'false',
+    transformLastLineOnly: false,
     trailing: {
         append: '',
         transform: [

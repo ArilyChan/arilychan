@@ -1,0 +1,15 @@
+port: 8080
+plugins:
+  console: null
+  logger: null
+  manager: null
+  status: null
+  ~puppeteer-cluster: null
+  insight: null
+  blame: null
+  ~osuexstat: null
+  nyan: null
+  express:
+    port: 9000
+  osuercalendar: null
+  ci: null

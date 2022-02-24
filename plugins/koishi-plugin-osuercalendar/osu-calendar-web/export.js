@@ -26,10 +26,17 @@ const deleteCache = () => {
 }
 const prep = async (options, doNotBuild = true) => {
   const dev = process.env.NODE_ENV !== 'production'
+  const magic = () => {
+    const distDir =  path.relative(process.cwd(),path.join(__dirname, '/.next'))
+    return distDir
+  }
+  // const distDir = magic()
+  // const distDir = path.join(__dirname, './.next')
   const app = next({
     dev,
     conf: {
-      distDir: path.join(__dirname, '.next'),
+      distDir: path.relative(process.cwd(),path.join(__dirname, '/.next')),
+      dir: __dirname,
       basePath: options.basePath || '/fortune',
       serverRuntimeConfig: {
         fortunePath: options.eventFile || path.join(__dirname, '../osuercalendar-events.json')
@@ -38,6 +45,7 @@ const prep = async (options, doNotBuild = true) => {
   })
   const handle = app.getRequestHandler()
   try {
+    deleteCache()
     await app.prepare()
   } catch (error) {
     console.error(error)

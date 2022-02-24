@@ -23,14 +23,14 @@ module.exports.apply = (ctx, options) => {
   ctx.using(['express'], function ousercalendarWebApp (ctx) {
     ctx.once('ready', async () => {
       try {
-        ctx.express.use(options.basePath, await web.webApp(options))
+        ctx.express.use(options.basePath || '/fortune', await web.webApp(options))
       } catch (_) {
         logger.warn('You need to build. run `npm run build` in osu-calendar-web')
         ctx.using(['ci'], async function osuercalendarAutoBuilder ({ ci: { build } }) {
           logger.info('You have ci plugin installed. tring auto-build...')
           await build.run({ only: [exports.name] })
           logger.info('Build finished, retry web service...')
-          ctx.express.use(options.basePath, await web.webApp(options))
+          ctx.express.use(options.basePath || '/fortune', await web.webApp(options))
           logger.success('... Succeed! You are all set!')
         })
       }

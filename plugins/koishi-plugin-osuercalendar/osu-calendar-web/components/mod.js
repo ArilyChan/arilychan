@@ -59,7 +59,7 @@ export default function Mods ({mod, size = "50px"} = {}) {
     const modArr = iconEnum[modI]
     return (
         <div className='flex'>
-            {modArr.map(mod => <div style={{width: size}}>{mod}</div>)}
+            {modArr.map(mod => <div style={{width: size}} key={`mod-${mod}`}>{mod}</div>)}
         </div>
     )
 }

@@ -1,7 +1,6 @@
 const path = require('path')
 const url = require('url')
 const next = require('next')
-const rewrite = require('express-urlrewrite')
 
 const express = require('express')
 const router = express.Router()

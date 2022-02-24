@@ -8,6 +8,7 @@ class beatmapDownloader {
     constructor(saveDir) {
         this.saveDir = saveDir;
     }
+
     async downloadMap(bid, times = 0) {
         const filePath = path.join(this.saveDir, `./${bid}.osu`);
         const MAX_RETRY = 20;
@@ -30,6 +31,7 @@ class beatmapDownloader {
             return this.downloadMap(bid, times + 1);
         }
     }
+
     async downloadQueue(beatmaps) {
         try {
             const queue = new PQueue({ concurrency: 1 });

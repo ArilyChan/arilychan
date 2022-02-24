@@ -6,9 +6,9 @@ const VIEWPORT = { width: 992, height: 100, deviceScaleFactor: 1.5 }
 // const crash = (str) => { throw new Error(str || 'something went wrong') }
 Context.delegate && Context.delegate('puppeteerCluster')
 module.exports.name = 'koishi-plugin-puppeteer-cluster'
-module.exports.apply = async (ctx, {
+module.exports.apply = async (ctx, { cluster: { launch }, viewport, navigation } = {
   cluster: {
-    launch = {
+    launch: {
       concurrency: Cluster.CONCURRENCY_CONTEXT,
       maxConcurrency: 10,
       puppeteerOptions: {
@@ -19,9 +19,6 @@ module.exports.apply = async (ctx, {
         ]
       }
     }
-  }, viewport, navigation
-} = {
-  cluster: {
   },
   viewport: VIEWPORT,
   navigation: {

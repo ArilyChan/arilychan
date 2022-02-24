@@ -5,7 +5,6 @@ const next = require('next')
 const express = require('express')
 const router = express.Router()
 
-const rootPath = path.relative(process.cwd(), __dirname)
 let site = null
 
 const nextBuild = require('next/dist/build')
@@ -19,7 +18,7 @@ const build = async () => {
 
 const deleteCache = () => {
     // delete cache to reload .next
-    const absRoot = path.resolve(rootPath , '.next')
+    const absRoot = path.join(__dirname , '.next')
     Object.keys(require.cache).forEach(r => {
       if (r.startsWith(absRoot)) { 
         delete require.cache[r] }
@@ -30,10 +29,10 @@ const prep = async (options, doNotBuild = true) => {
   const app = next({
     dev,
     conf: {
-      distDir: path.join(rootPath, '.next'),
+      distDir: path.join(__dirname, '.next'),
       basePath: options.basePath || '/fortune',
       serverRuntimeConfig: {
-        fortunePath: options.eventFile || path.join(rootPath, '../osuercalendar-events.json')
+        fortunePath: options.eventFile || path.join(__dirname, '../osuercalendar-events.json')
       }
     }
   })
@@ -41,6 +40,7 @@ const prep = async (options, doNotBuild = true) => {
   try {
     await app.prepare()
   } catch (error) {
+    console.error(error)
     if (doNotBuild){
       throw new Error('you need to build. koishi-plugin-ci required')
     }

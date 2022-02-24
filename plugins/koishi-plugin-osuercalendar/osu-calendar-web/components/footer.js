@@ -6,7 +6,7 @@ export default function Footer({build}) {
                 {/* <p className="pb-6">今日运势 {build}</p> */}
             </div>
             <div>
-                <span class="footer-title">referal</span>
+                <span className="footer-title">referal</span>
                 <a href="https://icons8.com/icon/6AqXMrgaiWZB/osu">Osu icon by Icons8</a>
                 <a href="https://icons8.com/icon/hUmiwR_HY5yT/fortune-teller">Fortune Teller icon by Icons8</a>
                 <a href="https://icons8.com/icon/113580/today">Today icon by Icons8</a>
@@ -16,7 +16,7 @@ export default function Footer({build}) {
                 <a href="https://icons8.com/icon/Qq-wIvIEHrlY/osu-lazer">Osu Lazer icon by Icons8</a>
             </div>
             <div>
-                <span class="footer-title">-</span>
+                <span className="footer-title">-</span>
                 <a href="https://icons8.com/icon/124080/fast-forward">Fast Forward icon by Icons8</a>
                 <a href="https://icons8.com/icon/112292/light-on">Light On icon by Icons8</a>
                 <a href="https://icons8.com/icon/105352/christmas-candy">Christmas Candy icon by Icons8</a>
@@ -26,10 +26,10 @@ export default function Footer({build}) {
                 <a href="https://icons8.com/icon/ReZIblLDDfYQ/futurama-bender">Futurama Bender icon by Icons8</a>
             </div>
             {/* <div>
-                <span class="footer-title">Legal</span>
-                <a class="link link-hover">Terms of use</a>
-                <a class="link link-hover">Privacy policy</a>
-                <a class="link link-hover">Cookie policy</a>
+                <span className="footer-title">Legal</span>
+                <a className="link link-hover">Terms of use</a>
+                <a className="link link-hover">Privacy policy</a>
+                <a className="link link-hover">Cookie policy</a>
             </div> */}
         </footer>
     )

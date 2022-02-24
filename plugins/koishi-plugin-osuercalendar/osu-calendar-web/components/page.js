@@ -14,14 +14,13 @@ export default function Result({ statList, displayName, seed, children }) {
               <div className="absolute right-3 top-3"><Calendar date={statList.date} /></div>
               <p className="card-title flex items-center"><img className="pr-1 drop-shadow-md" src="https://img.icons8.com/clouds/200/000000/fortune-teller.png" style={{ height: '70px', marginLeft: '-10px' }} /><b className="pr-1">{displayName ?? seed}</b>的运势</p>
               <div>
-                <p className="flex items-center"><img class="pr-2 drop-shadow" src="https://img.icons8.com/clouds/200/000000/today.png" style={{ height: '50px' }} /><b>{statList.luck}</b></p>
+                <p className="flex items-center"><img className="pr-2 drop-shadow" src="https://img.icons8.com/clouds/200/000000/today.png" style={{ height: '50px' }} /><b>{statList.luck}</b></p>
                 <div className="flex items-start">
                   <div className="pr-1 flex items-center"><img className="drop-shadow" src="https://img.icons8.com/clouds/100/000000/osu.png" style={{ height: '50px' }} /> </div>
-                  {/* <p className="pr-1">Mod: </p><b>{statList.mod}{(statList.specialMod) ? statList.specialMod + '（？' : ''}</b> */}
                   <Mods mod={statList.mod} />
                 </div>
               </div>
-              <div class="divider"></div>
+              <div className="divider"></div>
               <div className="flex flex-col w-full lg:flex-row">
                 <div className="grid flex-grow ">
                   <div className="grid-flow-row shadow stats">

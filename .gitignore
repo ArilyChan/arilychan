@@ -126,3 +126,4 @@ bot/Plugins/exsper/ppyshQuery/storage/database.db
 bot/Plugins/exsper/osuerCalendar/osuercalendar-events.json
 *.code-workspace
 koishi.config.yml
+accounts/*

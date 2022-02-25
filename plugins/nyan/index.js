@@ -4,6 +4,7 @@ const { Schema } = require('koishi')
 const nyaned = /喵([^\p{L}\d\s@#]+)?( +)?$/u
 const trailingChars = /(?<content>.*?)(?<trailing>[^\p{L}\d\s@#]+)?(?<trailingSpace> +)?$/u
 const trailingURL = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{2,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/
+const endsWithCQCode = /\[(.*)\]$/
 
 // logger = new Logger('nyan')
 // logger.level = 3
@@ -45,6 +46,10 @@ const nyan = (message, noiseMaker, { trailing: { append, transform }, transformL
     }
     if (nyaned.test(line)) {
       // logger.debug(line, 'unhandled due to \'nyaned\'')
+      return line
+    }
+    if (endsWithCQCode.test(line)) {
+      // logger.debug(line, 'unhandled due to \'ends with cqcode\'')
       return line
     }
     if (trailingURL.test(line)) {

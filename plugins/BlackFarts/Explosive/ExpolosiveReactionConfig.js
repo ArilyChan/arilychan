@@ -743,7 +743,7 @@ module.exports = {
   dad_of: dad
   // policeadd: async ({ command, meta, app}) => meta.send(await addUser(command.slice(1).join(' ')).then(_ => 'added')),
   // forceupdate: async ({ command, meta, app}) => meta.send(await addUser(command.slice(1).join(' '), true).then(_ => 'updated').catch(e => Promise.resolve(e.toString()))),
-  // deranker: async ({ command, meta, app}) => meta.send(`[CQ:image,file=base64://${await DerankerBase64Table()}]`),
+  // deranker: async ({ command, meta, app}) => meta.send(`[CQ:image,url=base64://${await DerankerBase64Table()}]`),
   // policeexists: async ({ command, meta, app}) => {
   //    const result = await fetch(`https://o.ri.mk/api/pppolice/v1/localUserExists/${command.slice(1).join(' ')}`).then(res => res.json())
   //    meta.send(result.toString());

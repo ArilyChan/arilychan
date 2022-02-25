@@ -2,6 +2,7 @@
 
 const run = require('./run')
 const path = require('path')
+const { segment } = require('koishi')
 const EventsJson = require('./lib/eventsJson')
 const thisPath = __dirname
 
@@ -23,14 +24,14 @@ module.exports.apply = (ctx, options) => {
   ctx.using(['express'], function ousercalendarWebApp (ctx) {
     ctx.once('ready', async () => {
       try {
-        ctx.express.use(options.basePath, await web.webApp(options))
+        ctx.express.use(options.basePath || '/fortune', await web.webApp(options))
       } catch (_) {
         logger.warn('You need to build. run `npm run build` in osu-calendar-web')
         ctx.using(['ci'], async function osuercalendarAutoBuilder ({ ci: { build } }) {
           logger.info('You have ci plugin installed. tring auto-build...')
           await build.run({ only: [exports.name] })
           logger.info('Build finished, retry web service...')
-          ctx.express.use(options.basePath, await web.webApp(options))
+          ctx.express.use(options.basePath || '/fortune', await web.webApp(options))
           logger.success('... Succeed! You are all set!')
         })
       }
@@ -49,17 +50,20 @@ module.exports.apply = (ctx, options) => {
           logger.error('got no cluster')
           return await run.koishiHandler(meta, eventPath, new Date())
         }
+        logger.error('got cluster')
         const cluster = ctx.puppeteerCluster.instance
         cluster.queue(async ({ page }) => {
           try {
-            await page.goto(`http://localhost:3005/fortune/daily?seed=${meta.userId}&lang=zh-cn&displayName=${meta.author?.nickname || meta.author?.username || '你'}`)
+            await page.goto(`http://localhost:9000/fortune/daily?seed=${meta.userId}&lang=zh-cn&displayName=${meta.author?.nickname || meta.author?.username || '你'}`)
             await page.setViewport({ width: 992, height: 100, deviceScaleFactor: 1.5 })
             const e = await page.$('#__next > div > div > div')
-            const ss = await e.screenshot({ encoding: 'base64' })
-            const cqcode = `[CQ:image,file=base64://${ss}]`
+            const ss = await e.screenshot({ encoding: 'base64', type: 'jpeg' })
+            const cqcode = `[CQ:image,url=base64://${ss}]`
+            console.log(cqcode.length)
             meta.send(cqcode).catch(_ => meta.send('发送图片失败。'))
           } catch (error) {
-            return await run.koishiHandler(meta, eventPath, new Date())
+            logger.error(error)
+            await run.koishiHandler(meta, eventPath, new Date())
           }
         })
       }

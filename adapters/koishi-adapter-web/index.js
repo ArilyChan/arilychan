@@ -44,7 +44,7 @@ Context.prototype.broadcast = async function (...args) {
     output += message.slice(0, capture.index)
     message = message.slice(capture.index + text.length)
     const { data } = await axios.get(url, { responseType: 'arraybuffer' })
-    output += `[CQ:image,file=base64://${Buffer.from(data).toString('base64')}]`
+    output += `[CQ:image,url=base64://${Buffer.from(data).toString('base64')}]`
   }
   args[index] = output + message
   return broadcast.apply(this, args)

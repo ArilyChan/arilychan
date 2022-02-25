@@ -1,5 +1,5 @@
 const defaultOptions = {
-  base: 'http://ri.mk:3006/cn'
+  base: 'https://info.osustuff.ri.mk/cn'
 }
 const specialChars = {
   '&': '&amp;',
@@ -50,7 +50,7 @@ module.exports.apply = async (app, options, storage) => {
       fullPage: true
     })
     // Store screenshot, do something else
-    const cqcode = `[CQ:image,file=base64://${screen}]`
+    const cqcode = `[CQ:image,url=base64://${screen}]`
     meta.send(cqcode).catch(_ => meta.send('发送图片失败。'))
   })
   cluster.on('taskerror', (err, data, willRetry) => {

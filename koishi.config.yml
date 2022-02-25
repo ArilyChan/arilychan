@@ -4,12 +4,29 @@ plugins:
   logger: null
   manager: null
   status: null
-  ~puppeteer-cluster: null
   insight: null
-  blame: null
   ~osuexstat: null
-  nyan: null
   express:
     port: 9000
   osuercalendar: null
   ci: null
+  adapter-telegram:
+    selfUrl: //bot.ri.mk
+    bots:
+      - token: 843244420:AAG_ugWiYS0Dg-grY8A6aRCuBr7jdv1M71g
+        protocol: polling
+  database-mongo:
+    protocol: mongodb+srv
+    host: pppolice-mongodb.fvcem.gcp.mongodb.net
+    username: koishi
+    password: x64bD6JGQJGJXmk9
+  ~blame: null
+  ~ppysb-query: null
+  puppeteer-cluster: null
+  ~assets-local:
+    root: ~/koishi/assets
+    selfUrl: //bot.ri.mk
+  osu-stat-screenshot: null
+  nyan:
+    trailing:
+      append: '~'

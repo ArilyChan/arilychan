@@ -5,7 +5,7 @@ const nyaned = /喵([^\p{L}\d\s@#]+)?( +)?$/u
 const trailingChars = /(?<content>.*?)(?<trailing>[^\p{L}\d\s@#]+)?(?<trailingSpace> +)?$/u
 const trailingURL = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{2,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/
 
-// const logger = new Logger('nyan')
+// logger = new Logger('nyan')
 // logger.level = 3
 
 const _transform = (trailing, transforms) => {
@@ -19,6 +19,7 @@ const _transform = (trailing, transforms) => {
     if (last !== occurrence) continue
     return trailing.slice(0, -1) + replaceWith
   }
+  return trailing
 }
 
 const nyan = (message, noiseMaker, { trailing: { append, transform }, transformLastLineOnly }) => {
@@ -33,6 +34,7 @@ const nyan = (message, noiseMaker, { trailing: { append, transform }, transformL
   }
   // transform message
   message = message.map((line, index, lines) => {
+    console.log(line.slice(-10))
     if (transformLastLineOnly && index < lines.length - 1) {
       // logger.debug(line, 'unhandled due to `transformLastLineOnly`')
       return line
@@ -98,6 +100,7 @@ module.exports = {
     ctx.any().before('send', (session) => {
       const noiseMaker = makeNoise(noises)
       session.content = nyan(session.content, noiseMaker, options)
+      console.log(session.content.slice(-10))
     })
   }
 }

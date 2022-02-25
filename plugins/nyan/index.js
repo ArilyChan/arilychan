@@ -105,7 +105,6 @@ module.exports = {
     ctx.any().before('send', (session) => {
       const noiseMaker = makeNoise(noises)
       session.content = nyan(session.content, noiseMaker, options)
-      console.log(session.content.slice(-10))
     })
   }
 }

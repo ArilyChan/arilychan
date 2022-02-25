@@ -1,5 +1,5 @@
 {
-  "name": "sb-plugin-osu-stat-screenshot",
+  "name": "koishi-plugin-osu-stat-screenshot",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",

@@ -75,7 +75,7 @@ module.exports = {
             });
             const picUrl = chart.draw();
             const base64 = picUrl.substring(picUrl.indexOf(",") + 1);
-            return `[CQ:image,file=base64://${base64}]`;
+            return `[CQ:image,url=base64://${base64}]`;
         }
         catch (ex) {
             return ex;

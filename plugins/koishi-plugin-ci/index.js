@@ -1,17 +1,11 @@
-const { Service, Context, Modules } = require('koishi')
+const { Service, Context, Modules, Schema } = require('koishi')
 const Build = require('./Build')
-const VersionControl = require('./VersionControl')
 
 Context.service('ci')
 module.exports = class KoishiCI extends Service {
-  constructor (ctx, options = {
-    update: {
-      channel: 'stable'
-    }
-  }) {
+  constructor (ctx, options = {}) {
     super(ctx, 'ci', true)
     this.build = new Build(this)
-    this.update = new VersionControl(this)
     this.options = options
   }
 
@@ -36,3 +30,5 @@ module.exports = class KoishiCI extends Service {
     return root
   }
 }
+
+module.exports.schema = Schema.object({})

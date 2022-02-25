@@ -2,6 +2,7 @@
 
 const run = require('./run')
 const path = require('path')
+const { segment } = require('koishi')
 const EventsJson = require('./lib/eventsJson')
 const thisPath = __dirname
 
@@ -49,17 +50,20 @@ module.exports.apply = (ctx, options) => {
           logger.error('got no cluster')
           return await run.koishiHandler(meta, eventPath, new Date())
         }
+        logger.error('got cluster')
         const cluster = ctx.puppeteerCluster.instance
         cluster.queue(async ({ page }) => {
           try {
-            await page.goto(`http://localhost:3005/fortune/daily?seed=${meta.userId}&lang=zh-cn&displayName=${meta.author?.nickname || meta.author?.username || '你'}`)
+            await page.goto(`http://localhost:9000/fortune/daily?seed=${meta.userId}&lang=zh-cn&displayName=${meta.author?.nickname || meta.author?.username || '你'}`)
             await page.setViewport({ width: 992, height: 100, deviceScaleFactor: 1.5 })
             const e = await page.$('#__next > div > div > div')
-            const ss = await e.screenshot({ encoding: 'base64' })
-            const cqcode = `[CQ:image,file=base64://${ss}]`
+            const ss = await e.screenshot({ encoding: 'base64', type: 'jpeg' })
+            const cqcode = `[CQ:image,url=base64://${ss}]`
+            console.log(cqcode.length)
             meta.send(cqcode).catch(_ => meta.send('发送图片失败。'))
           } catch (error) {
-            return await run.koishiHandler(meta, eventPath, new Date())
+            logger.error(error)
+            await run.koishiHandler(meta, eventPath, new Date())
           }
         })
       }

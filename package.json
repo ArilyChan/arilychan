@@ -38,7 +38,7 @@
     "plugins/koishi-plugin-blame",
     "plugins/arilychan-radio",
     "plugins/koishi-plugin-osuexstat",
-    "plugins/blackfarts",
+    "plugins/koishi-plugin-blackfarts",
     "plugins/recorder",
     "plugins/sb-plugin-osu-stat-screenshot",
     "plugins/koishi-plugin-netease",

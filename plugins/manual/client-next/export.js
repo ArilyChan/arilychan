@@ -8,8 +8,8 @@ const router = express.Router()
 let site = null
 
 const nextBuild = require('next/dist/build')
-const build = async () => {
-    await nextBuild.default(__dirname, require('./next.config.js'))
+const build = async (options) => {
+    await nextBuild.default(__dirname, {...require('./next.config.js'), basePath: options.web.prefix})
     return {
       job: 'build-nextjs',
       successed: true
@@ -25,22 +25,21 @@ const deleteCache = () => {
     })
 }
 const prep = async (options, doNotBuild = true) => {
-  const dev = process.env.NODE_ENV !== 'production'
-  const magic = () => {
-    const distDir =  path.relative(process.cwd(),path.join(__dirname, '/.next'))
-    return distDir
-  }
+  // const { dev } = options
   // const distDir = magic()
   // const distDir = path.join(__dirname, './.next')
   const app = next({
-    dev,
+    dev: true,
     dir: path.relative(process.cwd(), __dirname),
     conf: {
       distDir: path.relative(process.cwd(),path.join(__dirname, '/.next')),
-      dir: __dirname,
-      basePath: options.basePath || '/fortune',
+      // dir: path.relative(process.cwd(),path.join(__dirname)),
+      basePath: options.web.prefix,
       serverRuntimeConfig: {
-        fortunePath: options.eventFile || path.join(__dirname, '../osuercalendar-events.json')
+        manual: require('sb-bot-manual'), 
+        additional: {
+          hi: 'hi'
+        }
       }
     }
   })
@@ -51,16 +50,16 @@ const prep = async (options, doNotBuild = true) => {
   } catch (error) {
     console.error(error)
     if (doNotBuild){
-      throw new Error('you need to build. koishi-plugin-ci required')
+      throw new Error('you need to build.')
     }
-    await build()
+    await build(options)
     deleteCache()
     return prep(options, true) 
   }
   return handle
 }
 exports.build = build
-module.exports.webApp = async (options, storage, httpServer) => {
+module.exports.web = async (options) => {
   if (site) return site
   const handle = await prep(options)
   deleteCache()

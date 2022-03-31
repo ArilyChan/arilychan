@@ -39,7 +39,6 @@ export function apply (ctx: Context, options: Options = {
   hostname: undefined
 }): void {
   if (!ctx.app) return
-  console.log(options)
 
   const expressApp = express()
   ctx.express = expressApp

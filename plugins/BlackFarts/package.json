@@ -1,5 +1,5 @@
 {
-  "name": "blackfarts",
+  "name": "koishi-plugin-blackfarts",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -22,10 +22,10 @@
     "node-osu": "^2.2.1",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
-    "slugify": "^1.6.5"
+    "slugify": "^1.6.5",
+    "@babel/preset-react": "^7.16.7"
   },
   "devDependencies": {
-    "@babel/preset-react": "^7.16.7"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

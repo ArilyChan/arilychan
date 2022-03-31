@@ -3,11 +3,11 @@ const { Schema } = require('koishi')
 
 const nyaned = /喵([^\p{L}\d\s@#]+)?( +)?$/u
 const trailingChars = /(?<content>.*?)(?<trailing>[^\p{L}\d\s@#]+)?(?<trailingSpace> +)?$/u
-const trailingURL = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{2,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/
-const endsWithCQCode = /\[(.*)\]$/
+const trailingURL = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{2,6}\b([-a-zA-Z0-9()@:%_+.~#?&//<>{}]*)?$/u
+const endsWithCQCode = /\[[cqCQ](.*)\]$/u
 
-// logger = new Logger('nyan')
-// logger.level = 3
+// const logger = new Logger('nyan')
+// loggerlevel = 3
 
 const _transform = (trailing, transforms) => {
   // expect transforms is unempty
@@ -35,31 +35,30 @@ const nyan = (message, noiseMaker, { trailing: { append, transform }, transformL
   }
   // transform message
   message = message.map((line, index, lines) => {
-    console.log(line.slice(-10))
     if (transformLastLineOnly && index < lines.length - 1) {
-      // logger.debug(line, 'unhandled due to `transformLastLineOnly`')
+      // loggerdebug(line, 'unhandled due to `transformLastLineOnly`')
       return line
     }
     if (line.trim() === '') {
-      // logger.debug(line, 'unhandled due to empty line')
+      // loggerdebug(line, 'unhandled due to empty line')
       return line
     }
     if (nyaned.test(line)) {
-      // logger.debug(line, 'unhandled due to \'nyaned\'')
+      // loggerdebug(line, 'unhandled due to \'nyaned\'')
       return line
     }
     if (endsWithCQCode.test(line)) {
-      // logger.debug(line, 'unhandled due to \'ends with cqcode\'')
+      // loggerdebug(line, 'unhandled due to \'ends with cqcode\'')
       return line
     }
     if (trailingURL.test(line)) {
-      // logger.debug(line, 'unhandled due to \'trailing with url\'')
+      // loggerdebug(line, 'unhandled due to \'trailing with url\'')
       return line
     }
     const noise = noiseMaker()
-    // logger.debug('noise going to make this time:', noise)
+    // loggerdebug('noise going to make this time:', noise)
     let { groups: { content, trailing, trailingSpace } } = line.match(trailingChars)
-    // logger.debug('analyzed message:', { content, trailing, trailingSpace })
+    // loggerdebug('analyzed message:', { content, trailing, trailingSpace })
     if (!trailing) trailing = append
     else if (transform.length) trailing = _transform(trailing, transform)
     line = `${content ?? ''}${noise}${trailing ?? ''}${trailingSpace ?? ''}`

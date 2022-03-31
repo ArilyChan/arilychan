@@ -14,7 +14,7 @@ module.exports.schema = Schema.object({
       maxConcurrency: Schema.number().default(10).description('max concurrency'),
       puppeteerOptions: Schema.object({
         headless: Schema.boolean().default(true).description('start puppeteer in headless mode'),
-        args: Schema.array().default([
+        args: Schema.array(String).default([
           '--no-sandbox',
           '--disable-setuid-sandbox'
         ]).description('puppeteer start options')

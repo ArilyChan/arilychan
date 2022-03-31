@@ -1,7 +1,8 @@
+const { Schema } = require('koishi')
 const CabbageReaction = require('./Reaction')
 const Command = require('./Command')
 
-const Help = require('./Help')
+// const Help = require('./Help')
 const cabbageReaction = require('./Cabbage/CabbageReactionConfig')
 const explosiveReaction = require('./Explosive/ExpolosiveReactionConfig')
 const gambleReaction = require('./EWC-Gamble/GambleReactionConfig')
@@ -23,13 +24,17 @@ const web = require('./server')
 //   webInited = true
 //   return web(storage, http)
 // }
-
+module.exports.schema = Schema.object({
+  web: Schema.object({
+    prefix: Schema.string().default('/blackfarts').description('web server prefix')
+  })
+})
 module.exports.apply = function (app, options) {
   const cabbage = new CabbageReaction(cabbageReaction)
   const explosive = new CabbageReaction(explosiveReaction)
   const gamble = new CabbageReaction(gambleReaction)
   const recipe = new CabbageReaction(recipeReaction)
-  const help = new CabbageReaction(Help)
+  // const help = new CabbageReaction(Help)
 
   const storage = {
     originalMenu: menu,
@@ -46,7 +51,7 @@ module.exports.apply = function (app, options) {
   app.middleware((meta, next) => {
     let reacted = false
     if (meta.content[0] === '!' || meta.content[0] === '！') {
-      reacted = Object.entries({ help, cabbage, explosive, gamble, recipe }).some(([name, reaction]) => {
+      reacted = Object.entries({ cabbage, explosive, gamble, recipe }).some(([name, reaction]) => {
         if (reaction.reactTo(new Command({ meta, app, storage }))) {
           // console.log(`${meta.content} Catched by subplugin: ${name}`);
           return true

@@ -23,6 +23,7 @@ const manual = require('sb-bot-manual')
 const VIEWPORT = { width: 992, height: 100, deviceScaleFactor: 1.5 }
 module.exports.name = 'sc-stat'
 module.exports.apply = async (app, options, storage) => {
+  const logger = app.logger('puppeteer-cluster')
   options = { ...defaultOptions, ...options }
   const cluster = await Cluster.launch({
     concurrency: Cluster.CONCURRENCY_CONTEXT,
@@ -35,9 +36,9 @@ module.exports.apply = async (app, options, storage) => {
       ]
     }
   })
-  console.log('cluster started')
+  logger.info('cluster started')
   cluster.task(async ({ page, data: { url, meta } }) => {
-    console.log(url)
+    logger.info(url)
     await page.setViewport(VIEWPORT)
     await page.goto(url, {
       waitUntil: 'networkidle0'

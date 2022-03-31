@@ -11,6 +11,23 @@ class Base {
     this._tags = []
   }
 
+  json () {
+    const entries = [...this._entries.entries()].map(([id, entry]) => [id, entry.json()])
+    return {
+      ...JSON.parse(JSON.stringify(this)),
+      _entries: entries
+    }
+  }
+
+  // static fromJSON (json) {
+  //   json.entries = json.entries.map(entry => Base.fromJSON(entry))
+  //   const _entries = new Map(json.entries)
+  //   return {
+  //     ...json,
+  //     _entries
+  //   }
+  // }
+
   name (name) {
     this._name = name
     return this
@@ -62,7 +79,7 @@ class Base {
     return this
   }
 
-  renderAsString ({ indent, list, newLine, command } = { indent: '  ', list: '- ', newLine: '\n', command: '> ' }) {
+  renderAsString ({ indent = '  ', list = '- ', newLine = '\n', command = '> ' } = {}) {
     const v = { i: 0 }
     const i = () => [...Array(v.i)].map(_ => indent).join('')
     const l = () => list

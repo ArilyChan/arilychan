@@ -10,8 +10,10 @@ Root
 Expression "«"
   = _ line:(@q:Command / comment:Comment { return { comment }}) _ { return line }
 
+// Username "username"
+//   = username:([a-zA-Z0-9 \[\]-_] / [^\x00-\x7F|\s])+ { return username.join("").trim() }
 Username "username"
-  = username:[a-zA-Z0-9 \[\]-_]+ { return username.join("").trim() }
+  = username:(!LineTerminatorSequence @.)+ { return username.join("").trim() }
 
 Command "command"
   = command:(BanchoCommand / SBCommand)

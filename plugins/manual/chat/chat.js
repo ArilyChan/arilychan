@@ -9,10 +9,10 @@ async function helps (meta) {
   const kw = command.slice(1).join(' ').trim()
   if (kw) {
     const result = manual.filter(kw)
-    if (!result) return '没有找到相关词条'
-    return result.renderAsString({ indent: '\t' })
+    if (!result) { return '没有找到相关词条' }
+    return meta.send(result.renderAsString({ indent: '\t' }))
   }
-  if (new Date() - recent[meta?.groupId || meta?.userId]?.timestamp < 1000 * 60) return `[CQ:quote,id=${recent[meta?.groupId || meta?.userId].messageId}] 刚刚发过，很长，往上面翻一翻`
+  if (new Date() - recent[meta?.groupId || meta?.userId]?.timestamp < 1000 * 60) { return `[CQ:quote,id=${recent[meta?.groupId || meta?.userId].messageId}] 刚刚发过，很长，往上面翻一翻` }
   await meta.send(manual.renderAsString({ indent: '\t' }))
   recent[meta?.groupId || meta?.userId] = {
     messageId: meta.contentId,

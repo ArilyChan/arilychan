@@ -23,7 +23,7 @@ SBCommand "ppy.sb server"
   = "*" command:BaseCommand { return _rawCommand("sb", command) }
 
 BaseCommand "command"
-  = q:(StatCommand / RecentCommand / BestScoresCommand) sp user: Username { return { ...q, user }} /
+  = q:(StatCommand / RecentCommand / BestScoresCommand / UserpageCommand) sp user: Username { return { ...q, user }} /
     q:ScoreCommand sp id:Int { return {...q, id }} /
     q:BindUserCommand sp user:Username { return {...q, user }} /
     q:BindModeCommand sp mode:Mode { return {...q, mode }}
@@ -32,6 +32,9 @@ Mode "mode"
   = m:[a-zA-Z]+ { return m.join("") }
 HashtagMode ":mode"
   = "#" @Mode
+
+UserpageCommand
+  = "userpage"i { return {type: 'userpage' }}
 
 StatCommand "stat"
   = "stat"i mode:HashtagMode? { return { type: 'stat', mode }}

@@ -40,7 +40,7 @@
     "plugins/koishi-plugin-osuexstat",
     "plugins/koishi-plugin-blackfarts",
     "plugins/recorder",
-    "plugins/sb-plugin-osu-stat-screenshot",
+    "plugins/koishi-plugin-osu-stat-screenshot",
     "plugins/koishi-plugin-netease",
     "plugins/koishi-plugin-ppysb-query",
     "plugins/koishi-plugin-ppysh-query",

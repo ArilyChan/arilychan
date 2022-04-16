@@ -1,6 +1,4 @@
-const defaultOptions = {
-  base: 'https://info.osustuff.ri.mk/cn'
-}
+const { Schema } = require('koishi')
 const specialChars = {
   '&': '&amp;',
   '[': '&#91;',
@@ -9,58 +7,54 @@ const specialChars = {
 }
 function unescapeSpecialChars (chars) {
   chars = chars.toString()
-  Object.entries(specialChars).map(([replace, find]) => {
+  Object.entries(specialChars).forEach(([replace, find]) => {
     chars = chars.split(find).join(replace)
   })
   return chars
 }
 
-const { Cluster } = require('puppeteer-cluster')
 const manual = require('sb-bot-manual')
 
 // const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+const serverConfig = Schema.object({
+  default: Schema.boolean().default(false).description('默认查询此服务器'),
+  server: Schema.string(),
+  modes: Schema.array(String).default(['osu', 'taiko', 'fruit', 'mania'])
+})
 
-const VIEWPORT = { width: 992, height: 100, deviceScaleFactor: 1.5 }
-module.exports.name = 'sc-stat'
-module.exports.apply = async (app, options, storage) => {
-  const logger = app.logger('puppeteer-cluster')
-  options = { ...defaultOptions, ...options }
-  const cluster = await Cluster.launch({
-    concurrency: Cluster.CONCURRENCY_CONTEXT,
-    maxConcurrency: 2,
-    puppeteerOptions: {
-      headless: true,
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox'
-      ]
-    }
-  })
-  logger.info('cluster started')
-  cluster.task(async ({ page, data: { url, meta } }) => {
-    logger.info(url)
-    await page.setViewport(VIEWPORT)
-    await page.goto(url, {
-      waitUntil: 'networkidle0'
+module.exports.name = 'osu-stat-screenshot'
+module.exports.using = ['puppeteerCluster']
+module.exports.schema = Schema.object({
+  base: Schema.string().default('https://info.osustuff.ri.mk/cn').description('osu-info-web网站根目录(/{lang})'),
+  server: Schema.dict(serverConfig)
+    .description('配置可用的服务器')
+    .default({
+      bancho: {
+        default: true,
+        server: 'osu! 官方服务器',
+        modes: ['osu', 'taiko', 'fruit', 'mania']
+      },
+      sb: {
+        default: false,
+        server: 'ppy.sb私服',
+        modes: ['osu', 'osuRX', 'osuAP', 'taiko', 'taikoRX', 'fruit', 'fruitRX', 'mania']
+      }
+    }),
+  modeAlias: Schema.dict(Schema.array(String))
+    .description('mode的别名')
+    .default({
+      osu: ['std'],
+      osuRX: ['stdRX', 'stdRx', 'stdrx', 'osuRx', 'osurx', 'relax', 'osuRelax'],
+      osuAP: ['stdAP', 'stdAp', 'stdap', 'osuAp', 'osuap', 'ap', 'osuAutoPilot'],
+      taiko: ['太鼓', 'Taiko'],
+      taikoRX: ['TaikoRx', 'Taikorx', 'taikoRx', 'taikorx'],
+      fruit: ['ctb', 'CTB', '接水果', 'Ctb'],
+      mania: ['骂娘', 'Mania', 'keys', 'key']
     })
-    // await wait(1000);
-    // await page.goto(url);
-    const screen = await page.screenshot({
-      type: 'jpeg',
-      encoding: 'base64',
-      fullPage: true
-    })
-    // Store screenshot, do something else
-    const cqcode = `[CQ:image,url=base64://${screen}]`
-    meta.send(cqcode).catch(_ => meta.send('发送图片失败。'))
-  })
-  cluster.on('taskerror', (err, data, willRetry) => {
-    if (willRetry) {
-      console.warn(`Encountered an error while crawling ${data}. ${err.message}\nThis job will be retried`)
-    } else {
-      console.error(`Failed to crawl ${data}: ${err.message}`)
-    }
-  })
+})
+module.exports.apply = async (app, options) => {
+  options = new Schema(options)
+  const cluster = app.puppeteerCluster
 
   app.middleware(async (meta, next) => {
     if (!meta.content.startsWith('!!stat')) { return next() }
@@ -72,11 +66,8 @@ module.exports.apply = async (app, options, storage) => {
     if (!command[0].includes('@')) mode = undefined
     mode = command[0].split('@')[1]
     if (!['osu', 'taiko', 'fruits', 'mania', undefined].includes(mode)) return `模式有 osu, taiko, fruits, mania. ${mode}不在其中。`
-
-    await cluster.execute({
-      url: `${options.base}/users/${username}/${mode || ''}`,
-      meta
-    })
+    const screen = cluster.screenshot.base64(`${options.base}/users/${username}/${mode || ''}`)
+    return `[CQ:image,url=base64://${screen}]`
   })
 
   app.middleware(async (meta, next) => {
@@ -90,10 +81,8 @@ module.exports.apply = async (app, options, storage) => {
     mode = command[0].split('@')[1]
     if (!['osu', 'taiko', 'fruits', 'mania', undefined].includes(mode)) return `模式有 osu, taiko, fruits, mania. ${mode}不在其中。`
 
-    await cluster.execute({
-      url: `${options.base}/recent/${username}/${mode || ''}`,
-      meta
-    })
+    const screen = cluster.screenshot.base64(`${options.base}/recent/${username}/${mode || ''}`)
+    return `[CQ:image,url=base64://${screen}]`
   })
 
   app.middleware(async (meta, next) => {
@@ -102,10 +91,8 @@ module.exports.apply = async (app, options, storage) => {
     const username = unescapeSpecialChars(command.slice(1).join(' ').trim())
     if (!username) return '提供一下用户名。 !!userpage osuid\nex: !!userpage arily'
 
-    await cluster.execute({
-      url: `${options.base}/userpage/${username}`,
-      meta
-    })
+    const screen = cluster.screenshot.base64(`${options.base}/userpage/${username}`)
+    return `[CQ:image,url=base64://${screen}]`
   })
 
   app.middleware(async (meta, next) => {
@@ -131,10 +118,8 @@ module.exports.apply = async (app, options, storage) => {
     mode = command[0].split('@')[1]
     if (!['osu', 'taiko', 'fruits', 'mania', undefined].includes(mode)) return `模式有 osu, taiko, fruits, mania. ${mode}不在其中。`
 
-    await cluster.execute({
-      url: `${options.base}/best/${username}/${mode || ''}?${new URLSearchParams(params)}`,
-      meta
-    })
+    const screen = cluster.screenshot.base64(`${options.base}/best/${username}/${mode || ''}?${new URLSearchParams(params)}`)
+    return `[CQ:image,url=base64://${screen}]`
   })
 }
 

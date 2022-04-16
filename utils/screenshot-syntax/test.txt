@@ -1,0 +1,10 @@
+!!stat arily // bancho stat arily
+?recent arily  // osu
+*stat#osu 1130
+?best1 arily
+?bp @last 24 arily
+?bp @from 2022-12-30 @to 2024-12-12 1123053
+!!score 12345
+
+!!setUser arilychan
+!!setMode osurx

@@ -4,8 +4,6 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "puppeteer": "^13.0.1",
-    "puppeteer-cluster": "^0.22.0"
   },
   "devDependencies": {},
   "scripts": {

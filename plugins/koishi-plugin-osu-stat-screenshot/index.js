@@ -80,21 +80,32 @@ module.exports.apply = async (app, options) => {
     return op
   }
 
+  const params = (params) => {
+    return `?${new URLSearchParams(params)}`
+  }
+
   const ops = {
     stat ({ user: username, mode, server }) {
-      return screenshot(`${options.base}/users/${username}/${mode || ''}?server=${server}`)
+      return screenshot(`${options.base}/users/${username}/${mode || ''}${params({ server })}`)
     },
-    best ({ user: username, mode, server }) {
-      return screenshot(`${options.base}/users/${username}/${mode || ''}?server=${server}`)
+    best ({ user: username, mode, server, find }) {
+      if (!find) find = {}
+      find = {
+        startDate: find.from,
+        endDate: find.to,
+        startHoursBefore: find.last,
+        endHoursBefore: undefined
+      }
+      return screenshot(`${options.base}/best/${username}/${mode || ''}${params({ server, ...find })}`)
     },
     recent ({ user: username, mode, server }) {
-      return screenshot(`${options.base}/recent/${username}/${mode || ''}?server=${server}`)
+      return screenshot(`${options.base}/recent/${username}/${mode || ''}${params({ server })}`)
     },
     userpage ({ user: username, server }) {
-      return screenshot(`${options.base}/userpage/${username}?server=${server}`)
+      return screenshot(`${options.base}/userpage/${username}${params({ server })}`)
     },
     score ({ id, server }) {
-      return screenshot(`${options.base}/score/${id}?server=${server}`)
+      return screenshot(`${options.base}/score/${id}${params({ server })}`)
     },
     'set-user' () {
       return 'no imp yet'

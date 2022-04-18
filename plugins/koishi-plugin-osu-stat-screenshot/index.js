@@ -56,6 +56,7 @@ module.exports.schema = Schema.object({
 // `${options.base}/users/${username}/${mode || ''}`
 
 module.exports.apply = async (app, options) => {
+  const logger = app.logger('osu-screenshot')
   options = new Schema(options)
   const cluster = app.puppeteerCluster
   const screenshot = async (url) => {
@@ -99,7 +100,7 @@ module.exports.apply = async (app, options) => {
       }
       return screenshot(`${options.base}/best/${username}/${mode || ''}${params({ server, ...find })}`)
     },
-    recent ({ user: username, mode, server }) {
+    'recent-score' ({ user: username, mode, server }) {
       return screenshot(`${options.base}/recent/${username}/${mode || ''}${params({ server })}`)
     },
     userpage ({ user: username, server }) {
@@ -131,6 +132,7 @@ module.exports.apply = async (app, options) => {
       const result = await Promise.all(data.map(op => run(op, meta)))
       return result.join('\n')
     } catch (err) {
+      logger.error(err)
       return next()
     }
   })

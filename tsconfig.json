@@ -1,9 +1,14 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
+    "outDir": "./built",
+    "target":"ES2020",
+    "allowJs": true,
     "baseUrl": ".",
     "paths": {
-      "koishi-plugin-*": ["plugins/*/src"]
-    },
-  },
+      "koishi-plugin-*": [
+        "plugins/*"
+      ]
+    }
+  }
 }

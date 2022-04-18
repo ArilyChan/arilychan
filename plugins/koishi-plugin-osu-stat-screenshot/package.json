@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "peggy": "^1.2.0"
   },
   "devDependencies": {},
   "scripts": {

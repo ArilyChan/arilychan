@@ -1,39 +1,40 @@
 {{
+// const banchoCommand = ['?', '!!']
+const defaultTrigger = {
+  bancho: ['?', '!!'],
+  sb: ['*']
+}
+function _trigger(test) {
+  const trigger = options.trigger ?? defaultTrigger
+  for (const server in trigger) {
+    const triggers = trigger[server]
+    if (triggers.includes(test)) return { server }
+  }
+  return false
+}
 function _rawCommand(server, command){
 	return { server, ...command }
 }
 }}
 
 Root
-  = lines:(Expression)+ { return lines.filter(line => !line.comment)}
+  = lines:(Line)+ { return lines.filter(line => !line.comment)}
 
-Expression "«"
+Line "Line"
   = _ line:(@q:Command / comment:Comment { return { comment }}) _ { return line }
 
-// Username "username"
-//   = username:([a-zA-Z0-9 \[\]-_] / [^\x00-\x7F|\s])+ { return username.join("").trim() }
-Username "username"
-  = username:(!LineTerminatorSequence @.)+ { return username.join("").trim() }
-
 Command "command"
-  = command:(BanchoCommand / SBCommand)
+  // = command:(BanchoCommand / SBCommand)
+  = trigger:Trigger command:BaseCommand { return {...trigger, ...command} }
 
-BanchoCommand "bancho server"
-  = ("?" / "!!") command:BaseCommand { return _rawCommand("bancho", command) }
-
-SBCommand "ppy.sb server"
-  = "*" command:BaseCommand { return _rawCommand("sb", command) }
+Trigger
+  = kw:$[^a-zA-Z]+ &{ return _trigger(kw) } { return _trigger(kw) }
 
 BaseCommand "command"
-  = q:(StatCommand / RecentCommand / BestScoresCommand / UserpageCommand) sp user: Username { return { ...q, user }} /
+  = q:(StatCommand / RecentCommand / BestScoresCommand / UserpageCommand) me:Me? user:(sp @Username)? { return { ...q, ...me, user }} /
     q:ScoreCommand sp id:Int { return {...q, id }} /
     q:BindUserCommand sp user:Username { return {...q, user }} /
-    q:BindModeCommand sp mode:Mode { return {...q, mode }}
-
-Mode "mode"
-  = m:[a-zA-Z]+ { return m.join("") }
-HashtagMode ":mode"
-  = "#" @Mode
+    q:BindModeCommand sp mode:Mode? { return {...q, mode }}
 
 UserpageCommand
   = "userpage"i { return {type: 'userpage' }}
@@ -47,7 +48,7 @@ RecentCommand "recent"
 ScoreCommand "score"
   = "score"i mode:HashtagMode? { return { type: 'score', mode }}
 
-BestScoresCommand
+BestScoresCommand "best"
   = ("best"i / "bp"i) 
     find: (
       id: Int { return { id } } / 
@@ -71,9 +72,9 @@ BestScoresCommand
     }
   }
 Last
-  = "@last" sp hours:Int { return hours }
+  = "@last" sp @hours:Int
 DateCommand
-  = "@" date:(DateFromCommand / DateToCommand) { return date }
+  = "@" @date:(DateFromCommand / DateToCommand)
 DateFromCommand
   = "from"i ":"? sp d:Date { return {from: d}}
 DateToCommand
@@ -84,13 +85,24 @@ BindUserCommand
 BindModeCommand
   = "setMode"i { return {type: "set-mode" }}
 
+Me
+  = "me" { return { forceDatabase: true } }
+Mode "mode"
+  = m:$[a-zA-Z]+
+HashtagMode ":mode"
+  = "#" @Mode
+
 // types
+// Username "username"
+//   = username:([a-zA-Z0-9 \[\]-_] / [^\x00-\x7F|\s])+ { return username.join("").trim() }
+Username "username"
+  = username:$(!Line @.)+ { return username.trim() }
 Digit "digit"
  = [0-9]
 Int "integer"
-  = id:Digit+ { return parseInt(id.join("")) }
+  = id:$Digit+ { return parseInt(id) }
 Year "year"
-  = year:(Digit Digit Digit Digit) { return parseInt(year.join("")) }
+  = year:$(Digit Digit Digit Digit) { return parseInt(year) }
 Month "month"
   = m:(Digit Digit?) {
     if (m.length == 1) return parseInt(m[0])

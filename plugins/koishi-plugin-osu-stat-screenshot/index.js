@@ -1,4 +1,5 @@
 const { Schema } = require('koishi')
+const parser = require('./screenshot-syntax')
 // const specialChars = {
 //   '&': '&amp;',
 //   '[': '&#91;',
@@ -120,7 +121,7 @@ module.exports.apply = async (app, options) => {
     if (ops[op.type]) return ops[op.type](op)
     throw new Error('unknown op')
   }
-  const parser = require('./parser')
+
   app.middleware(async (meta, next) => {
     try {
       const data = parser.parse(meta.content)

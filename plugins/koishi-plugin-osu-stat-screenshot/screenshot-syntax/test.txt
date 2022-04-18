@@ -1,0 +1,62 @@
+/*
+-------- grammar ------------
+<>中的必须提供
+[]中的可选
+
+<trigger><keywords.Type>[#<mode>] ...[@<modifiers> <something>] [<username> / <id>]
+解析会返回：
+{
+    server: <trigger>,
+    type: <keywords.Type>,
+    mode?: <mode>,
+    find?: {
+        [modifiers]: <something>
+    },
+    user?: <username>,
+    id?: <id>
+}
+------------------------------
+
+-------- triggers ------------
+!! { server: "bancho" }
+? { server: "bancho" }
+* { server: "sb" }
+------------------------------
+
+-------- keywords.Type 关键词对大小写不敏感 ------------
+stat => { type: "stat" } 查询stat
+info => { type: "stat" } 查询stat
+userpage => { type: "userpage" } 查询userpage
+recent => { type: "recent-score"} 查询最近
+pr => { type: "recent-score"} 查询最近
+best => { type: "best" }
+score => { type: "score" }
+
+setUser  => { type: "set-user" } 绑定用户
+setMode => { type: "set-mode" } 绑定模式
+
+[keywords.Type]me { forceDatabase: true } 比如bpme 用数据库中的用户名填充
+------------------------------------------------------
+
+-------- modifiers -------------------
+[@<something>] best中会用到的具体查询项目
+[#<mode>] 强制覆盖模式，默认为null
+---------------------------------------
+*/
+// 测试，不用数据库的部分
+!!stat 兔子不吃兔肉1233!! // server=bancho type=stat user=兔子不吃兔肉1233!!
+?recent arily  // server=bancho type=recent user=arily
+*stat#osu 1130 // server=sb type=stat mode=osu user=1130
+?best1 arily // server=bancho type=bp[0] user=arily
+?bp @last 24 arily // bancho/bp user=arily last=24
+?bp @from 2022-12-30 @to 2024-12-12 1123053 // bancho bp arily 2022年12月30 到2024年12月12
+!!score 12345 // score id=12345
+!!userpage arily
+
+// 测试，配置数据库的部分
+!!setUser arilychan
+!!setMode osurx
+
+// 测试，读数据库的部分
+!!stat
+!!statme

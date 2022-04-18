@@ -31,22 +31,22 @@ Trigger
   = kw:$[^a-zA-Z]+ &{ return _trigger(kw) } { return _trigger(kw) }
 
 BaseCommand "command"
-  = q:(StatCommand / RecentCommand / BestScoresCommand / UserpageCommand) me:Me? user:(sp @Username)? { return { ...q, ...me, user }} /
+  = q:(StatCommand / RecentCommand / BestScoresCommand / UserpageCommand) me:Me? mode:HashtagMode? user:(sp @Username)? { return { ...q, ...me, mode, user }} /
     q:ScoreCommand sp id:Int { return {...q, id }} /
     q:BindUserCommand sp user:Username { return {...q, user }} /
     q:BindModeCommand sp mode:Mode? { return {...q, mode }}
 
 UserpageCommand
-  = "userpage"i { return {type: 'userpage' }}
+  = "userpage"i { return {type: 'userpage' } }
 
 StatCommand "stat"
-  = "stat"i mode:HashtagMode? { return { type: 'stat', mode }}
+  = "stat"i { return { type: 'stat' } }
   
 RecentCommand "recent"
-  = ("recent"i / "pr"i) mode:HashtagMode? { return { type: 'recent-score', mode } }
+  = ("recent"i / "pr"i) { return { type: 'recent-score' } }
   
 ScoreCommand "score"
-  = "score"i mode:HashtagMode? { return { type: 'score', mode }}
+  = "score"i { return { type: 'score' } }
 
 BestScoresCommand "best"
   = ("best"i / "bp"i) 

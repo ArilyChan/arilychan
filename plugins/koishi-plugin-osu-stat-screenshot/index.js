@@ -19,8 +19,9 @@ const manual = require('sb-bot-manual')
 // const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 const serverConfig = Schema.object({
   default: Schema.boolean().default(false).description('默认查询此服务器'),
+  trigger: Schema.array(String).description('触发').default([]),
   server: Schema.string(),
-  modes: Schema.array(String).default(['osu', 'taiko', 'fruit', 'mania'])
+  mode: Schema.array(String).default(['osu', 'taiko', 'fruit', 'mania'])
 })
 
 module.exports.name = 'osu-stat-screenshot'
@@ -32,13 +33,15 @@ module.exports.schema = Schema.object({
     .default({
       bancho: {
         default: true,
+        trigger: ['!!', '?'],
         server: 'osu! 官方服务器',
-        modes: ['osu', 'taiko', 'fruit', 'mania']
+        mode: ['osu', 'taiko', 'fruit', 'mania']
       },
       sb: {
         default: false,
+        trigger: ['*'],
         server: 'ppy.sb私服',
-        modes: ['osu', 'osuRX', 'osuAP', 'taiko', 'taikoRX', 'fruit', 'fruitRX', 'mania']
+        mode: ['osu', 'osuRX', 'osuAP', 'taiko', 'taikoRX', 'fruit', 'fruitRX', 'mania']
       }
     }),
   modeAlias: Schema.dict(Schema.array(String))
@@ -56,7 +59,7 @@ module.exports.schema = Schema.object({
 // `${options.base}/users/${username}/${mode || ''}`
 
 module.exports.apply = async (app, options) => {
-  const logger = app.logger('osu-screenshot')
+  // const logger = app.logger('osu-screenshot')
   options = new Schema(options)
   const cluster = app.puppeteerCluster
   const screenshot = async (url) => {
@@ -65,9 +68,9 @@ module.exports.apply = async (app, options) => {
   }
 
   const validateMode = (op, meta) => {
-    if (!op.mode) op.mode = meta.user?.osu?.[op.server]?.mode || options.server[op.server].modes[0]
+    if (!op.mode) op.mode = meta.user?.osu?.[op.server]?.mode || options.server[op.server].mode[0]
     if (!options.server[op.server]) throw new Error(['Invalid server:', op.server].join(' '))
-    if (!options.server[op.server].modes.includes(op.mode)) throw new Error(['Invalid mode on server:', op.server, 'with mode:', op.mode].join(' '))
+    if (!options.server[op.server].mode.includes(op.mode)) throw new Error(['Invalid mode on server:', op.server, 'with mode:', op.mode].join(' '))
     return op
   }
 
@@ -114,26 +117,50 @@ module.exports.apply = async (app, options) => {
     },
     'set-mode' () {
       return 'no imp yet'
-    }
+    },
+    comment () {},
+    help () { return '使用方法请通过`!help screenshot`查询。' }
   }
+
+  const comment = (comment) => {
+    // switch (comment[0]) {
+    //   case '//': {
+    //     return comment[1].slice(0, 60)
+    //   }
+    //   case '/*': {
+
+    //   }
+    // }
+    return comment[1].join('').slice(0, 60)
+  }
+
   const run = (op, meta) => {
+    if (op.comment) { return comment(op.comment) }
     op = transformMode(op, meta)
     op = validateMode(op, meta)
     if (ops[op.type]) return ops[op.type](op)
     throw new Error('unknown op')
   }
 
+  const trigger = {}
+  const allTriggers = ['//', '/*']
+  for (const server in options.server) {
+    trigger[server] = options.server[server].trigger
+    allTriggers.push(...trigger[server])
+  }
   app.middleware(async (meta, next) => {
     try {
+      const triggered = allTriggers.some((trigger) => meta.content.startsWith(trigger))
+      if (!triggered) return next()
       const data = parser.parse(meta.content)
-
       if (!data.length) { return next() }
-
+      if (!data.some(line => line.type)) return next()
       const result = await Promise.all(data.map(op => run(op, meta)))
       return result.join('\n')
     } catch (err) {
-      logger.error(err)
-      return next()
+      return err.message
+      // logger.error(err)
+      // return next()
     }
   })
 }

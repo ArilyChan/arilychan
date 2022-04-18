@@ -18,10 +18,10 @@ function _rawCommand(server, command){
 }}
 
 Root
-  = lines:(Line)+ { return lines.filter(line => !line.comment)}
+  = lines:(Line)+
 
-Line "Line"
-  = _ line:(@q:Command / comment:Comment { return { comment }}) _ { return line }
+Line "command or comment"
+  = _ @(Command / Comment) _
 
 Command "command"
   // = command:(BanchoCommand / SBCommand)
@@ -76,14 +76,14 @@ Last
 DateCommand
   = "@" @date:(DateFromCommand / DateToCommand)
 DateFromCommand
-  = "from"i ":"? sp d:Date { return {from: d}}
+  = "from"i ":"? sp d:Date { return {from: d} }
 DateToCommand
-  = "to"i ":"? sp d:Date { return {to: d}}
+  = "to"i ":"? sp d:Date { return {to: d} }
 
 BindUserCommand
-  = "setUser"i { return {type: "set-user" }}
+  = "setUser"i { return {type: "set-user" } }
 BindModeCommand
-  = "setMode"i { return {type: "set-mode" }}
+  = "setMode"i { return {type: "set-mode" } }
 
 Me
   = "me" { return { forceDatabase: true } }
@@ -161,14 +161,14 @@ LineTerminatorSequence "end of line"
   / "\u2029"
 
 Comment "comment"
-  = MultiLineComment
-  / SingleLineComment
+  = comment:(MultiLineComment
+  / SingleLineComment) { return { comment } }
 
 MultiLineComment
-  = "/*" (!"*/" SourceCharacter)* "*/"
+  = "/*" (!"*/" @SourceCharacter)* "*/"
 
 MultiLineCommentNoLineTerminator
-  = "/*" (!("*/" / LineTerminator) SourceCharacter)* "*/"
+  = "/*" (!("*/" / LineTerminator) @SourceCharacter)* "*/"
 
 SingleLineComment
-  = "//" (!LineTerminator SourceCharacter)*
+  = "//" (!LineTerminator @SourceCharacter)*

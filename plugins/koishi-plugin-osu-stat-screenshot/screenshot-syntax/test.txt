@@ -1,4 +1,4 @@
-/*
+/**
 -------- grammar ------------
 <>中的必须提供
 []中的可选
@@ -51,14 +51,4 @@ setMode => { type: "set-mode" } 绑定模式
 ?bp @last 24 arily // server=bancho type=best user=arily last=24
 ?bp @from 2022-12-30 @to 2024-12-12 1123053 // server=bancho type=best user=arily from=2022-12-30 to=2024-12-12
 !!score 12345 // server=bancho type=score id=12345
-!!userpage arily server=bancho type=userpage
-
-// 测试，配置数据库的部分
-!!setUser arilychan // server=bancho type=set-user user=arilychan
-!!setMode osurx // server=bancho type=set-mode mode=osurx
-
-// 测试，读数据库的部分
-!!stat // server=bancho type=stat user=null
-!!statme // server=bancho type=stat forceDatabase=true
-*statme#mania // server=bancho type=stat forceDatabase=true mode=mania
-?userpage
+!!userpage arily // server=bancho type=userpage

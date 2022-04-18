@@ -60,3 +60,5 @@ setMode => { type: "set-mode" } 绑定模式
 // 测试，读数据库的部分
 !!stat // server=bancho type=stat user=null
 !!statme // server=bancho type=stat forceDatabase=true
+*statme#mania // server=bancho type=stat forceDatabase=true mode=mania
+?userpage

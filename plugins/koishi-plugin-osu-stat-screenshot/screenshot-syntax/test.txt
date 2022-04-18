@@ -47,16 +47,16 @@ setMode => { type: "set-mode" } 绑定模式
 !!stat 兔子不吃兔肉1233!! // server=bancho type=stat user=兔子不吃兔肉1233!!
 ?recent arily  // server=bancho type=recent user=arily
 *stat#osu 1130 // server=sb type=stat mode=osu user=1130
-?best1 arily // server=bancho type=bp[0] user=arily
-?bp @last 24 arily // bancho/bp user=arily last=24
-?bp @from 2022-12-30 @to 2024-12-12 1123053 // bancho bp arily 2022年12月30 到2024年12月12
-!!score 12345 // score id=12345
-!!userpage arily
+?best1 arily // server=bancho type=best id=1 user=arily
+?bp @last 24 arily // server=bancho type=best user=arily last=24
+?bp @from 2022-12-30 @to 2024-12-12 1123053 // server=bancho type=best user=arily from=2022-12-30 to=2024-12-12
+!!score 12345 // server=bancho type=score id=12345
+!!userpage arily server=bancho type=userpage
 
 // 测试，配置数据库的部分
-!!setUser arilychan
-!!setMode osurx
+!!setUser arilychan // server=bancho type=set-user user=arilychan
+!!setMode osurx // server=bancho type=set-mode mode=osurx
 
 // 测试，读数据库的部分
-!!stat
-!!statme
+!!stat // server=bancho type=stat user=null
+!!statme // server=bancho type=stat forceDatabase=true

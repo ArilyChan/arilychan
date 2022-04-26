@@ -158,9 +158,9 @@ module.exports.apply = async (app, options) => {
       const result = await Promise.all(data.map(op => run(op, meta)))
       return result.join('\n')
     } catch (err) {
-      return err.message
+      // return err.message
       // logger.error(err)
-      // return next()
+      return next()
     }
   })
 }

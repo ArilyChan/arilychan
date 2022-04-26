@@ -127,3 +127,5 @@ bot/Plugins/exsper/osuerCalendar/osuercalendar-events.json
 *.code-workspace
 koishi.config.yml
 accounts/*
+
+package-lock.json

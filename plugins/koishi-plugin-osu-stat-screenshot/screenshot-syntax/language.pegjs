@@ -32,7 +32,7 @@ Trigger
 
 BaseCommand "command"
   = q:(StatCommand / RecentCommand / BestScoresCommand / UserpageCommand) me:Me? mode:HashtagMode? user:(sp @Username)? { return { ...q, ...me, mode, user }} /
-    q:ScoreCommand sp id:Int { return {...q, id }} /
+    q:ScoreCommand mode:HashtagMode? sp id:Int { return {...q, mode, id }} /
     q:BindUserCommand sp user:Username { return {...q, user }} /
     q:BindModeCommand sp mode:Mode? { return {...q, mode }}
 

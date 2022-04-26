@@ -109,8 +109,8 @@ module.exports.apply = async (app, options) => {
     userpage ({ user: username, server }) {
       return screenshot(`${options.base}/userpage/${username}${params({ server })}`)
     },
-    score ({ id, server }) {
-      return screenshot(`${options.base}/score/${id}${params({ server })}`)
+    score ({ id, mode, server }) {
+      return screenshot(`${options.base}/scores/${mode}/${id}${params({ server })}`)
     },
     'set-user' () {
       return 'no imp yet'

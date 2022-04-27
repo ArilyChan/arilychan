@@ -8,8 +8,9 @@ class utils {
       ']': '&#93;',
       ',': '&#44;'
     }
+    if (!chars) return ''
     chars = chars.toString()
-    Object.entries(specialChars).map(([replace, find]) => {
+    Object.entries(specialChars).forEach(([replace, find]) => {
       chars = chars.split(find).join(replace)
     })
     return chars

@@ -18,6 +18,7 @@ class Osuexstat {
         this.bd = new BeatmapDownloader(this.mapFolder);
         this.commandsInfo = new CommandsInfo();
     }
+
     /**
      * 获得返回消息
      * @param {Number} qqId

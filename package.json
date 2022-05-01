@@ -52,6 +52,7 @@
     "plugins/koishi-plugin-puppeteer-cluster",
     "plugins/koishi-plugin-express",
     "plugins/nyan",
+    "plugins/sb-name-test",
     "utils/sb-prompt-filter",
     "utils/sb-plugin-wrapper",
     "utils/cqcode-builder",

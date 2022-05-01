@@ -99,8 +99,6 @@
     "koishi-plugin-osu-stat-screenshot": "1.0.0",
     "koishi-plugin-osuercalendar": "1.0.0",
     "koishi-plugin-osuexstat": "1.1.1",
-    "koishi-plugin-ppysb-query": "1.0.6",
-    "koishi-plugin-ppysh-query": "1.0.7",
     "koishi-plugin-puppeteer-cluster": "1.0.0",
     "koishi-plugin-sillychooser": "1.0.0",
     "tsconfig-paths": "^3.14.1",

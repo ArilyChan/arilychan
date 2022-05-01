@@ -12,7 +12,11 @@ module.exports.apply = function sbNameTestPlugin (ctx, options) {
   ctx.command('checkname <name:text>')
     .action(async (_, name) => {
       if (!name) return
-      const res = await ctx.http.get(encodeURI(options.endpoint + '/' + name))
+      const res = await ctx.http.get(encodeURI(options.endpoint, {
+        params: {
+          name
+        }
+      }))
       if (!res) return
       if (!res.rejected) return `${name}: ok!`
       // name rejected by server

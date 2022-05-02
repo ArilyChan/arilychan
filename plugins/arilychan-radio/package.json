@@ -1,6 +1,6 @@
 {
   "name": "koishi-plugin-arilychan-radio",
-  "version": "0.2",
+  "version": "0.2.1",
   "description": "",
   "main": "index.js",
   "directories": {

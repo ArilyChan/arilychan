@@ -1,7 +1,13 @@
 'use strict'
 
 const querystring = require('querystring')
-const fetch = require('node-fetch')
+const https = require("https")
+const axios = require('axios')
+const axios_ru = axios.create({
+  httpsAgent: new https.Agent({  
+    rejectUnauthorized: false
+  })
+})
 
 class BeatmapInfo {
   constructor (data, SpecDiff = "") {
@@ -56,12 +62,14 @@ class SayabotApi {
   static async apiRequestV2 (options) {
     const contents = (options) ? querystring.stringify(options) : ''
     const url = 'https://api.sayobot.cn/v2/beatmapinfo?' + contents
-    return await fetch(url).then(res => res.json())
+    let result = await axios_ru.get(url);
+    return result.data;
   }
 
   static async apiRequestList (keyword) {
     const url = 'https://api.sayobot.cn/beatmaplist?0=1&1=0&2=4&' + querystring.stringify({ 3: keyword })
-    return await fetch(url).then(res => res.json())
+    let result = await axios_ru.get(url);
+    return result.data;
   }
 
   /**

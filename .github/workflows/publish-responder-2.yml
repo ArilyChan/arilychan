@@ -13,7 +13,7 @@ on:
     inputs:
 
 jobs:
-  publish-plugin-express:
+  publish-plugin-responder2:
     runs-on: ubuntu-latest
     defaults:
     steps:

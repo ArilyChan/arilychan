@@ -1,5 +1,5 @@
 'use strict'
-
+const { Schema } = require('koishi')
 const run = require('./run')
 const path = require('path')
 const EventsJson = require('./lib/eventsJson')
@@ -13,8 +13,23 @@ module.exports.name = 'koishi-plugin-osuercalendar'
 // module.exports.webPath = '/'
 // module.exports.webApp = web.webApp
 // module.exports.build = web.build
+module.exports.schema = web.schema = Schema.object({
+  web: Schema.object({
+    path: Schema.string().default('http://localhost:3005/fortune').description('screenshot path')
+  }),
+  auth: Schema.object({
+    database: Schema.boolean().default(true).description('database auth'),
+    databaseAuthority: Schema.number().default(3).description('minium authority to manage fortune.'),
+    local: Schema.object({
+      admin: Schema.array(String).default([]),
+      blackList: Schema.array(String).default([]),
+      whiteList: Schema.array(String).default([])
+    })
+  })
+})
 module.exports.apply = (ctx, options) => {
-  const users = options.users || { admin: [], blackList: [], whiteList: [] }
+  options = new Schema(options)
+  const users = options.auth.local // deprecate this
   const eventPath = options.eventFile || path.join(thisPath, './osuercalendar-events.json')
 
   const eventsJson = new EventsJson()
@@ -52,7 +67,7 @@ module.exports.apply = (ctx, options) => {
       const cluster = ctx.puppeteerCluster.instance
       cluster.queue(async ({ page }) => {
         try {
-          await page.goto(`http://localhost:9000/fortune/daily?seed=${meta.userId}&lang=zh-cn&displayName=${meta.author?.nickname || meta.author?.username || '你'}`)
+          await page.goto(`${options.web.path}/daily?seed=${meta.userId}&lang=zh-cn&displayName=${meta.author?.nickname || meta.author?.username || '你'}`)
           await page.setViewport({ width: 992, height: 100, deviceScaleFactor: 1.5 })
           const e = await page.$('#__next > div > div > div')
           const ss = await e.screenshot({ encoding: 'base64', type: 'jpeg' })

@@ -9,7 +9,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@types/puppeteer": "^5.4.4",
+    "@types/puppeteer": "^5.4.6",
     "puppeteer-cluster": "^0.23.0"
   }
 }

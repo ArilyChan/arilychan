@@ -1,7 +1,13 @@
 'use strict'
 
 const querystring = require('querystring')
-const fetch = require('node-fetch')
+const https = require("https")
+const axios = require('axios')
+const axios_ru = axios.create({
+  httpsAgent: new https.Agent({  
+    rejectUnauthorized: false
+  })
+})
 
 /*
 class OsusearchBeatmap {
@@ -40,7 +46,8 @@ class OsusearchApi {
   static async apiRequest (options) {
     const contents = (options) ? querystring.stringify(options) : ''
     const url = 'https://osusearch.com/query/?' + contents
-    return await fetch(url).then(res => res.json())
+    const result = await axios_ru.get(url);
+    return result.data;
   }
 
   static findtheMostSuitable (result, params) {

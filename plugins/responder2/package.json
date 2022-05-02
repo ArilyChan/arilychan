@@ -8,6 +8,7 @@
     "lib",
     "dist"
   ],
+  "author": "arily",
   "license": "MIT",
   "scripts": {
     "postbuild": "cp src/grammar/a.pegjs lib/grammar/a.pegjs"

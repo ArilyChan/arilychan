@@ -1,0 +1,88 @@
+# koishi-plugin-responder2
+
+[![npm](https://img.shields.io/npm/v/koishi-plugin-responder2?style=flat-square)](https://www.npmjs.com/package/koishi-plugin-responder2)
+
+可以让你在配置里写函数
+
+## 语法
+### 示例
+假如收到'hi'就回复'hi~'
+```
+$ === 'hi' -> 'hi~'
+```
+自行实现matcher function
+```
+$ -> session.userId === 'onebot:12345' -> '您被ban了'
+```
+自定义action function
+
+假如消息以'教我'开头，就调用'help'命令 （会将‘教我’后面的部分传给help）
+```
+$startsWith '教我' -> session.execute(`help ${session.content.slice(2)}`)
+```
+
+### 结构
+以下所有im为incomingMessage的简写
+
+`im`  `keyword`  `Literal` -> `Literal`
+
+`im`  `keyword`  `Literal` -> `ActionFunction` | `AsyncActionFunction`
+
+`im` -> `MatcherFunction` | `AsyncMatcherFunction` -> `Literal`
+
+`im` -> `MatcherFunction` | `AsyncMatcherFunction` ->  `ActionFunction` | `AsyncActionFunction`
+
+### incomingMessage 的别名
+|alias|example
+|--|--
+`incomingMessage`  | `incomingMessage includes 'sb'`
+`im`  | `im includes 'sb'`
+`on`  | `on includes 'sb'`
+`$`  | `$includes 'sb'`
+### keywords
+|keyword|explain|example
+|--|--|--
+`includes` | `im` includes `'string'` | `$includes 'sb'`
+`startsWith` | `im` startsWith `'string'` | `$startsWith 'sb'`
+`=` | `im` eqeq `'string'` (prints error) | `$ == 'sb'`
+`==` | `im` eqeq `'string'` | `$ == 'sb'`
+`===` | `im` eqeqeq `'string'` | `$ === 'sb'`
+`is` | `im` eqeqeq `'string'` | `$ is 'sb'`
+`equals` | `im` eqeqeq `'string'` | `$ euals 'sb'`
+
+### 操作符
+|op|explain|example
+|--|--|--|
+|->|`matcher` -> `action`|`$includes 'sb'` -> `'triggered'`|
+|->|`im` -> `Function`|`$` -> `session => session.userId === '12345'`|
+
+### 函数
+|type|params|returns|
+|--|--|--|
+|MatcherFunction|`(session: Session, context: Context)`| `boolean`
+|MatcherAsyncFunction|`(session: Session, context: Context)`| `Promise<boolean>`
+|ActionFunction|`(session: Session, context: Context)`| `string \| void`
+|ActionoAsyncFunction|`(session: Session, context: Context)`| `Promise<string \| void>`
+函数可以省略parameters 会默认用session, context作为parameters
+```
+$ -> session.userId === 12345 -> 'sb'
+```
+由于函数以外的部分并不是js语言解释的结果，书写体验与js"略有不同"
+
+以下每一行的运行结果都是相同的：回复每条消息'???'
+```
+$ -> () => { return true } -> async await '???'
+$ -> { return true } -> async '???'
+$ -> () => true -> async await '???'
+$ -> true -> () => '???'
+$ -> true -> '???'
+```
+
+### 类型
+|type|explain|examples
+|--|--|--
+|Literal| string | `'sb'`
+|Function| Match | `session => session.userId === 12345`
+|AsyncFunction| Match | `async session => session.userId === 12345`
+|Function| Action | `(session, ctx) => session.execute('help')`
+|AsyncFunction| Action | `async session => session.userId === 12345`

@@ -1,0 +1,30 @@
+# This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
+# For more information see: https://help.github.com/actions/language-and-framework-guides/publishing-nodejs-packages
+
+name: Node.js Package
+
+on:
+  push:
+    branches:
+      - publish
+    paths:
+      - 'plugins/responder2/package.json'
+  workflow_dispatch:
+    inputs:
+
+jobs:
+  publish-plugin-express:
+    runs-on: ubuntu-latest
+    defaults:
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+          registry-url: https://registry.npmjs.org/
+      - run: npm install -D
+      - run: npm run build responder2
+      - run: cp plugins/responder2/src/grammar/*.pegjs plugins/responder2/lib/grammar
+      - run: npm pub responder2
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}

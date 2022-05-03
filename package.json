@@ -79,6 +79,7 @@
     "@koishijs/plugin-logger": "^1.2.2",
     "@koishijs/plugin-manager": "1.7.3",
     "@koishijs/plugin-recall": "1.1.0",
+    "@koishijs/plugin-respondent": "5.0.0",
     "@koishijs/plugin-sandbox": "1.1.0",
     "@koishijs/plugin-status": "5.3.6",
     "@koishijs/plugin-switch": "1.0.3",

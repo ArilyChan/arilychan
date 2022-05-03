@@ -3,7 +3,12 @@
 [![npm](https://img.shields.io/npm/v/koishi-plugin-responder2?style=flat-square)](https://www.npmjs.com/package/koishi-plugin-responder2)
 
 可以让你在配置里写函数
-
+## 命令
+|command|usage|
+|--|--|
+|responder2.test|测试语法是否合法|
+|responder2.explain|解释语法，可多行|
+|responder2.explain current|解释配置中的语法|
 ## 语法
 ### 示例
 假如收到'hi'就回复'hi~'
@@ -63,6 +68,7 @@ $startsWith '教我' -> session.execute(`help ${session.content.slice(2)}`)
 |MatcherAsyncFunction|`(session: Session, context: Context)`| `Promise<boolean>`
 |ActionFunction|`(session: Session, context: Context)`| `string \| void`
 |ActionoAsyncFunction|`(session: Session, context: Context)`| `Promise<string \| void>`
+
 函数可以省略parameters 会默认用session, context作为parameters
 ```
 $ -> session.userId === 12345 -> 'sb'

@@ -12,7 +12,7 @@ export interface Options {
   screenshot: {
     base: string,
   }
-  server: Record<string, {
+  server: Array<{
     default: boolean,
     // trigger: string[],
     server: string,

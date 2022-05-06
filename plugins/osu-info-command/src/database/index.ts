@@ -1,4 +1,4 @@
-import { Context } from 'koishi'
+import { Context, Session } from 'koishi'
 // import injectOsuOptions from '../command-inject-options'
 import TryMode from '../utils/tryMode'
 import { Options } from '../index'
@@ -19,23 +19,6 @@ declare module 'koishi' {
   }
 }
 export function apply (ctx: Context, options: Options) {
-  const replyBindedStatus = (osu, omit: string[] = [], only: string[] = undefined): string => {
-    const rep = []
-    const servers = Object.keys(options.server)
-    servers.forEach(server => {
-      if (!only) {
-        if (omit.includes(server)) return
-      } else {
-        if (!only.includes(server)) return
-      }
-      if (!osu[server]) return
-      const serverBind = osu[server]
-      const serverConf = options.server[server]
-      rep.push([`${serverConf.server}: `, serverBind.mode && `mode: ${serverBind.mode} `, serverBind.user && `user: ${serverBind.user}`].join(''))
-    })
-    if (osu.defaultServer && !omit.includes('defaultServer')) { rep.push(`默认服务器: ${osu.defaultServer}`) }
-    return rep.join('\n')
-  }
   const { transformMode, validateMode } = TryMode(options)
   ctx.model.extend('user', {
     osu: { type: 'json', initial: {} }
@@ -58,7 +41,7 @@ export function apply (ctx: Context, options: Options) {
         if (!session.user.osu[server]) session.user.osu[server] = {}
         if (mode) session.user.osu[server].mode = mode
         if (user) session.user.osu[server].user = user
-        return replyBindedStatus(session.user.osu, [], [server])
+        return JSON.stringify(session.user.osu)
       } catch (error) {
         if (session.user.authority > 2) { return error.stack }
         return error.message
@@ -66,7 +49,9 @@ export function apply (ctx: Context, options: Options) {
     })
   cmd.subcommand('.binded')
     .userFields(['authority', 'osu'])
-    .action(({ session }) => replyBindedStatus(session.user.osu))
+    .action(({ session }) =>
+      JSON.stringify(session.user.osu)
+    )
   cmd.subcommand('.unbind')
     .option('server', '-s <server>')
     .userFields(['authority', 'osu'])
@@ -79,7 +64,6 @@ export function apply (ctx: Context, options: Options) {
           session.user.osu.defaultServer = undefined
         }
       }
-      return '👌 ok!'
     })
   cmd.subcommand('bindserver <server>')
     .userFields(['authority', 'osu'])
@@ -89,6 +73,5 @@ export function apply (ctx: Context, options: Options) {
       // @ts-expect-error optional chained
       if (!session.user.osu?.[server]?.name) return '您还未绑定该服务器的用户。请先绑定！'
       session.user.osu.defaultServer = server
-      return '👌 ok!'
     })
 }

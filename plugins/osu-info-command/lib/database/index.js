@@ -21,6 +21,8 @@ function apply(ctx, options) {
         let { session, options: { server, mode } } = argv;
         if (!session.user.osu)
             session.user.osu = {};
+        // workaround
+        const binded = { ...session.user.osu };
         // const binded = session.user.osu
         if (!server)
             return '请指定服务器: osu.bind --server <server>\n' + Object.entries(options.server).map(([server, conf]) => `${conf.server}: ${server}`).join('\n');
@@ -29,12 +31,13 @@ function apply(ctx, options) {
             mode = validateMode(transformMode(mode), server);
             if (mode && !Object.values(options.server).some(server => server.mode.some(m => m === mode)))
                 return `指定的模式不存在。 ${options.server[server].server}可用: ${options.server[server].mode.join(', ')}`;
-            if (!session.user.osu[server])
-                session.user.osu[server] = {};
+            if (!binded[server])
+                binded[server] = {};
             if (mode)
-                session.user.osu[server].mode = mode;
+                binded[server].mode = mode;
             if (user)
-                session.user.osu[server].user = user;
+                binded[server].user = user;
+            session.user.osu = { ...binded };
             return JSON.stringify(session.user.osu);
         }
         catch (error) {

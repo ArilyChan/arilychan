@@ -4,10 +4,10 @@ import TryMode from '../utils/tryMode'
 import { Options } from '../index'
 export const name = 'osu-info-command-extend-database'
 type UserServerBind = Record<string, {
-  mode?: string
+  mode?: string,
+  user?: string
 }>
 declare module 'koishi' {
-  // eslint-disable-next-line no-unused-vars
   interface User {
     osu: UserServerBind & {
       defaultServer?: keyof UserServerBind
@@ -26,8 +26,8 @@ export function apply (ctx: Context, options: Options) {
     .option('mode', '-m <mode>')
     .action((argv, user) => {
       let { session, options: { server, mode } } = argv
-      // @ts-expect-error extended before (line 14)
-      const binded = session.user.osu
+      // @ts-expect-error refer to koishi doc
+      const binded = session.user.osu as UserServerBind
       // @ts-expect-error refer to koishi doc
       if (!session.user.osu) session.user.osu = {}
       if (!server) return '请指定服务器: osu.bind --server <server>\n' + Object.entries(options.server).map(([server, conf]) => `${conf.server}: ${server}`).join('\n')

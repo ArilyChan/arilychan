@@ -21,47 +21,65 @@ export function apply (app: Context, options) {
 
   const ops = {
     stat (op: {user: string, mode: string, server: string, session: Session & {user: {osu: Record<string, any>}}}) {
-      op = validateOP(transformModeOP(op), op.session)
-      let { user: username, mode, server, session } = op
-      username = tryUser(username, session, server)
-      if (!username) return '需要提供用户名。'
-      const ep = `${options.screenshot.base}/users/${username}/${mode || ''}${params({ server })}`
-      // return ep
-      return screenshot(ep)
+      try {
+        op = validateOP(transformModeOP(op), op.session)
+        let { user: username, mode, server, session } = op
+        username = tryUser(username, session, server)
+        if (!username) return '需要提供用户名。'
+        const ep = `${options.screenshot.base}/users/${username}/${mode || ''}${params({ server })}`
+        return screenshot(ep)
+      } catch (error) {
+        return error.message
+      }
     },
     best (op: {user: string, mode: string, server: string, session: Session & {user: {osu: Record<string, any>}}, find: any}) {
-      op = validateOP(transformModeOP(op), op.session)
-      let { user: username, mode, server, session, find } = op
-      username = tryUser(username, session, server)
-      find = {
-        startDate: find.from,
-        endDate: find.to,
-        startHoursBefore: find.last,
-        endHoursBefore: undefined
+      try {
+        op = validateOP(transformModeOP(op), op.session)
+        let { user: username, mode, server, session, find } = op
+        username = tryUser(username, session, server)
+        find = {
+          startDate: find.from,
+          endDate: find.to,
+          startHoursBefore: find.last,
+          endHoursBefore: undefined
+        }
+        if (!username) return '需要提供用户名。'
+        return screenshot(`${options.screenshot.base}/best/${username}/${mode || ''}${params({ server, ...find })}`)
+      } catch (err) {
+        return err.message
       }
-      if (!username) return '需要提供用户名。'
-      return screenshot(`${options.screenshot.base}/best/${username}/${mode || ''}${params({ server, ...find })}`)
     },
     'recent-score' (op: {user: string, mode: string, server: string, session: Session & {user: {osu: Record<string, any>}}}) {
-      op = validateOP(transformModeOP(op), op.session)
-      let { user: username, mode, server, session } = op
-      username = tryUser(username, session, server)
-      if (!username) return '需要提供用户名。'
-      return screenshot(`${options.screenshot.base}/recent/${username}/${mode || ''}${params({ server })}`)
+      try {
+        op = validateOP(transformModeOP(op), op.session)
+        let { user: username, mode, server, session } = op
+        username = tryUser(username, session, server)
+        if (!username) return '需要提供用户名。'
+        return screenshot(`${options.screenshot.base}/recent/${username}/${mode || ''}${params({ server })}`)
+      } catch (err) {
+        return err.message
+      }
     },
     userpage (op: {user: string, server: string, session: Session & {user: {osu: Record<string, any>}}}) {
-      op = validateOP(transformModeOP(op), op.session)
-      let { user: username, server, session } = op
-      username = tryUser(username, session, server)
-      if (!username) return '需要提供用户名。'
-      return screenshot(`${options.screenshot.base}/userpage/${username}${params({ server })}`)
+      try {
+        op = validateOP(transformModeOP(op), op.session)
+        let { user: username, server, session } = op
+        username = tryUser(username, session, server)
+        if (!username) return '需要提供用户名。'
+        return screenshot(`${options.screenshot.base}/userpage/${username}${params({ server })}`)
+      } catch (e) {
+        return e.message
+      }
     },
     score (op: { id: any, mode: string, server: string, session: Session}) {
-      op = validateOP(transformModeOP(op), op.session)
-      const { mode, id, server } = op
-      return screenshot(`${options.screenshot.base}/scores/${mode}/${id}${params({ server })}`)
+      try {
+        op = validateOP(transformModeOP(op), op.session)
+        const { mode, id, server } = op
+        return screenshot(`${options.screenshot.base}/scores/${mode}/${id}${params({ server })}`)
+      } catch (e) {
+        return e.message
+      }
     },
-    comment () { },
     help () { return '使用方法请通过`!help screenshot`查询。' }
   }
 

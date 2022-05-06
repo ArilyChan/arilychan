@@ -67,7 +67,7 @@ BestScoresCommand "best"
       }
     ) {
     return {
-      type: 'best',
+      type: 'best-score',
 	  find
     }
   }

@@ -38,6 +38,12 @@ export default function TryMode (options: Options) {
   return {
     validateOP,
     transformModeOP,
-    transformMode
+    transformMode,
+    validateMode (mode, server) {
+      if (!mode) return mode
+      if (!options.server[server]) throw new Error(['Invalid server:', server].join(' '))
+      if (!options.server[server].mode.includes(mode)) throw new Error(['Invalid mode on server:', server, 'with mode:', mode].join(' '))
+      return mode
+    }
   }
 }

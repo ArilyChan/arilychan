@@ -14,4 +14,4 @@ export declare const schema: Schema<{
 export interface schema {
     rules: string[];
 }
-export declare function apply(ctx: Context, _options: any): void;
+export declare function apply(ctx: Context, options: any): void;

@@ -57,8 +57,7 @@ exports.name = 'yet-another-responder';
 exports.schema = koishi_1.Schema.object({
     rules: koishi_1.Schema.array(String).description('match rules.').default(['// add more down below', '// don\'t leave rules empty'])
 });
-function apply(ctx, _options) {
-    const options = new koishi_1.Schema(_options);
+function apply(ctx, options) {
     const trigger = options.rules.join('\n');
     try {
         const [matches, builder] = commandBuilder(ctx.logger('resp2/builder'));

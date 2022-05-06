@@ -3,6 +3,7 @@ import { Options } from '../index';
 export declare const name = "osu-info-command-extend-database";
 declare type UserServerBind = Record<string, {
     mode?: string;
+    user?: string;
 }>;
 declare module 'koishi' {
     interface User {

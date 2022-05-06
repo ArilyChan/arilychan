@@ -7,8 +7,9 @@ function TryMode(options) {
         if (!op.server)
             op.server = session.user?.osu?.defaultServer || defaultServer;
         const server = op.server;
+        // if (!op.mode) op.mode = session.user?.osu?.[server]?.mode || options.server?.[server].mode[0]
         if (!op.mode)
-            op.mode = session.user?.osu?.[server]?.mode || options.server?.[server].mode[0];
+            return op;
         if (!options.server[server])
             throw new Error(['Invalid server:', server].join(' '));
         if (!options.server[server].mode.includes(op.mode))
@@ -29,6 +30,8 @@ function TryMode(options) {
         return op;
     };
     const transformMode = (mode) => {
+        if (!mode)
+            return mode;
         Object.entries(options.modeAlias)
             .some(([to, alias]) => {
             if (!alias.includes(mode.toLowerCase()))
@@ -41,7 +44,16 @@ function TryMode(options) {
     return {
         validateOP,
         transformModeOP,
-        transformMode
+        transformMode,
+        validateMode(mode, server) {
+            if (!mode)
+                return mode;
+            if (!options.server[server])
+                throw new Error(['Invalid server:', server].join(' '));
+            if (!options.server[server].mode.includes(mode))
+                throw new Error(['Invalid mode on server:', server, 'with mode:', mode].join(' '));
+            return mode;
+        }
     };
 }
 exports.default = TryMode;

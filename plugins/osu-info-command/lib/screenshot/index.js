@@ -24,57 +24,74 @@ function apply(app, options) {
     };
     const ops = {
         stat(op) {
-            op = validateOP(transformModeOP(op), op.session);
-            let { user: username, mode, server, session } = op;
-            username = tryUser(username, session, server);
-            if (!mode)
-                mode = options.server[server].mode[0];
-            if (!username)
-                return '需要提供用户名。';
-            const ep = `${options.screenshot.base}/users/${username}/${mode || ''}${params({ server })}`;
-            // return ep
-            return screenshot(ep);
+            try {
+                op = validateOP(transformModeOP(op), op.session);
+                let { user: username, mode, server, session } = op;
+                username = tryUser(username, session, server);
+                if (!username)
+                    return '需要提供用户名。';
+                const ep = `${options.screenshot.base}/users/${username}/${mode || ''}${params({ server })}`;
+                return screenshot(ep);
+            }
+            catch (error) {
+                return error.message;
+            }
         },
         best(op) {
-            op = validateOP(transformModeOP(op), op.session);
-            let { user: username, mode, server, session, find } = op;
-            username = tryUser(username, session, server);
-            find = {
-                startDate: find.from,
-                endDate: find.to,
-                startHoursBefore: find.last,
-                endHoursBefore: undefined
-            };
-            if (!mode)
-                mode = options.server[server].mode[0];
-            if (!username)
-                return '需要提供用户名。';
-            return screenshot(`${options.screenshot.base}/best/${username}/${mode || ''}${params({ server, ...find })}`);
+            try {
+                op = validateOP(transformModeOP(op), op.session);
+                let { user: username, mode, server, session, find } = op;
+                username = tryUser(username, session, server);
+                find = {
+                    startDate: find.from,
+                    endDate: find.to,
+                    startHoursBefore: find.last,
+                    endHoursBefore: undefined
+                };
+                if (!username)
+                    return '需要提供用户名。';
+                return screenshot(`${options.screenshot.base}/best/${username}/${mode || ''}${params({ server, ...find })}`);
+            }
+            catch (err) {
+                return err.message;
+            }
         },
         'recent-score'(op) {
-            op = validateOP(transformModeOP(op), op.session);
-            let { user: username, mode, server, session } = op;
-            username = tryUser(username, session, server);
-            if (!mode)
-                mode = options.server[server].mode[0];
-            if (!username)
-                return '需要提供用户名。';
-            return screenshot(`${options.screenshot.base}/recent/${username}/${mode || ''}${params({ server })}`);
+            try {
+                op = validateOP(transformModeOP(op), op.session);
+                let { user: username, mode, server, session } = op;
+                username = tryUser(username, session, server);
+                if (!username)
+                    return '需要提供用户名。';
+                return screenshot(`${options.screenshot.base}/recent/${username}/${mode || ''}${params({ server })}`);
+            }
+            catch (err) {
+                return err.message;
+            }
         },
         userpage(op) {
-            op = validateOP(transformModeOP(op), op.session);
-            let { user: username, server, session } = op;
-            username = tryUser(username, session, server);
-            if (!username)
-                return '需要提供用户名。';
-            return screenshot(`${options.screenshot.base}/userpage/${username}${params({ server })}`);
+            try {
+                op = validateOP(transformModeOP(op), op.session);
+                let { user: username, server, session } = op;
+                username = tryUser(username, session, server);
+                if (!username)
+                    return '需要提供用户名。';
+                return screenshot(`${options.screenshot.base}/userpage/${username}${params({ server })}`);
+            }
+            catch (e) {
+                return e.message;
+            }
         },
         score(op) {
-            op = validateOP(transformModeOP(op), op.session);
-            const { mode, id, server } = op;
-            return screenshot(`${options.screenshot.base}/scores/${mode}/${id}${params({ server })}`);
+            try {
+                op = validateOP(transformModeOP(op), op.session);
+                const { mode, id, server } = op;
+                return screenshot(`${options.screenshot.base}/scores/${mode}/${id}${params({ server })}`);
+            }
+            catch (e) {
+                return e.message;
+            }
         },
-        comment() { },
         help() { return '使用方法请通过`!help screenshot`查询。'; }
     };
     const oi = app.command('osu');

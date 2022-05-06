@@ -9,7 +9,7 @@ exports.name = 'osu-info-command-text';
 function apply(ctx) {
     const oi = ctx.command('osu');
     const info = oi
-        .subcommand('.info.text [<username:text]')
+        .subcommand('.info.text [username:text]')
         .action((argv, username) => {
         const { options } = argv;
         // @ts-expect-error registered later

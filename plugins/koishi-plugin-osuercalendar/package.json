@@ -14,7 +14,6 @@
     "xorshift": "^1.2.0",
     "autoprefixer": "^10.4.5",
     "daisyui": "^1.25.4",
-    "eslint-plugin-next": "^0.0.0",
     "next": "12.1.0",
     "postcss": "^8.4.13",
     "react": "17.0.2",
@@ -23,7 +22,6 @@
   },
   "devDependencies": {
     "babel-preset-next": "^1.4.0",
-    "eslint": "8.4.1",
     "eslint-config-next": "^12.1.5"
   },
   "optionalDependencies": {

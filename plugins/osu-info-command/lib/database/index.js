@@ -19,6 +19,7 @@ function apply(ctx, options) {
         .userFields(['authority', 'osu'])
         .action((argv, user) => {
         let { session, options: { server, mode } } = argv;
+        // if (!session.user.osu) session.user.osu = {}
         // const binded = session.user.osu
         if (!server)
             return '请指定服务器: osu.bind --server <server>\n' + Object.entries(options.server).map(([server, conf]) => `${conf.server}: ${server}`).join('\n');
@@ -36,10 +37,9 @@ function apply(ctx, options) {
             return JSON.stringify(session.user.osu);
         }
         catch (error) {
-            if (session.user.authority > 2) {
-                return error.stack;
-            }
-            return error.message;
+            // if (session.user.authority > 2) { return error.stack }
+            // return error.message
+            return error.stack;
         }
     });
     cmd.subcommand('.binded')

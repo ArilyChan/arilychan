@@ -67,7 +67,8 @@ module.exports.apply = async (app, options) => {
   }
 
   const validateMode = (op, meta) => {
-    if (!op.mode) op.mode = meta.user?.osu?.[op.server]?.mode || options.server[op.server].mode[0]
+    // if (!op.mode) op.mode = meta.user?.osu?.[op.server]?.mode || options.server[op.server].mode[0]
+    if (!op.mode) return op
     if (!options.server[op.server]) throw new Error(['Invalid server:', op.server].join(' '))
     if (!options.server[op.server].mode.includes(op.mode)) throw new Error(['Invalid mode on server:', op.server, 'with mode:', op.mode].join(' '))
     return op

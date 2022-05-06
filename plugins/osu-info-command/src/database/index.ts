@@ -30,15 +30,15 @@ export function apply (ctx: Context, options: Options) {
     .action((argv, user) => {
       let { session, options: { server, mode } } = argv as typeof argv & { session: { user: { osu: Record<string, any>, authority: number }}}
       if (!session.user.osu) session.user.osu = {}
-      const binded = session.user.osu
+      // const binded = session.user.osu
       if (!server) return '请指定服务器: osu.bind --server <server>\n' + Object.entries(options.server).map(([server, conf]) => `${conf.server}: ${server}`).join('\n')
       // if (!mode && !binded?.[server]?.mode) return '请指定模式: osu.bind --mode <mode>\n' + `${options.server[server].server}: ${options.server[server].mode.join(', ')}`
       try {
         mode = validateMode(transformMode(mode), server)
         if (mode && !Object.values(options.server).some(server => server.mode.some(m => m === mode))) return `指定的模式不存在。 ${options.server[server].server}可用: ${options.server[server].mode.join(', ')}`
-        if (!binded[server]) binded[server] = {}
-        if (mode) binded[server].mode = mode
-        if (user) binded[server].user = user
+        if (!session.user.osu[server]) session.user.osu[server] = {}
+        if (mode) session.user.osu[server].mode = mode
+        if (user) session.user.osu[server].user = user
         return JSON.stringify(session.user.osu)
       } catch (error) {
         if (session.user.authority > 2) { return error.stack }

@@ -165,10 +165,10 @@ Comment "comment"
   / SingleLineComment) { return { comment } }
 
 MultiLineComment
-  = "/*" (!"*/" @SourceCharacter)* "*/"
+  = "/*" $(!"*/" @SourceCharacter)* "*/"
 
 MultiLineCommentNoLineTerminator
   = "/*" (!("*/" / LineTerminator) @SourceCharacter)* "*/"
 
 SingleLineComment
-  = "//" (!LineTerminator @SourceCharacter)*
+  = "//" $(!LineTerminator @SourceCharacter)*

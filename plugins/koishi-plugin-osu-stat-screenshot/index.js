@@ -42,17 +42,15 @@ module.exports.apply = async (app, options) => {
     'set-mode': {
       command: 'osu.bind',
       text: 'osu.bind'
-    },
-    comment: {
-      echo: true
     }
   }
   const run = async (parsedCommand, session) => {
-    if (Array.isArray(parsedCommand)) {
+    if (parsedCommand.comment) {
       // is comment
-      if (ops.command.echo) {
-        return parsedCommand[1]
+      if (options.includeComment) {
+        return parsedCommand.comment[1]
       }
+      return
     } else if (!parsedCommand.type) return
     else if (!ops[parsedCommand.type]) return
     // handle command

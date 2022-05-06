@@ -28,8 +28,11 @@ function apply(app, options) {
                 op = validateOP(transformModeOP(op), op.session);
                 let { user: username, mode, server, session } = op;
                 username = tryUser(username, session, server);
-                if (!username)
+                if (!username) {
+                    if (session.user.authority > 2)
+                        return JSON.stringify({ username, binded: { osu: { ...session.user.osu } } });
                     return '需要提供用户名。';
+                }
                 const ep = `${options.screenshot.base}/users/${username}/${mode || ''}${params({ server })}`;
                 return screenshot(ep);
             }
@@ -108,6 +111,7 @@ function apply(app, options) {
     const defaultWithServerModeCommands = [
         oi
             .subcommand('.info.screenshot <username:text>')
+            .userFields(['authority', 'osu'])
             .action((argv, username) => {
             const { options, session } = argv;
             // @ts-expect-error registered later
@@ -116,6 +120,7 @@ function apply(app, options) {
         }),
         oi
             .subcommand('.recent.screenshot <username:text>')
+            .userFields(['authority', 'osu'])
             .action((argv, username) => {
             const { options, session } = argv;
             // @ts-expect-error registered later
@@ -124,6 +129,7 @@ function apply(app, options) {
         }),
         oi
             .subcommand('.best.screenshot <username:text>')
+            .userFields(['authority', 'osu'])
             .option('from', '<date>')
             .option('to', '<date>')
             .option('last', '<hours>')
@@ -135,6 +141,7 @@ function apply(app, options) {
         }),
         oi
             .subcommand('.score.screenshot <id:number>')
+            .userFields(['authority', 'osu'])
             .action((argv, id) => {
             const { options, session } = argv;
             // @ts-expect-error registered later

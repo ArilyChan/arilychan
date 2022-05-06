@@ -20,12 +20,15 @@ export function apply (app: Context, options) {
   }
 
   const ops = {
-    stat (op: {user: string, mode: string, server: string, session: Session & {user: {osu: Record<string, any>}}}) {
+    stat (op: {user: string, mode: string, server: string, session: Session & {user: {osu: Record<string, any>, authority: number}} }) {
       try {
         op = validateOP(transformModeOP(op), op.session)
         let { user: username, mode, server, session } = op
         username = tryUser(username, session, server)
-        if (!username) return '需要提供用户名。'
+        if (!username) {
+          if (session.user.authority > 2) return JSON.stringify({ username, binded: { osu: { ...session.user.osu } } })
+          return '需要提供用户名。'
+        }
         const ep = `${options.screenshot.base}/users/${username}/${mode || ''}${params({ server })}`
         return screenshot(ep)
       } catch (error) {
@@ -99,6 +102,7 @@ export function apply (app: Context, options) {
   const defaultWithServerModeCommands: Command[] = [
     oi
       .subcommand('.info.screenshot <username:text>')
+      .userFields(['authority', 'osu'])
       .action((argv, username) => {
         const { options, session } = argv as typeof argv & { session: { user: { osu: Record<string, any>}}}
         // @ts-expect-error registered later
@@ -107,6 +111,7 @@ export function apply (app: Context, options) {
       }),
     oi
       .subcommand('.recent.screenshot <username:text>')
+      .userFields(['authority', 'osu'])
       .action((argv, username) => {
         const { options, session } = argv as typeof argv & { session: { user: { osu: Record<string, any>}}}
         // @ts-expect-error registered later
@@ -115,6 +120,7 @@ export function apply (app: Context, options) {
       }),
     oi
       .subcommand('.best.screenshot <username:text>')
+      .userFields(['authority', 'osu'])
       .option('from', '<date>')
       .option('to', '<date>')
       .option('last', '<hours>')
@@ -126,8 +132,9 @@ export function apply (app: Context, options) {
       }),
     oi
       .subcommand('.score.screenshot <id:number>')
+      .userFields(['authority', 'osu'])
       .action((argv, id) => {
-        const { options, session } = argv as typeof argv & { session: { user: { osu: Record<string, any>}}}
+        const { options, session } = argv
         // @ts-expect-error registered later
         const { mode, server } = options
         return ops.score({ id, mode, server, session })

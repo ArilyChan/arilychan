@@ -1,4 +1,4 @@
-import { Context } from 'koishi'
+import { Context, Session } from 'koishi'
 // import injectOsuOptions from '../command-inject-options'
 import TryMode from '../utils/tryMode'
 import { Options } from '../index'
@@ -8,6 +8,8 @@ type UserServerBind = Record<string, {
   user?: string
 }>
 declare module 'koishi' {
+  // waht do you mean unused??
+  // eslint-disable-next-line no-unused-vars
   interface User {
     osu: UserServerBind & {
       defaultServer?: keyof UserServerBind
@@ -25,10 +27,8 @@ export function apply (ctx: Context, options: Options) {
     .option('server', '-s <server>')
     .option('mode', '-m <mode>')
     .action((argv, user) => {
-      let { session, options: { server, mode } } = argv
-      // @ts-expect-error refer to koishi doc
+      let { session, options: { server, mode } } = argv as typeof argv & { session: { user: { osu: Record<string, any>}}}
       const binded = session.user.osu as UserServerBind
-      // @ts-expect-error refer to koishi doc
       if (!session.user.osu) session.user.osu = {}
       if (!server) return '请指定服务器: osu.bind --server <server>\n' + Object.entries(options.server).map(([server, conf]) => `${conf.server}: ${server}`).join('\n')
       // if (!mode && !binded?.[server]?.mode) return '请指定模式: osu.bind --mode <mode>\n' + `${options.server[server].server}: ${options.server[server].mode.join(', ')}`
@@ -37,19 +37,16 @@ export function apply (ctx: Context, options: Options) {
       if (!binded[server]) binded[server] = {}
       if (mode) binded[server].mode = mode
       if (user) binded[server].user = user
-      // @ts-expect-error refer to koishi doc
       return JSON.stringify(session.user.osu)
     })
   cmd.subcommand('.binded')
-  // @ts-expect-error refer to koishi doc
-    .action(({ session }) => JSON.stringify(session.user.osu))
+    .action(({ session }: {session: Session & { user: { osu: Record<string, any>}}}) => JSON.stringify(session.user.osu))
   cmd.subcommand('.unbind')
     .option('server', '-s <server>')
-    .action(({ session, options }) => {
+    .action((argv) => {
+      const { session, options } = argv as typeof argv & { session: { user: { osu: Record<string, any>}}}
       const { server } = options
-      // @ts-expect-error refer to koishi doc
       if (session.user.osu[server]) {
-        // @ts-expect-error refer to koishi doc
         delete session.user.osu[server]
       }
     })

@@ -1,9 +1,11 @@
+import { Session } from 'koishi'
 import { Options } from '../index'
+import { unescapeOnebotSpecialChars } from './unescape'
 export default function tryUser (options: Options) {
   const defaultServer = Object.entries(options.server).find(([server, conf]) => conf.default)?.[0]
   return {
-    tryUser (user, session, server = defaultServer) {
-      return session.user?.osu?.[server]?.user || user
+    tryUser (user: string | undefined, session: Session & {user: {osu: Record<string, any>}}, server = defaultServer): string | undefined {
+      return (user && unescapeOnebotSpecialChars(user)) || session.user?.osu?.[server]?.user
     }
   }
 }

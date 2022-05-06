@@ -1,12 +1,12 @@
 import { Context } from 'koishi'
 import injectOsuOptions from '../command-inject-options'
-export const name = 'osu-info-command-text'
 
+export const name = 'osu-info-command-text'
 export function apply (ctx: Context) {
   const oi = ctx.command('osu')
 
   const info = oi
-    .subcommand('.info.text [<username:text]')
+    .subcommand('.info.text [username:text]')
     .action((argv, username) => {
       const { options } = argv
       // @ts-expect-error registered later

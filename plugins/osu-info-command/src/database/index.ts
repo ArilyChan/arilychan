@@ -30,7 +30,6 @@ export function apply (ctx: Context, options: Options) {
     .userFields(['authority', 'osu'])
     .action((argv, user) => {
       let { session, options: { server, mode } } = argv as typeof argv & { session: { user: { osu: Record<string, any>, authority: number }}}
-      // if (!session.user.osu) session.user.osu = {}
       // const binded = session.user.osu
       if (!server) return '请指定服务器: osu.bind --server <server>\n' + Object.entries(options.server).map(([server, conf]) => `${conf.server}: ${server}`).join('\n')
       // if (!mode && !binded?.[server]?.mode) return '请指定模式: osu.bind --mode <mode>\n' + `${options.server[server].server}: ${options.server[server].mode.join(', ')}`
@@ -42,9 +41,8 @@ export function apply (ctx: Context, options: Options) {
         if (user) session.user.osu[server].user = user
         return JSON.stringify(session.user.osu)
       } catch (error) {
-        // if (session.user.authority > 2) { return error.stack }
-        // return error.message
-        return error.stack
+        if (session.user.authority > 2) { return error.stack }
+        return error.message
       }
     })
   cmd.subcommand('.binded')

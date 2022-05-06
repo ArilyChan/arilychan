@@ -19,8 +19,6 @@ function apply(ctx, options) {
         .userFields(['authority', 'osu'])
         .action((argv, user) => {
         let { session, options: { server, mode } } = argv;
-        if (!session.user.osu)
-            session.user.osu = {};
         // const binded = session.user.osu
         if (!server)
             return '请指定服务器: osu.bind --server <server>\n' + Object.entries(options.server).map(([server, conf]) => `${conf.server}: ${server}`).join('\n');

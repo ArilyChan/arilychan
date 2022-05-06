@@ -13,31 +13,27 @@ function apply(ctx, options) {
         osu: { type: 'json', initial: {} }
     });
     const cmd = ctx.command('osu');
-    cmd.subcommand('.bind [username: text]')
-        .option('server', '-s <server>')
-        .option('mode', '-m <mode>')
-        .userFields(['authority', 'osu'])
-        .action((argv, user) => {
-        let { session, options: { server, mode } } = argv;
-        if (!session.user.osu)
-            session.user.osu = {};
-        // workaround
-        const binded = { ...session.user.osu };
-        // const binded = session.user.osu
+    cmd.subcommand('.bind <username: text>')
+        .option('server', '-s [server]')
+        .option('mode', '-m [mode]')
+        .userFields(['osu', 'osu2', 'authority'])
+        .action(async (argv, user) => {
+        const { session } = argv;
+        let { options: { server, mode } } = argv;
         if (!server)
             return '请指定服务器: osu.bind --server <server>\n' + Object.entries(options.server).map(([server, conf]) => `${conf.server}: ${server}`).join('\n');
         // if (!mode && !binded?.[server]?.mode) return '请指定模式: osu.bind --mode <mode>\n' + `${options.server[server].server}: ${options.server[server].mode.join(', ')}`
         try {
             mode = validateMode(transformMode(mode), server);
+            console.log({ mode, user, server });
             if (mode && !Object.values(options.server).some(server => server.mode.some(m => m === mode)))
                 return `指定的模式不存在。 ${options.server[server].server}可用: ${options.server[server].mode.join(', ')}`;
-            if (!binded[server])
-                binded[server] = {};
+            if (!session.user.osu[server])
+                session.user.osu[server] = {};
             if (mode)
-                binded[server].mode = mode;
+                session.user.osu[server].mode = mode;
             if (user)
-                binded[server].user = user;
-            session.user.osu = { ...binded };
+                session.user.osu[server].user = user;
             return JSON.stringify(session.user.osu);
         }
         catch (error) {

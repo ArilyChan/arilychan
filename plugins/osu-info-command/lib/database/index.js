@@ -16,6 +16,7 @@ function apply(ctx, options) {
     cmd.subcommand('.bind [username: text]')
         .option('server', '-s <server>')
         .option('mode', '-m <mode>')
+        .userFields(['authority', 'osu'])
         .action((argv, user) => {
         let { session, options: { server, mode } } = argv;
         if (!session.user.osu)
@@ -28,7 +29,8 @@ function apply(ctx, options) {
             mode = validateMode(transformMode(mode), server);
             if (mode && !Object.values(options.server).some(server => server.mode.some(m => m === mode)))
                 return `指定的模式不存在。 ${options.server[server].server}可用: ${options.server[server].mode.join(', ')}`;
-            // if (!session.user.osu[server]) session.user.osu[server] = {}
+            if (!session.user.osu[server])
+                session.user.osu[server] = {};
             if (mode)
                 session.user.osu[server].mode = mode;
             if (user)
@@ -43,9 +45,11 @@ function apply(ctx, options) {
         }
     });
     cmd.subcommand('.binded')
+        .userFields(['authority', 'osu'])
         .action(({ session }) => JSON.stringify(session.user.osu));
     cmd.subcommand('.unbind')
         .option('server', '-s <server>')
+        .userFields(['authority', 'osu'])
         .action((argv) => {
         const { session, options } = argv;
         const { server } = options;
@@ -57,11 +61,13 @@ function apply(ctx, options) {
         }
     });
     cmd.subcommand('bindserver <server>')
+        .userFields(['authority', 'osu'])
         .action(({ session }, server) => {
         if (!server)
             return '请指定服务器。\n' + Object.entries(options.server).map(([server, conf]) => `${conf.server}: ${server}`).join('\n');
         server = server.trim();
-        if (!session.user.osu[server].name)
+        // @ts-expect-error optional chained
+        if (!session.user.osu?.[server]?.name)
             return '您还未绑定该服务器的用户。请先绑定！';
         session.user.osu.defaultServer = server;
     });

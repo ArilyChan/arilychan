@@ -5,7 +5,7 @@ export interface Options {
     screenshot: {
         base: string;
     };
-    server: Array<{
+    server: Record<string, {
         default: boolean;
         server: string;
         mode: string[];

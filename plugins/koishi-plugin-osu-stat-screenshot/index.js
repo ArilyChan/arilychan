@@ -4,7 +4,7 @@ const parser = require('./screenshot-syntax')
 module.exports.name = 'osu-stat-screenshot'
 module.exports.using = ['puppeteerCluster']
 module.exports.schema = Schema.object({
-  prefix: Schema.array().default(['!!', '*', '?', '/*', '//']).description('skip if not starts with'),
+  prefix: Schema.array(String).default(['!!', '*', '?', '/*', '//']).description('skip if not starts with'),
   includeComment: Schema.boolean().default(false).description('include comments in response')
 })
 

@@ -3,13 +3,14 @@ import { Context } from 'koishi'
 import TryMode from '../utils/tryMode'
 import { Options } from '../index'
 export const name = 'osu-info-command-extend-database'
+type UserServerBind = Record<string, {
+  mode?: string
+}>
 declare module 'koishi' {
   // eslint-disable-next-line no-unused-vars
   interface User {
-    osu: Record<string, {
-      mode?: string
-    }> & {
-      defaultServer?: string
+    osu: UserServerBind & {
+      defaultServer?: keyof UserServerBind
     }
   }
 }
@@ -34,8 +35,10 @@ export function apply (ctx: Context, options: Options) {
       if (!binded[server]) binded[server] = {}
       if (mode) binded[server].mode = mode
       if (user) binded[server].user = user
+      // @ts-expect-error refer to koishi doc
       return JSON.stringify(session.user.osu)
     })
   cmd.subcommand('.binded')
+  // @ts-expect-error refer to koishi doc
     .action(({ session }) => JSON.stringify(session.user.osu))
 }

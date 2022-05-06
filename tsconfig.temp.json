@@ -1,0 +1,8 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./plugins/osu-info-command"
+    }
+  ]
+}

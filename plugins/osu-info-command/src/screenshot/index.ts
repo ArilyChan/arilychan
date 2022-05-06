@@ -24,7 +24,6 @@ export function apply (app: Context, options) {
       op = validateOP(transformModeOP(op), op.session)
       let { user: username, mode, server, session } = op
       username = tryUser(username, session, server)
-      if (!mode) mode = options.server[server].mode[0]
       if (!username) return '需要提供用户名。'
       const ep = `${options.screenshot.base}/users/${username}/${mode || ''}${params({ server })}`
       // return ep
@@ -40,7 +39,6 @@ export function apply (app: Context, options) {
         startHoursBefore: find.last,
         endHoursBefore: undefined
       }
-      if (!mode) mode = options.server[server].mode[0]
       if (!username) return '需要提供用户名。'
       return screenshot(`${options.screenshot.base}/best/${username}/${mode || ''}${params({ server, ...find })}`)
     },
@@ -48,7 +46,6 @@ export function apply (app: Context, options) {
       op = validateOP(transformModeOP(op), op.session)
       let { user: username, mode, server, session } = op
       username = tryUser(username, session, server)
-      if (!mode) mode = options.server[server].mode[0]
       if (!username) return '需要提供用户名。'
       return screenshot(`${options.screenshot.base}/recent/${username}/${mode || ''}${params({ server })}`)
     },

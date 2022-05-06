@@ -28,10 +28,12 @@ export function apply (ctx: Context, options: Options) {
       let { session, options: { server, mode } } = argv
       // @ts-expect-error extended before (line 14)
       const binded = session.user.osu
+      // @ts-expect-error refer to koishi doc
+      if (!session.user.osu) session.user.osu = {}
       if (!server) return '请指定服务器: osu.bind --server <server>\n' + Object.entries(options.server).map(([server, conf]) => `${conf.server}: ${server}`).join('\n')
-      if (!mode && !binded[server]?.mode) return '请指定模式: osu.bind --mode <mode>\n' + `${options.server[server].server}: ${options.server[server].mode.join(', ')}`
+      // if (!mode && !binded?.[server]?.mode) return '请指定模式: osu.bind --mode <mode>\n' + `${options.server[server].server}: ${options.server[server].mode.join(', ')}`
       mode = transformMode(mode)
-      if (!Object.values(options.server).some(server => server.mode.some(m => m === mode))) return `模式不存在。 ${options.server[server].server}可用: ${options.server[server].mode.join(', ')}`
+      if (mode && !Object.values(options.server).some(server => server.mode.some(m => m === mode))) return `指定的模式不存在。 ${options.server[server].server}可用: ${options.server[server].mode.join(', ')}`
       if (!binded[server]) binded[server] = {}
       if (mode) binded[server].mode = mode
       if (user) binded[server].user = user
@@ -41,4 +43,14 @@ export function apply (ctx: Context, options: Options) {
   cmd.subcommand('.binded')
   // @ts-expect-error refer to koishi doc
     .action(({ session }) => JSON.stringify(session.user.osu))
+  cmd.subcommand('.unbind')
+    .option('server', '-s <server>')
+    .action(({ session, options }) => {
+      const { server } = options
+      // @ts-expect-error refer to koishi doc
+      if (session.user.osu[server]) {
+        // @ts-expect-error refer to koishi doc
+        delete session.user.osu[server]
+      }
+    })
 }

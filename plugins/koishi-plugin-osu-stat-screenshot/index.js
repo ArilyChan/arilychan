@@ -64,7 +64,7 @@ module.exports.apply = async (app, options) => {
     const user = parsedCommand.user
     delete parsedCommand.type
     delete parsedCommand.user
-    return session.execute({ session, options: parsedCommand, args: [user], command })
+    return session.execute({ session, options: parsedCommand, args: [user], command }, true)
   }
 
   app.middleware(async (meta, next) => {

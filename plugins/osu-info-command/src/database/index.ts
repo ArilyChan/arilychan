@@ -36,7 +36,7 @@ export function apply (ctx: Context, options: Options) {
       try {
         mode = validateMode(transformMode(mode), server)
         if (mode && !Object.values(options.server).some(server => server.mode.some(m => m === mode))) return `指定的模式不存在。 ${options.server[server].server}可用: ${options.server[server].mode.join(', ')}`
-        if (!session.user.osu[server]) session.user.osu[server] = {}
+        // if (!session.user.osu[server]) session.user.osu[server] = {}
         if (mode) session.user.osu[server].mode = mode
         if (user) session.user.osu[server].user = user
         return JSON.stringify(session.user.osu)

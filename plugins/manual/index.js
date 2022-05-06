@@ -21,7 +21,6 @@ module.exports = {
     // const logger = ctx.logger('arilychan-manual')
     // inject service
     ctx.manual = helps
-    options = new Schema(options)
     // install web page on express server
     // ctx.using(['express'], async function ManualOnWeb ({ express }) {
     //   let handler

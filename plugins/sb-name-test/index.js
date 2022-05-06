@@ -5,7 +5,6 @@ module.exports.schema = Schema.object({
     .default('http://localhost:4532/test')
 })
 module.exports.apply = function sbNameTestPlugin (ctx, options) {
-  options = new Schema(options)
   if (options.endpoint.endsWith('/')) {
     options.endpoint = options.endpoint.slice(0, options.endpoint.length - 1)
   }

@@ -31,7 +31,7 @@ module.exports.schema = Schema.object({
   })
 })
 module.exports.apply = async (ctx, options) => {
-  const { cluster: { launch }, viewport, navigation } = new Schema(options)
+  const { cluster: { launch }, viewport, navigation } = options
   const status = {
     cluster: {
       inited: false,

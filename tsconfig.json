@@ -1,12 +1,13 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
+    "outDir": ".built",
     "allowJs": true,
     "baseUrl": ".",
     "paths": {
       "koishi-plugin-*": [
-        "plugins/*",
-        "plugins/*/src"
+        "plugins/*/src",
+        "plugins/*"
       ]
     }
   }

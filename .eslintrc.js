@@ -4,6 +4,8 @@ module.exports = {
     commonjs: true,
     es2020: true
   },
+  parser: '@typescript-eslint/parser',
+  plugins: ['@typescript-eslint'],
   extends: [
     'standard'
   ],

@@ -28,7 +28,6 @@ module.exports.schema = Schema.object({
   })
 })
 module.exports.apply = async (ctx, options) => {
-  options = new Schema(options)
   const storage = await api(options)
   ctx.using(['express'], function arilychanRadioWebService ({ express, _expressHttpServer }) {
     express.use(options.web.path, server(options, storage, _expressHttpServer))

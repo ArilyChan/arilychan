@@ -54,8 +54,7 @@ export const schema = Schema.object({
 export interface schema {
   rules: string[]
 }
-export function apply(ctx: Context, _options) {
-  const options = new Schema(_options) as unknown as schema
+export function apply(ctx: Context, options) {
   const trigger = options.rules.join('\n')
   try {
     const [matches, builder] = commandBuilder(ctx.logger('resp2/builder'))

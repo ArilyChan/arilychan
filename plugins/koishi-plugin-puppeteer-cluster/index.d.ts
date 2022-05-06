@@ -15,7 +15,7 @@ interface ClusterOptions {
     puppeteer: any;
 }
 import { Cluster } from 'puppeteer-cluster'
-import { Context } from 'koishi-core'
+import { Context } from 'koishi'
 type puppeteerCluster = {
   instance: Cluster<string, number>,
   options: {
@@ -29,8 +29,8 @@ type puppeteerCluster = {
     screenshot: (data: {page: Page, data: { url: string } & Partial<puppeteerCluster['options']>}) => Promise<string | Buffer>
   }
   screenshot: {
-    base64: (url: string, options: puppeteerCluster['options']) => Promise<string>,
-    binary: (url: string, options: puppeteerCluster['options']) => Promise<Buffer>,
+    binary: (url: string, options?: puppeteerCluster['options']) => Promise<Buffer>,
+    base64: (url: string, options?: puppeteerCluster['options']) => Promise<string>,
     save: (url: string, path: string) => Promise<void>
   }
 }
@@ -43,7 +43,7 @@ type Options = {
   navigation?: Partial<NavigationOptions>
 }
 
-declare module 'koishi-core' {
+declare module 'koishi' {
   interface Context {
     puppeteerCluster: puppeteerCluster
   }
@@ -59,4 +59,4 @@ declare namespace plugin {
   const apply: (ctx: Context, options: Options) => Promise<void>
 }
 
-export = plugin
+export default plugin

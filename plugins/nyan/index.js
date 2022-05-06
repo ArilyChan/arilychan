@@ -100,7 +100,7 @@ module.exports = {
   name: 'nyan',
   schema,
   apply (ctx, options) {
-    const { noises } = options = new Schema(options)
+    const { noises } = options
     ctx.any().before('send', (session) => {
       const noiseMaker = makeNoise(noises)
       session.content = nyan(session.content, noiseMaker, options)

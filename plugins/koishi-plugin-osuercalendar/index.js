@@ -28,7 +28,6 @@ module.exports.schema = web.schema = Schema.object({
   })
 })
 module.exports.apply = (ctx, options) => {
-  options = new Schema(options)
   const users = options.auth.local // deprecate this
   const eventPath = options.eventFile || path.join(thisPath, './osuercalendar-events.json')
 

@@ -24,11 +24,13 @@ function commandBuilder(logger) {
                     break;
                 case 'equals':
                     if (cond.eq === 'eqeqeq')
-                        matchRule = (content) => content === cond.content;
+                        matchRule = (session) => session.content === cond.content;
+                    // eslint-disable-next-line eqeqeq
                     if (cond.eq === 'eqeq')
-                        matchRule = (content) => content == cond.content;
+                        matchRule = (session) => session.content == cond.content;
                     if (cond.eq === 'eq') {
                         logger('responder2').warn(`got left assign in rules #${index}, auto-corret to double equal.`);
+                        // eslint-disable-next-line eqeqeq
                         matchRule = (content) => content == cond.content;
                     }
                     break;
@@ -81,7 +83,7 @@ function apply(ctx, options) {
             .example('resp2.test $ -> true -> "ok!"')
             .action((_, syntax) => {
             try {
-                const parsed = grammar_1.parser.parse(syntax);
+                grammar_1.parser.parse(syntax);
                 return 'parsing succeed! should work!';
             }
             catch (err) {
@@ -120,7 +122,7 @@ function apply(ctx, options) {
                         rtn.push(`|| 触发条件:\n|| session.content.${cond.type}('${cond.content}')`);
                     }
                     else if (cond.type === 'equals') {
-                        let equals = cond.eq.split('eq').join('=');
+                        const equals = cond.eq.split('eq').join('=');
                         rtn.push(`|| 触发条件:\n|| session.content ${equals} '${cond.content}'`);
                     }
                     else if (cond.type === 'exec') {
@@ -133,8 +135,8 @@ function apply(ctx, options) {
                     else if (action.type === 'exec') {
                         rtn.push(`|| 自定义回复函数: ${transformNames(action)}`);
                     }
-                    if (index < parsed.length - 1) {
-                    }
+                    // if (index < parsed.length - 1) {
+                    // }
                 });
                 return rtn.join('\n');
             }

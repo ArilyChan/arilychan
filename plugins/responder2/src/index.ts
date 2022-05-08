@@ -5,7 +5,7 @@ export type CustomMatcher = (session: Session, context: Context) => Promise<bool
 export type Match = CustomMatcher
 export type Action = (session: Session, context: Context) => string | Promise<string>
 export type Respond = [Match, Action]
-export function commandBuilder(logger): [Respond[], CallableFunction] {
+export function commandBuilder (logger): [Respond[], CallableFunction] {
   const matches: Respond[] = []
   return [
     matches,
@@ -22,10 +22,12 @@ export function commandBuilder(logger): [Respond[], CallableFunction] {
           matchRule = (session) => session.content.includes(cond.content)
           break
         case 'equals':
-          if (cond.eq === 'eqeqeq') matchRule = (content) => content === cond.content
-          if (cond.eq === 'eqeq') matchRule = (content) => content == cond.content
+          if (cond.eq === 'eqeqeq') matchRule = (session) => session.content === cond.content
+          // eslint-disable-next-line eqeqeq
+          if (cond.eq === 'eqeq') matchRule = (session) => session.content == cond.content
           if (cond.eq === 'eq') {
             logger('responder2').warn(`got left assign in rules #${index}, auto-corret to double equal.`)
+            // eslint-disable-next-line eqeqeq
             matchRule = (content) => content == cond.content
           }
           break
@@ -38,7 +40,7 @@ export function commandBuilder(logger): [Respond[], CallableFunction] {
       switch (action.type) {
         case 'Literal':
           run = () => action.value
-          break;
+          break
         case 'exec':
           if (!action.names) action.names = {}
           run = exec(action.code, action.names, { async: action.async, inline: action.inline })
@@ -51,10 +53,10 @@ export const name = 'yet-another-responder'
 export const schema = Schema.object({
   rules: Schema.array(String).description('match rules.').default(['// add more down below', '// don\'t leave rules empty'])
 })
-export interface schema {
+export interface Options {
   rules: string[]
 }
-export function apply(ctx: Context, options) {
+export function apply (ctx: Context, options: Options) {
   const trigger = options.rules.join('\n')
   try {
     const [matches, builder] = commandBuilder(ctx.logger('resp2/builder'))
@@ -76,7 +78,7 @@ export function apply(ctx: Context, options) {
       .example('resp2.test $ -> true -> "ok!"')
       .action((_, syntax) => {
         try {
-          const parsed = parser.parse(syntax)
+          parser.parse(syntax)
           return 'parsing succeed! should work!'
         } catch (err) {
           return err.message
@@ -88,11 +90,10 @@ export function apply(ctx: Context, options) {
       .action((_, syntax) => {
         try {
           const transformNames = (ip) => {
-            const {names, inline, async: isAsync, code } = ip
+            const { names, inline, async: isAsync, code } = ip
             let rtn = `${isAsync ? '[async]' : ''} ${inline ? '[inline]' : ''} \n`
             rtn += `${isAsync ? '|| async ' : '|| '}`
-            if (!names || (names && names.session && names.context)) {rtn += `(session, context) => ${inline ? code.trim() :'{' + code.trim() + '}'}`}
-            else if (names.session && !names.context) {rtn += `session => ${inline ? code.trim() :'{' + code.trim() + '}'}`}
+            if (!names || (names && names.session && names.context)) { rtn += `(session, context) => ${inline ? code.trim() : '{' + code.trim() + '}'}` } else if (names.session && !names.context) { rtn += `session => ${inline ? code.trim() : '{' + code.trim() + '}'}` }
             return rtn
           }
           if (syntax === 'current') syntax = trigger
@@ -100,13 +101,13 @@ export function apply(ctx: Context, options) {
           const rtn = []
           parsed.forEach((line, index) => {
             rtn.push(`[${index}]:`)
-            if (Array.isArray(line)) { return rtn.push(`注释: ${line[1]}`)}
+            if (Array.isArray(line)) { return rtn.push(`注释: ${line[1]}`) }
             const cond = line.cond
             const action = line.action
             if (['startsWith', 'includes'].includes(cond.type)) {
               rtn.push(`|| 触发条件:\n|| session.content.${cond.type}('${cond.content}')`)
             } else if (cond.type === 'equals') {
-              let equals = cond.eq.split('eq').join('=')
+              const equals = cond.eq.split('eq').join('=')
               rtn.push(`|| 触发条件:\n|| session.content ${equals} '${cond.content}'`)
             } else if (cond.type === 'exec') {
               rtn.push(`|| 自定义触发函数: ${transformNames(cond)}`)
@@ -117,8 +118,8 @@ export function apply(ctx: Context, options) {
             } else if (action.type === 'exec') {
               rtn.push(`|| 自定义回复函数: ${transformNames(action)}`)
             }
-            if (index < parsed.length - 1) {
-            }
+            // if (index < parsed.length - 1) {
+            // }
           })
           return rtn.join('\n')
         } catch (err) {

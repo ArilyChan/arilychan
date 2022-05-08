@@ -11,7 +11,7 @@ export declare const schema: Schema<{
 } & import("koishi").Dict<any, string>, {
     rules: string[];
 } & import("koishi").Dict<any, string>>;
-export interface schema {
+export interface Options {
     rules: string[];
 }
-export declare function apply(ctx: Context, options: any): void;
+export declare function apply(ctx: Context, options: Options): void;

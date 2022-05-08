@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-responder2",
-  "description": "resp",
-  "version": "1.0.1",
+  "description": "最新应答机！你可以在conf里写函数！",
+  "version": "1.0.2",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -15,6 +15,9 @@
     "koishi",
     "plugin"
   ],
+  "customField": {
+    "gotPublished": true
+  },
   "peerDependencies": {
     "koishi": "^4.6.1"
   },

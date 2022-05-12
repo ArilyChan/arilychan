@@ -10,7 +10,8 @@
     "dist"
   ],
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+  },
   "keywords": [
     "chatbot",
     "koishi",

@@ -40,7 +40,7 @@
   ],
   "dependencies": {
     "@koishijs/cli": "^4.6.2",
-    "@koishijs/client": "^3.2.8",
+    "@koishijs/client": "^3.2.10",
     "@koishijs/plugin-adapter-onebot": "4.2.2",
     "@koishijs/plugin-adapter-telegram": "2.2.4",
     "@koishijs/plugin-admin": "1.1.2",
@@ -66,7 +66,6 @@
     "dotenv": "^12.0.4",
     "koishi": "^4.6.3",
     "koishi-plugin-aircon": "1.0.1",
-    "koishi-plugin-blame": "4.0.0",
     "koishi-plugin-changelog": "1.1.4",
     "koishi-plugin-chinfo": "1.0.0"
   }

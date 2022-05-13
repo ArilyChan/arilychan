@@ -11,6 +11,8 @@
   ],
   "license": "MIT",
   "scripts": {
+    "prebuild": "echo pre-built",
+    "build:console": "koishi-console build"
   },
   "keywords": [
     "chatbot",

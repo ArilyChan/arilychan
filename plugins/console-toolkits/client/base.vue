@@ -8,7 +8,6 @@
             type="success"
             v-for="(word, index) in tools.keywords"
             :key="index"
-            @click="words.splice(index, 1)"
             >{{ word }}
           </k-badge>
           <input
@@ -27,14 +26,14 @@
         class="tool"
       >
         <h3 class="entry-name my-1">
-          {{ entry.name || entry.component.title || entry.component.name || "unnamed" }}
+          {{ entry.name || entry.title || "unnamed" }}
         </h3>
-        <div class="text-wrap-pre px-2 my-1" v-if="entry.description || entry.component.description">
-          {{entry.description || entry.component.description}}
+        <div class="text-wrap-pre px-2 my-1" v-if="entry.description">
+          {{entry.description}}
         </div>
         <div class="splitter m-1" />
         <div class="px-2 tool-component">
-          <component :is="entry.component.name" />
+          <component :is="entry.name" />
         </div>
       </div>
     </div>
@@ -42,18 +41,19 @@
 </template>
 
 <script>
-import tools from "../client/register/tools";
+// const modules = import.meta.glob('./components/**/*.vue')
+import assignee from './components/assignee/client.vue'
 export default {
-  beforeMount() {
-    tools.value.forEach((entry) => {
-      this.$options.components[entry.component.name] = entry.component;
-    });
-  },
   data() {
     return {
-      tools,
+      tools: [assignee],
       keyword: "",
     };
+  },
+  beforeMount() {
+    this.tools.forEach((entry) => {
+      this.$options.components[entry.name] = entry;
+    });
   },
   methods: {
     showComponent(entry) {

@@ -11,5 +11,5 @@ export function apply (ctx: Context) {
       prod: resolve(__dirname, '../dist')
     })
   })
-  ctx.plugin(resolve(__dirname, '../toolkits/assignee/server.ts'))
+  ctx.plugin(resolve(__dirname, './assignee/server'))
 }

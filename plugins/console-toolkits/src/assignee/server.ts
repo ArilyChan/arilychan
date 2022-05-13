@@ -14,6 +14,7 @@ export default function (ctx: Context) {
   const searchPlatform = async (platform: string): Promise<PlatformRow[]> => {
     const result = await ctx.database.get('channel', {
       platform: new RegExp(platform)
+      // @ts-expect-error
     }, ['id', 'name', 'platform', 'assignee'])
     if (!result.length) {
       return []
@@ -31,6 +32,7 @@ export default function (ctx: Context) {
 
     const result = await ctx.database.get('channel', {
       assignee: new RegExp(assignee)
+      // @ts-expect-error
     }, ['id', 'assignee', 'name', 'platform'])
     if (!result.length) {
       return []

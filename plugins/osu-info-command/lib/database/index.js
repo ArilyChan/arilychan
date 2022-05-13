@@ -57,7 +57,6 @@ function apply(ctx, options) {
                 session.user.osu[server].mode = mode;
             if (user)
                 session.user.osu[server].user = user;
-            // return JSON.stringify(session.user.osu)
             return replyBindedStatus(session.user.osu, [], [server]);
         }
         catch (error) {

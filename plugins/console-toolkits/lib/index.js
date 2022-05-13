@@ -12,6 +12,6 @@ function apply(ctx) {
             prod: (0, path_1.resolve)(__dirname, '../dist')
         });
     });
-    ctx.plugin((0, path_1.resolve)(__dirname, '../toolkits/assignee/server.ts'));
+    ctx.plugin((0, path_1.resolve)(__dirname, './assignee/server'));
 }
 exports.apply = apply;

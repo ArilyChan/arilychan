@@ -4,6 +4,7 @@
     "outDir": ".built",
     "allowJs": true,
     "baseUrl": ".",
+    "jsx": "preserve",
     "paths": {
       "koishi-plugin-*": [
         "plugins/*/src",

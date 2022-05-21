@@ -18,7 +18,7 @@
     "tsc": "tsc"
   },
   "devDependencies": {
-    "@koishijs/client": "^3.2.8",
+    "@koishijs/client": "^3.2.10",
     "@koishijs/scripts": "^1.3.2",
     "@typescript-eslint/eslint-plugin": "^5.22.0",
     "@typescript-eslint/parser": "^5.22.0",
@@ -33,11 +33,17 @@
   },
   "author": "",
   "license": "MIT",
-  "workspaces": [
-    "adapters/*",
-    "plugins/*",
-    "utils/*"
-  ],
+  "workspaces": {
+    "packages": [
+      "adapters/*",
+      "plugins/*",
+      "utils/*"
+    ],
+    "nohoist": [
+      "plugins/koishi-plugins-osuercalendar",
+      "plugins/manual-on-web"
+    ]
+  },
   "dependencies": {
     "@koishijs/cli": "^4.6.2",
     "@koishijs/client": "^3.2.10",

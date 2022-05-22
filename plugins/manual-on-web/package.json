@@ -1,26 +1,52 @@
 {
   "name": "koishi-plugin-manual-on-web",
-  "version": "0.0.0",
+  "description": "provide doc on web",
+  "private": true,
+  "version": "1.0.0",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "dist"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "chatbot",
+    "koishi",
+    "plugin"
+  ],
+  "peerDependencies": {
+    "koishi": "^4.6.3"
+  },
+  "dependencies": {
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-typescript": "^8.3.2",
+    "marked": "^4.0.16",
+    "mime-types": "^2.1.35"
+  },
   "scripts": {
-    "dev": "solid-start dev",
-    "build": "solid-start build",
-    "start": "solid-start start"
+    "build:plugin:async": "rollup -c rollup.config.js",
+    "start:plugin:async": "node examples/async/lib/index.js",
+    "build:example:async": "rollup -c examples/async/rollup.config.js",
+    "start:example:async": "node examples/async/lib/index.js",
+    "build:example:ssg": "rollup -c examples/ssg/rollup.config.js && node --trace-warnings examples/ssg/export.js",
+    "start:example:ssg": "npx serve examples/ssg/public -l 8080",
+    "build:example:ssr": "rollup -c examples/ssr/rollup.config.js",
+    "start:example:ssr": "node examples/ssr/lib/index.js",
+    "build:example:stream": "rollup -c examples/stream/rollup.config.js",
+    "start:example:stream": "node examples/stream/lib/index.js",
+    "clean": "rimraf examples/**/lib/ examples/**/public/"
   },
-  "main": "dist/koishi/index.js",
-  "type": "module",
   "devDependencies": {
-    "@mdx-js/rollup": "^2.0.0",
-    "solid-app-router": "^0.3.1",
-    "solid-js": "^1.4.0",
-    "solid-mdx": "^0.0.6",
-    "solid-meta": "^0.27.3",
-    "solid-start": "next",
-    "solid-start-node": "next",
-    "typescript": "^4.4.3",
-    "undici": "^4.12.2",
-    "vite": "^2.8.6"
-  },
-  "engines": {
-    "node": ">=14"
+    "@babel/core": "^7.16.7",
+    "@rollup/plugin-babel": "5.3.0",
+    "@rollup/plugin-commonjs": "21.0.1",
+    "@rollup/plugin-node-resolve": "13.1.2",
+    "babel-preset-solid": "^1.4.2",
+    "express": "^4.17.1",
+    "rollup": "^2.62.0",
+    "rollup-plugin-copy": "^3.4.0",
+    "shx": "^0.3.3",
+    "solid-js": "^1.4.2"
   }
 }

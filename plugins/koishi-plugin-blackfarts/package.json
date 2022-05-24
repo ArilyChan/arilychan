@@ -10,7 +10,6 @@
     "abort-controller": "^3.0.0",
     "app-module-path": "^2.2.0",
     "console.table": "^0.10.0",
-    "ewc-api": "github:arily/ewc-api",
     "express": "^4.18.1",
     "express-react-views": "^0.11.0",
     "glob": "^7.2.0",

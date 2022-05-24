@@ -4,7 +4,7 @@ const Command = require('./Command')
 
 // const Help = require('./Help')
 const cabbageReaction = require('./Cabbage/CabbageReactionConfig')
-const explosiveReaction = require('./Explosive/ExpolosiveReactionConfig')
+// const explosiveReaction = require('./Explosive/ExpolosiveReactionConfig')
 const gambleReaction = require('./EWC-Gamble/GambleReactionConfig')
 const recipeReaction = require('./Recipe/RecipeReactionConfig')
 const { menu, models: menuModels } = require('./Recipe/menu')
@@ -31,7 +31,7 @@ module.exports.schema = Schema.object({
 })
 module.exports.apply = function (app, options) {
   const cabbage = new CabbageReaction(cabbageReaction)
-  const explosive = new CabbageReaction(explosiveReaction)
+  // const explosive = new CabbageReaction(explosiveReaction)
   const gamble = new CabbageReaction(gambleReaction)
   const recipe = new CabbageReaction(recipeReaction)
   // const help = new CabbageReaction(Help)

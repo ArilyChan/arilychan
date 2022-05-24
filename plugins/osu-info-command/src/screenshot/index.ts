@@ -20,7 +20,7 @@ export function apply (app: Context, options) {
   }
 
   const ops = {
-    stat (op: {user: string, mode: string, server: string, session: Session & {user: {osu: Record<string, any>, authority: number}} }) {
+    stat (op: { user: string, mode: string, server: string, session: Session & { user: { osu: Record<string, any>, authority: number } } }) {
       try {
         op = validateOP(transformModeOP(op), op.session)
         let { user: username, mode, server, session } = op
@@ -29,13 +29,14 @@ export function apply (app: Context, options) {
           if (session.user.authority > 2) return JSON.stringify({ username, binded: { osu: { ...session.user.osu } } })
           return '需要提供用户名。'
         }
-        const ep = `${options.screenshot.base}/users/${username}/${mode || ''}${params({ server })}`
+        app.logger('osu-info-command').info('stat:', { username, mode, server })
+        const ep = `${options.screenshot.base}/users/${username}${(mode && `/${mode}`) || ''}${params({ server })}`
         return screenshot(ep)
       } catch (error) {
         return error.message
       }
     },
-    best (op: {user: string, mode: string, server: string, session: Session & {user: {osu: Record<string, any>}}, find: any}) {
+    best (op: { user: string, mode: string, server: string, session: Session & { user: { osu: Record<string, any> } }, find: any }) {
       try {
         op = validateOP(transformModeOP(op), op.session)
         let { user: username, mode, server, session, find } = op
@@ -47,23 +48,23 @@ export function apply (app: Context, options) {
           endHoursBefore: undefined
         }
         if (!username) return '需要提供用户名。'
-        return screenshot(`${options.screenshot.base}/best/${username}/${mode || ''}${params({ server, ...find })}`)
+        return screenshot(`${options.screenshot.base}/best/${username}${(mode && `/${mode}`) || ''}${params({ server, ...find })}`)
       } catch (err) {
         return err.message
       }
     },
-    'recent-score' (op: {user: string, mode: string, server: string, session: Session & {user: {osu: Record<string, any>}}}) {
+    'recent-score' (op: { user: string, mode: string, server: string, session: Session & { user: { osu: Record<string, any> } } }) {
       try {
         op = validateOP(transformModeOP(op), op.session)
         let { user: username, mode, server, session } = op
         username = tryUser(username, session, server)
         if (!username) return '需要提供用户名。'
-        return screenshot(`${options.screenshot.base}/recent/${username}/${mode || ''}${params({ server })}`)
+        return screenshot(`${options.screenshot.base}/recent/${username}${(mode && `/${mode}`) || ''}${params({ server })}`)
       } catch (err) {
         return err.message
       }
     },
-    userpage (op: {user: string, server: string, session: Session & {user: {osu: Record<string, any>}}}) {
+    userpage (op: { user: string, server: string, session: Session & { user: { osu: Record<string, any> } } }) {
       try {
         op = validateOP(transformModeOP(op), op.session)
         let { user: username, server, session } = op
@@ -74,7 +75,7 @@ export function apply (app: Context, options) {
         return e.message
       }
     },
-    score (op: { id: any, mode: string, server: string, session: Session}) {
+    score (op: { id: any, mode: string, server: string, session: Session }) {
       try {
         op = validateOP(transformModeOP(op), op.session)
         const { mode, id, server } = op
@@ -92,7 +93,7 @@ export function apply (app: Context, options) {
     oi
       .subcommand('.userpage.screenshot <username:text>')
       .action((argv, username) => {
-        const { options, session } = argv as typeof argv & { session: { user: { osu: Record<string, any>}}}
+        const { options, session } = argv as typeof argv & { session: { user: { osu: Record<string, any> } } }
         // @ts-expect-error registered later
         const { server } = options
         return ops.userpage({ user: username, server, session })
@@ -104,7 +105,7 @@ export function apply (app: Context, options) {
       .subcommand('.info.screenshot <username:text>')
       .userFields(['authority', 'osu'])
       .action((argv, username) => {
-        const { options, session } = argv as typeof argv & { session: { user: { osu: Record<string, any>}}}
+        const { options, session } = argv as typeof argv & { session: { user: { osu: Record<string, any> } } }
         // @ts-expect-error registered later
         const { mode, server } = options
         return ops.stat({ user: username, mode, server, session })
@@ -113,7 +114,7 @@ export function apply (app: Context, options) {
       .subcommand('.recent.screenshot <username:text>')
       .userFields(['authority', 'osu'])
       .action((argv, username) => {
-        const { options, session } = argv as typeof argv & { session: { user: { osu: Record<string, any>}}}
+        const { options, session } = argv as typeof argv & { session: { user: { osu: Record<string, any> } } }
         // @ts-expect-error registered later
         const { mode, server } = options
         return ops['recent-score']({ user: username, mode, server, session })
@@ -125,7 +126,7 @@ export function apply (app: Context, options) {
       .option('to', '<date>')
       .option('last', '<hours>')
       .action((argv, username) => {
-        const { options, session } = argv as typeof argv & { session: { user: { osu: Record<string, any>}}}
+        const { options, session } = argv as typeof argv & { session: { user: { osu: Record<string, any> } } }
         // @ts-expect-error registered later
         const { mode, server, from, to, last } = options
         return ops.best({ user: username, mode, server, session, find: { from, to, last } })

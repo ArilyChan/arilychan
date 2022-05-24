@@ -8,15 +8,14 @@ function TryMode(options) {
             op.server = session.user?.osu?.defaultServer || defaultServer;
         const server = op.server;
         // if (!op.mode) op.mode = session.user?.osu?.[server]?.mode || options.server?.[server].mode[0]
-        if (!op.mode)
-            return op;
         if (!options.server[server])
             throw new Error(['Invalid server:', server].join(' '));
+        if (!op.mode)
+            return op;
         if (!options.server[server].mode.includes(op.mode))
             throw new Error(['Invalid mode on server:', op.server, 'with mode:', op.mode].join(' '));
         return op;
     };
-    // eslint-disable-next-line no-unused-vars
     const transformModeOP = (op) => {
         if (!op.mode)
             return op;

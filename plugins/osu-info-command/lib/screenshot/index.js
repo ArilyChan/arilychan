@@ -33,7 +33,7 @@ function apply(app, options) {
                         return JSON.stringify({ username, binded: { osu: { ...session.user.osu } } });
                     return '需要提供用户名。';
                 }
-                const ep = `${options.screenshot.base}/users/${username}/${mode || ''}${params({ server })}`;
+                const ep = `${options.screenshot.base}/users/${username}${(mode && `/${mode}`) || ''}${params({ server })}`;
                 return screenshot(ep);
             }
             catch (error) {
@@ -53,7 +53,7 @@ function apply(app, options) {
                 };
                 if (!username)
                     return '需要提供用户名。';
-                return screenshot(`${options.screenshot.base}/best/${username}/${mode || ''}${params({ server, ...find })}`);
+                return screenshot(`${options.screenshot.base}/best/${username}${(mode && `/${mode}`) || ''}${params({ server, ...find })}`);
             }
             catch (err) {
                 return err.message;
@@ -66,7 +66,7 @@ function apply(app, options) {
                 username = tryUser(username, session, server);
                 if (!username)
                     return '需要提供用户名。';
-                return screenshot(`${options.screenshot.base}/recent/${username}/${mode || ''}${params({ server })}`);
+                return screenshot(`${options.screenshot.base}/recent/${username}${(mode && `/${mode}`) || ''}${params({ server })}`);
             }
             catch (err) {
                 return err.message;

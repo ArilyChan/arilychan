@@ -1,3 +1,4 @@
+/// <reference types="koishi/lib" />
 import { Session } from 'koishi';
 import { Options } from '../index';
 export default function tryUser(options: Options): {

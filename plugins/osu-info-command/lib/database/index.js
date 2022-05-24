@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.apply = exports.name = void 0;
 // import injectOsuOptions from '../command-inject-options'
 const tryMode_1 = __importDefault(require("../utils/tryMode"));
+const tryUser_1 = __importDefault(require("../utils/tryUser"));
 exports.name = 'osu-info-command-extend-database';
 function apply(ctx, options) {
     const replyBindedStatus = (osu, omit = [], only = undefined) => {
@@ -48,7 +49,9 @@ function apply(ctx, options) {
         // if (!mode && !binded?.[server]?.mode) return '请指定模式: osu.bind --mode <mode>\n' + `${options.server[server].server}: ${options.server[server].mode.join(', ')}`
         try {
             mode = validateMode(transformMode(mode), server);
-            console.log({ mode, user, server });
+            const { tryUser } = (0, tryUser_1.default)(options);
+            // @ts-expect-error we got this
+            user = tryUser(user, session);
             if (mode && !Object.values(options.server).some(server => server.mode.some(m => m === mode)))
                 return `指定的模式不存在。 ${options.server[server].server}可用: ${options.server[server].mode.join(', ')}`;
             if (!session.user.osu[server])
@@ -83,17 +86,15 @@ function apply(ctx, options) {
         }
         return '👌 ok!';
     });
-    cmd.subcommand('bindserver <server>')
-        .userFields(['authority', 'osu'])
-        .action(({ session }, server) => {
-        if (!server)
-            return '请指定服务器。\n' + Object.entries(options.server).map(([server, conf]) => `${conf.server}: ${server}`).join('\n');
-        server = server.trim();
-        // @ts-expect-error optional chained
-        if (!session.user.osu?.[server]?.name)
-            return '您还未绑定该服务器的用户。请先绑定！';
-        session.user.osu.defaultServer = server;
-        return '👌 ok!';
-    });
+    // cmd.subcommand('.bindserver <server>')
+    //   .userFields(['authority', 'osu'])
+    //   .action(({ session }, server) => {
+    //     if (!server) return '请指定服务器。\n' + Object.entries(options.server).map(([server, conf]) => `${conf.server}: ${server}`).join('\n')
+    //     server = server.trim()
+    //     // @ts-expect-error optional chained
+    //     if (!session.user.osu?.[server]?.name) return '您还未绑定该服务器的用户。请先绑定！'
+    //     session.user.osu.defaultServer = server
+    //     return '👌 ok!'
+    //   })
 }
 exports.apply = apply;

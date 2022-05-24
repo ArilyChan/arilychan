@@ -1,6 +1,7 @@
 import { Context } from 'koishi'
 // import injectOsuOptions from '../command-inject-options'
 import TryMode from '../utils/tryMode'
+import TryUser from '../utils/tryUser'
 import { Options } from '../index'
 export const name = 'osu-info-command-extend-database'
 type UserServerBind = Record<string, {
@@ -53,7 +54,9 @@ export function apply (ctx: Context, options: Options) {
       // if (!mode && !binded?.[server]?.mode) return '请指定模式: osu.bind --mode <mode>\n' + `${options.server[server].server}: ${options.server[server].mode.join(', ')}`
       try {
         mode = validateMode(transformMode(mode), server)
-        console.log({ mode, user, server })
+        const { tryUser } = TryUser(options)
+        // @ts-expect-error we got this
+        user = tryUser(user, session)
         if (mode && !Object.values(options.server).some(server => server.mode.some(m => m === mode))) return `指定的模式不存在。 ${options.server[server].server}可用: ${options.server[server].mode.join(', ')}`
         if (!session.user.osu[server]) session.user.osu[server] = {}
         if (mode) session.user.osu[server].mode = mode
@@ -81,14 +84,14 @@ export function apply (ctx: Context, options: Options) {
       }
       return '👌 ok!'
     })
-  cmd.subcommand('bindserver <server>')
-    .userFields(['authority', 'osu'])
-    .action(({ session }, server) => {
-      if (!server) return '请指定服务器。\n' + Object.entries(options.server).map(([server, conf]) => `${conf.server}: ${server}`).join('\n')
-      server = server.trim()
-      // @ts-expect-error optional chained
-      if (!session.user.osu?.[server]?.name) return '您还未绑定该服务器的用户。请先绑定！'
-      session.user.osu.defaultServer = server
-      return '👌 ok!'
-    })
+  // cmd.subcommand('.bindserver <server>')
+  //   .userFields(['authority', 'osu'])
+  //   .action(({ session }, server) => {
+  //     if (!server) return '请指定服务器。\n' + Object.entries(options.server).map(([server, conf]) => `${conf.server}: ${server}`).join('\n')
+  //     server = server.trim()
+  //     // @ts-expect-error optional chained
+  //     if (!session.user.osu?.[server]?.name) return '您还未绑定该服务器的用户。请先绑定！'
+  //     session.user.osu.defaultServer = server
+  //     return '👌 ok!'
+  //   })
 }

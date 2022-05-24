@@ -129,3 +129,4 @@ koishi.config.yml
 accounts/*
 
 package-lock.json
+yarn.lock

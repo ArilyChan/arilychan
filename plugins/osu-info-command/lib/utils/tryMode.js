@@ -7,7 +7,8 @@ function TryMode(options) {
         if (!op.server)
             op.server = session.user?.osu?.defaultServer || defaultServer;
         const server = op.server;
-        // if (!op.mode) op.mode = session.user?.osu?.[server]?.mode || options.server?.[server].mode[0]
+        if (!op.mode)
+            op.mode = session.user?.osu?.[server]?.mode; // || options.server?.[server].mode[0]
         if (!options.server[server])
             throw new Error(['Invalid server:', server].join(' '));
         if (!op.mode)

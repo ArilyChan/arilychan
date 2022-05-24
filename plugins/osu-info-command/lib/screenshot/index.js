@@ -33,6 +33,7 @@ function apply(app, options) {
                         return JSON.stringify({ username, binded: { osu: { ...session.user.osu } } });
                     return '需要提供用户名。';
                 }
+                app.logger('osu-info-command').info('stat:', { username, mode, server });
                 const ep = `${options.screenshot.base}/users/${username}${(mode && `/${mode}`) || ''}${params({ server })}`;
                 return screenshot(ep);
             }

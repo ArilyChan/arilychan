@@ -56,7 +56,6 @@ export const name = 'osu-info-command'
 export function apply (ctx: Context, options: Options) {
   console.log(options)
   ctx.plugin(database, options)
-  // @ts-expect-error we got this, it's fine
   ctx.plugin(screenshot, options)
   ctx.plugin(text, options)
 }

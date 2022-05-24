@@ -70,7 +70,6 @@ exports.name = 'osu-info-command';
 function apply(ctx, options) {
     console.log(options);
     ctx.plugin(database, options);
-    // @ts-expect-error we got this, it's fine
     ctx.plugin(screenshot, options);
     ctx.plugin(text, options);
 }

@@ -35,8 +35,6 @@ const models = {
     collateral: 0,
     // 风险率
     get margin() {
-      // return -(((this.balance + this.unrealizedGain) - this.collateral) / (this.balance + this.unrealizedGain)) || 0
-      // const net = this.balance + this.unrealizedGain - this.collateral + state.credit
       const net = this.net + state.credit
       const overBorrow = net * state.leverage / this.collateral < state.liquidate
       return overBorrow ? Infinity : this.collateral / net / state.leverage
@@ -142,7 +140,10 @@ function lend (bettorId, lending) {
   gambler.collateral += lending
   state.lending += lending
   if (gambler.margin > 1) {
-    console.log('over-betting', bettorId)
+    // console.log('over-betting', bettorId, {
+    //   lending: lending / state.float,
+    //   margin: gambler.margin
+    // })
     gambler.collateral -= lending
     state.lending -= lending
     return {
@@ -151,13 +152,17 @@ function lend (bettorId, lending) {
     }
   }
   gambler.balance += lending
+  return {
+    stat: true
+  }
 }
 
 function bet(pool, bettorId, amount, horseId) {
   const gambler = state.gamblers.get(bettorId)
   const lending = amount - gambler.balance
   if (lending > 0) {
-    lend(bettorId, lending)
+    const result = lend(bettorId, lending)
+    if (!result.stat) return result
   }
   gambler.unrealizedGain -= amount
   pool.bets.push({ bettorId, amount, horseId })
@@ -217,7 +222,7 @@ function settlePool(pool) {
         amount -= amountReturn
         gambler.unrealizedGain += amountReturn
         gambler.collateral -= amountReturn
-        state.length -= amountReturn
+        state.lending -= amountReturn
       }
 
       gambler.balance += amount
@@ -261,16 +266,13 @@ function round(params) {
   bet(pool, 2, Math.floor(Math.random() * 10000), Math.round(Math.random() * 3) + 1)
   bet(pool, 3, Math.floor(Math.random() * 10000), Math.round(Math.random() * 3) + 1)
   bet(pool, 4, Math.floor(Math.random() * 20000), Math.round(Math.random() * 3) + 1)
-  console.log('马', match.horses)
+  console.log('======')
   console.log('池', pool.name)
   console.log('总赌注', pool.totalBalance / state.float)
   console.log('下注', pool.balance)
   console.log('赔率', pool.odds)
   console.log('-----')
   console.log('下注情况', pool.bets)
-  console.log('-----')
-  console.log('赌狗资金')
-  logBalance()
 
   settleMatch(match)
   console.log('-----')
@@ -293,7 +295,8 @@ round()
 round()
 round()
 round()
-console.log('1号的赌博', state.gamblers.get(1).history)
+console.log('1号的赌博')
+console.table(state.gamblers.get(1).history, ['amount', 'horseId'])
 
 module.exports = {
   state,

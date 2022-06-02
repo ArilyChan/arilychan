@@ -5811,6 +5811,11 @@ koishi-plugin-aircon@1.0.1:
   resolved "https://registry.yarnpkg.com/koishi-plugin-aircon/-/koishi-plugin-aircon-1.0.1.tgz#a3f64f5d870c9e5002c4cce12d1dea614b98e419"
   integrity sha512-X6mTqGVNSV88rLDP4Jrw/NIMVzydW9gH+DPjnD2GJNunRKdv5Yli9ZUJyfm4RlQOUimfxJxjsqm5jGMMC6+weA==
 
+koishi-plugin-beian@0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/koishi-plugin-beian/-/koishi-plugin-beian-0.1.2.tgz#12364800ac7e3d8617be036f2296b84cd12e657d"
+  integrity sha512-y7KBRCYS4VailkIDQgCSOEzr/H2vBrSJcU9Z+moc1r138+/bM1O5sLCPzPN72kE3jRlA7bdraMt8fkE/GjXnug==
+
 koishi-plugin-changelog@1.1.4:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/koishi-plugin-changelog/-/koishi-plugin-changelog-1.1.4.tgz#06c0a14ed0f69849bba78e4fb3f2d512f79ede90"

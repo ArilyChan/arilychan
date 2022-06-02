@@ -44,14 +44,19 @@ module.exports.apply = function (app, options) {
 
   recipeReaction?.['recipe.init']?.({ storage })
 
-  app.using(['express'], function blackFartWebService ({ express, _expressHttpServer }) {
+  app.using(['express'], function blackFartWebService({ express, _expressHttpServer }) {
     express.use(options?.web?.prefix || '/blackfarts', web(storage, _expressHttpServer))
   })
 
   app.middleware((meta, next) => {
     let reacted = false
     if (meta.content[0] === '!' || meta.content[0] === '！') {
-      reacted = Object.entries({ cabbage, explosive, gamble, recipe }).some(([name, reaction]) => {
+      reacted = Object.entries({
+        cabbage,
+        // explosive,
+        gamble,
+        recipe
+      }).some(([name, reaction]) => {
         if (reaction.reactTo(new Command({ meta, app, storage }))) {
           // console.log(`${meta.content} Catched by subplugin: ${name}`);
           return true

@@ -1,10 +1,12 @@
 import { Context, Schema, Session } from 'koishi'
 import { parser } from './grammar'
 import { build as exec } from './runtime/builder'
+
 export type CustomMatcher = (session: Session, context: Context) => Promise<boolean> | boolean
 export type Match = CustomMatcher
 export type Action = (session: Session, context: Context) => string | Promise<string>
 export type Respond = [Match, Action]
+
 export function commandBuilder (logger): [Respond[], CallableFunction] {
   const matches: Respond[] = []
   return [
@@ -22,9 +24,9 @@ export function commandBuilder (logger): [Respond[], CallableFunction] {
           matchRule = (session) => session.content.includes(cond.content)
           break
         case 'equals':
-          if (cond.eq === 'eqeqeq') matchRule = (session) => session.content === cond.content
+          if (cond.eq === 'strictEqual') matchRule = (session) => session.content === cond.content
           // eslint-disable-next-line eqeqeq
-          if (cond.eq === 'eqeq') matchRule = (session) => session.content == cond.content
+          if (cond.eq === 'equal') matchRule = (session) => session.content == cond.content
           if (cond.eq === 'eq') {
             logger('responder2').warn(`got left assign in rules #${index}, auto-corret to double equal.`)
             // eslint-disable-next-line eqeqeq
@@ -49,6 +51,7 @@ export function commandBuilder (logger): [Respond[], CallableFunction] {
     }
   ]
 }
+
 export const name = 'yet-another-responder'
 export const schema = Schema.object({
   rules: Schema.array(String).description('match rules.').default(['// add more down below', '// don\'t leave rules empty'])
@@ -70,7 +73,7 @@ export function apply (ctx: Context, options: Options) {
         if (!rtn) return
         return rtn.toString()
       }
-      return next()
+      return await next()
     })
     const resp2 = ctx.command('responder2').alias('resp2').usage('可以在配置里写函数的应答器')
     resp2.subcommand('.test <reallyLongString:text>')
@@ -93,7 +96,7 @@ export function apply (ctx: Context, options: Options) {
             const { names, inline, async: isAsync, code } = ip
             let rtn = `${isAsync ? '[async]' : ''} ${inline ? '[inline]' : ''} \n`
             rtn += `${isAsync ? '|| async ' : '|| '}`
-            if (!names || (names && names.session && names.context)) { rtn += `(session, context) => ${inline ? code.trim() : '{' + code.trim() + '}'}` } else if (names.session && !names.context) { rtn += `session => ${inline ? code.trim() : '{' + code.trim() + '}'}` }
+            if (!names || (names?.session && names.context)) { rtn += `(session, context) => ${inline ? code.trim() : `{ ${code.trim()} }`}` } else if (names.session && !names.context) { rtn += `session => ${inline ? code.trim() : `{ ${code.trim()} }`}` }
             return rtn
           }
           if (syntax === 'current') syntax = trigger
@@ -123,7 +126,7 @@ export function apply (ctx: Context, options: Options) {
           })
           return rtn.join('\n')
         } catch (err) {
-          return 'error when parsing:' + err.stack
+          return `error when parsing: ${err.stack}`
         }
       })
   } catch (err) {

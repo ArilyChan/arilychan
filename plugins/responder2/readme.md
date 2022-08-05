@@ -12,18 +12,53 @@
 ## 语法
 ### 示例
 假如收到'hi'就回复'hi~'
-```
+```js
 $ === 'hi' -> 'hi~'
 ```
-自行实现matcher function
+```js
+// responder2.explain
+[0]:
+|| 触发条件:
+|| session.content === 'hi'
+|| ⬇️
+|| 固定回复:
+|| 'hi~'
 ```
-$ -> session.userId === 'onebot:12345' -> '您被ban了'
+自定义 Matcher function
+```js
+// 多行 其实是可以的.
+// 写注释也可以。
+$ -> session.userId === 'onebot:12345'
+  -> '您被ban了'
 ```
-自定义action function
-
-假如消息以'教我'开头，就调用'help'命令 （会将‘教我’后面的部分传给help）
+```js
+// responder2.explain
+[0]:
+注释:  多行 其实是可以的.
+[1]:
+注释:  写注释也可以。
+[2]:
+|| 自定义触发函数:  [inline] 
+|| (session, context) => session.userId === 'onebot:12345'
+|| ⬇️
+|| 固定回复:
+|| '您被ban了'
 ```
+自定义 Action function
+```js
+// 假如消息以'教我'开头，就调用'help'命令 （会将‘教我’后面的部分传给help）
 $startsWith '教我' -> session.execute(`help ${session.content.slice(2)}`)
+```
+```js
+// responder2.explain
+[0]:
+注释:  假如消息以`教我`开头，就调用`help`命令 （会将`教我`后面的部分传给help）
+[1]:
+|| 触发条件:
+|| session.content.startsWith('教我')
+|| ⬇️
+|| 自定义回复函数:  [inline] 
+|| (session, context) => session.execute(`help ${session.content.slice(2)}`)
 ```
 
 ### 结构
@@ -39,24 +74,24 @@ $startsWith '教我' -> session.execute(`help ${session.content.slice(2)}`)
 
 ### incomingMessage 的别名
 |alias|example
-|--|--
-`incomingMessage`  | `incomingMessage includes 'sb'`
-`im`  | `im includes 'sb'`
-`on`  | `on includes 'sb'`
-`$`  | `$includes 'sb'`
+|--|--｜
+`incomingMessage`  | `incomingMessage includes 'sb'`|
+`im`  | `im includes 'sb'`|
+`on`  | `on includes 'sb'`|
+`$`   | `$includes 'sb'`|
 ### keywords
-|keyword|explain|example
-|--|--|--
-`includes` | `im` includes `'string'` | `$includes 'sb'`
-`startsWith` | `im` startsWith `'string'` | `$startsWith 'sb'`
-`=` | `im` eqeq `'string'` (prints error) | `$ == 'sb'`
-`==` | `im` eqeq `'string'` | `$ == 'sb'`
-`===` | `im` eqeqeq `'string'` | `$ === 'sb'`
-`is` | `im` eqeqeq `'string'` | `$ is 'sb'`
-`equals` | `im` eqeqeq `'string'` | `$ euals 'sb'`
+|keyword|explain|example|
+|--|--|--|
+`includes` | `im` includes `'string'` | `$includes 'sb'`|
+`startsWith` | `im` startsWith `'string'` | `$startsWith 'sb'`|
+`=` | `im` eqeq `'string'` (prints error) | `$ == 'sb'`|
+`==` | `im` eqeq `'string'` | `$ == 'sb'`|
+`===` | `im` eqeqeq `'string'` | `$ === 'sb'`|
+`is` | `im` eqeqeq `'string'` | `$ is 'sb'`|
+`equals` | `im` eqeqeq `'string'` | `$ euals 'sb'`|
 
 ### 操作符
-|op|explain|example
+|op|explain|example|
 |--|--|--|
 |->|`matcher` -> `action`|`$includes 'sb'` -> `'triggered'`|
 |->|`im` -> `Function`|`$` -> `session => session.userId === '12345'`|
@@ -77,6 +112,7 @@ $ -> session.userId === 12345 -> 'sb'
 
 以下每一行的运行结果都是相同的：回复每条消息'???'
 ```
+$ -> (customNameForSession, customNameForContext) => true -> async await '???'
 $ -> () => { return true } -> async await '???'
 $ -> { return true } -> async '???'
 $ -> () => true -> async await '???'
@@ -85,10 +121,10 @@ $ -> true -> '???'
 ```
 
 ### 类型
-|type|explain|examples
-|--|--|--
-|Literal| string | `'sb'`
-|Function| Match | `session => session.userId === 12345`
-|AsyncFunction| Match | `async session => session.userId === 12345`
-|Function| Action | `(session, ctx) => session.execute('help')`
-|AsyncFunction| Action | `async session => session.userId === 12345`
+|type|explain|examples|
+|--|--|--|
+|Literal| string | `'sb'`|
+|Function| Match | `session => session.userId === 12345`|
+|AsyncFunction| Match | `async session => session.userId === 12345`|
+|Function| Action | `(session, ctx) => session.execute('help')`|
+|AsyncFunction| Action | `async session => session.userId === 12345`|

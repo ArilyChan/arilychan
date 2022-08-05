@@ -10,10 +10,10 @@ Config "incomingMessage"
     cond:Condition
     Do
     _
-    action:(Reply / Execute)
+    action:(StringLiteral / Execute)
     _
   {
-  	return {...type, cond, action}
+  	return {...type, cond, action }
   }
 
  
@@ -25,19 +25,19 @@ ExecuteCondition
   = sp* (Do / 'exec') @Execute
 
 IncludeCondition
-  = sp* 'includes' _ content:StringLiteral _ { return {type: 'includes' , content: content.value }}
+  = sp* 'includes' _ content:StringLiteral _ { return { type: 'includes' , content: content.value }}
 
 StartsWithCondition
-  = sp* 'startsWith' _ content:StringLiteral _ { return {type: 'startsWith' , content: content.value }}
+  = sp* 'startsWith' _ content:StringLiteral _ { return { type: 'startsWith' , content: content.value }}
 
 EqualCondition
   = sp* eq:( 
-  '===' { return 'eqeqeq' }
-  / '==' { return 'eqeq' }
+  '===' { return 'strictEqual' }
+  / '==' { return 'equal' }
   / '=' { return 'eq' }
-  / 'is' { return 'eqeqeq' }
-  / 'equals' { return 'eqeqeq' }
-  ) _ content:StringLiteral _ { return {type: 'equals' , eq, content: content.value }}
+  / 'is' { return 'strictEqual' }
+  / 'equals' { return 'strictEqual' }
+  ) _ content:StringLiteral _ { return { type: 'equals' , eq, content: content.value }}
   
 Do
   = _ '->' _
@@ -46,8 +46,8 @@ Do
 Execute
   = async:("async" { return true })? sp* 
   names:(@(SessionName / SessionContextName / NoName) _ '=>' _ )?
-  code:(code:Function {return { code }} / inline:InlineFunction { return {code: inline, inline: true}}) 
-  { return {type: 'exec', async: async || false, ...code, names}}
+  code:(code:Function { return { code }} / inline:InlineFunction { return { code: inline, inline: true }}) 
+  { return { type: 'exec', async: async || false, ...code, names }}
 InlineFunction
   = !Config !Do @$(!Config !Do [^\n])+
 Function
@@ -58,18 +58,19 @@ TextUntilTerminator
 HaveTerminatorAhead
  = . _ !Config !Do (!"}" .)* "}" 
 
-Reply
-  = StringLiteral
+// Reply
+//   = StringLiteral
   
 NoName
-  = '()' { return {session: false, context: false}}
+  = '()' { return { session: false, context: false }}
 SessionName
-  = name:VariableName { return { session: name } }
+  = name:(sp* @VariableName sp*
+  / sp* "(" sp* @VariableName sp* ")" sp*) { return { session: name } }
   
 SessionContextName
   = sp* "(" sp* session:VariableName sp* context:(")" / @("," sp* @VariableName sp* ')'))
   {
-  	return {session, context}
+  	return { session, context }
   }
 // utils
 VariableName

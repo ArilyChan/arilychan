@@ -23,10 +23,10 @@ function commandBuilder(logger) {
                     matchRule = (session) => session.content.includes(cond.content);
                     break;
                 case 'equals':
-                    if (cond.eq === 'eqeqeq')
+                    if (cond.eq === 'strictEqual')
                         matchRule = (session) => session.content === cond.content;
                     // eslint-disable-next-line eqeqeq
-                    if (cond.eq === 'eqeq')
+                    if (cond.eq === 'equal')
                         matchRule = (session) => session.content == cond.content;
                     if (cond.eq === 'eq') {
                         logger('responder2').warn(`got left assign in rules #${index}, auto-corret to double equal.`);
@@ -75,7 +75,7 @@ function apply(ctx, options) {
                     return;
                 return rtn.toString();
             }
-            return next();
+            return await next();
         });
         const resp2 = ctx.command('responder2').alias('resp2').usage('可以在配置里写函数的应答器');
         resp2.subcommand('.test <reallyLongString:text>')
@@ -99,11 +99,11 @@ function apply(ctx, options) {
                     const { names, inline, async: isAsync, code } = ip;
                     let rtn = `${isAsync ? '[async]' : ''} ${inline ? '[inline]' : ''} \n`;
                     rtn += `${isAsync ? '|| async ' : '|| '}`;
-                    if (!names || (names && names.session && names.context)) {
-                        rtn += `(session, context) => ${inline ? code.trim() : '{' + code.trim() + '}'}`;
+                    if (!names || (names?.session && names.context)) {
+                        rtn += `(session, context) => ${inline ? code.trim() : `{ ${code.trim()} }`}`;
                     }
                     else if (names.session && !names.context) {
-                        rtn += `session => ${inline ? code.trim() : '{' + code.trim() + '}'}`;
+                        rtn += `session => ${inline ? code.trim() : `{ ${code.trim()} }`}`;
                     }
                     return rtn;
                 };
@@ -141,7 +141,7 @@ function apply(ctx, options) {
                 return rtn.join('\n');
             }
             catch (err) {
-                return 'error when parsing:' + err.stack;
+                return `error when parsing: ${err.stack}`;
             }
         });
     }

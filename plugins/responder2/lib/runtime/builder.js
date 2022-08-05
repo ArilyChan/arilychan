@@ -8,7 +8,7 @@ function build(code, names, options) {
         Constructor = AsyncFunction;
     }
     if (options.inline)
-        code = 'return ' + code;
+        code = `return ${code}`;
     if (names.session && !names.context)
         return new Constructor(names.session, code);
     if (names.session && names.context)

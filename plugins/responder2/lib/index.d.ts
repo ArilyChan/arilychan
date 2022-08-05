@@ -1,4 +1,3 @@
-/// <reference types="koishi/lib" />
 import { Context, Schema, Session } from 'koishi';
 export declare type CustomMatcher = (session: Session, context: Context) => Promise<boolean> | boolean;
 export declare type Match = CustomMatcher;
@@ -8,9 +7,9 @@ export declare function commandBuilder(logger: any): [Respond[], CallableFunctio
 export declare const name = "yet-another-responder";
 export declare const schema: Schema<{
     rules?: string[];
-} & import("koishi").Dict<any, string>, {
+} & import("cosmokit").Dict<any, string>, {
     rules: string[];
-} & import("koishi").Dict<any, string>>;
+} & import("cosmokit").Dict<any, string>>;
 export interface Options {
     rules: string[];
 }

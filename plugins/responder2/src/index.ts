@@ -73,7 +73,7 @@ export interface Options {
 export function apply (ctx: Context, options: Options) {
   const trigger = options.rules.join('\n')
   try {
-    const [matches, builder] = commandBuilder(ctx.logger('resp2/builder'))
+    const [matches, builder] = commandBuilder(ctx.logger('responder2/builder'))
     const reader = parser.parse(trigger)
     reader.forEach(builder)
     ctx.middleware(async (session, next) => {

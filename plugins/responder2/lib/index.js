@@ -62,7 +62,7 @@ exports.schema = koishi_1.Schema.object({
 function apply(ctx, options) {
     const trigger = options.rules.join('\n');
     try {
-        const [matches, builder] = commandBuilder(ctx.logger('resp2/builder'));
+        const [matches, builder] = commandBuilder(ctx.logger('responder2/builder'));
         const reader = grammar_1.parser.parse(trigger);
         reader.forEach(builder);
         ctx.middleware(async (session, next) => {

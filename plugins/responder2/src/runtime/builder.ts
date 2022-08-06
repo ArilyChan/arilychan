@@ -5,6 +5,18 @@ export interface BuilderOptions {
   isMatcher?: boolean
   isAction?: boolean
 }
+
+export const rebuildVariableString = (variable: Variable) => {
+  if (typeof variable === 'string') return variable
+  else if (variable.type === 'array-destructuring') {
+    return `[ ${variable.variables.map(rebuildVariableString).join(', ')} ]`
+  } else if (variable.type === 'object-destructuring') {
+    return `{ ${variable.variables.map(rebuildVariableString).join(', ')} }`
+  } else if (variable.type === 'rename') {
+    return `${variable.from}: ${variable.to}`
+  }
+}
+
 export function build (code: string, variables: Variable[], options: BuilderOptions) {
   let Constructor = Function
   const { async, isMatcher, isAction } = options
@@ -16,5 +28,5 @@ export function build (code: string, variables: Variable[], options: BuilderOpti
   if (!variables.length && isMatcher) return new Constructor('session', 'context', 'resolve', 'reject', code)
   else if (!variables.length && isAction) return new Constructor('session', 'context', 'returnedValue', code)
   // TODO: support destructuring
-  return new Constructor(...variables, code)
+  return new Constructor(...variables.map(rebuildVariableString), code)
 }

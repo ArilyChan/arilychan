@@ -1,6 +1,6 @@
 import { Context, Schema, Session, segment } from 'koishi'
 import { parser } from './grammar'
-import { build as exec } from './runtime/builder'
+import { build as exec, rebuildVariableString } from './runtime/builder'
 
 export type Variable = string | {
   type: 'object-destructuring' | 'array-destructuring'
@@ -51,7 +51,7 @@ export type ActionFunction = (
   session: Session,
   context: Context,
   returnedValue: returnedValue
-) => Promise<string | undefined | { toString: () => string }> | string | { toString: () => string }
+) => Promise<string | undefined | { toString: () => string }> | string | undefined | { toString: () => string }
 
 export type MatchFunction = CustomMatcher
 export type Entry = [MatchFunction, ActionFunction]
@@ -177,7 +177,10 @@ export function apply (ctx: Context, options: Options) {
               if (isMatcher) rtn += `(session, context, resolve, reject) => ${inline ? code.trim() : `{ ${code.trim()} }`}`
               else rtn += `(session, context, returnedValue) => ${inline ? code.trim() : `{ ${code.trim()} }`}`
             } else {
-              rtn += `(${variables.join(', ')}) => ${inline ? code.trim() : `{ ${code.trim()} }`}`
+              // this throws an error if the code is invalid
+              exec(ip.code, ip.variables, { async: ip.async, inline: ip.inline, isAction: true })
+
+              rtn += `(${variables.map(rebuildVariableString).join(', ')}) => ${inline ? code.trim() : `{ ${code.trim()} }`}`
             }
             return rtn
           }

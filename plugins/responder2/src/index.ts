@@ -2,9 +2,20 @@ import { Context, Schema, Session } from 'koishi'
 import { parser } from './grammar'
 import { build as exec } from './runtime/builder'
 
-export type CustomMatcher = (session: Session, context: Context) => Promise<boolean> | boolean
+export type returnedValue = any
+export type CustomMatcher = (
+  session: Session,
+  context: Context,
+  resolve: (carry: returnedValue) => void,
+  reject: () => void
+) => Promise<returnedValue> | returnedValue
+export type Action = (
+  session: Session,
+  context: Context,
+  returnedValue: returnedValue
+) => Promise<string | undefined>
+
 export type Match = CustomMatcher
-export type Action = (session: Session, context: Context) => string | Promise<string>
 export type Respond = [Match, Action]
 
 export function commandBuilder (logger): [Respond[], CallableFunction] {
@@ -28,14 +39,14 @@ export function commandBuilder (logger): [Respond[], CallableFunction] {
           // eslint-disable-next-line eqeqeq
           if (cond.eq === 'equal') matchRule = (session) => session.content == cond.content
           if (cond.eq === 'eq') {
-            logger('responder2').warn(`got left assign in rules #${index}, auto-corret to double equal.`)
+            logger('responder2').warn(`got 'assignment operator' in rules #${index}, auto-corret to double equal.`)
             // eslint-disable-next-line eqeqeq
             matchRule = (content) => content == cond.content
           }
           break
         case 'exec':
           if (!cond.names) cond.names = {}
-          matchRule = exec(cond.code, cond.names, { async: cond.async, inline: cond.inline }) as unknown as CustomMatcher
+          matchRule = exec(cond.code, cond.names, { async: cond.async, inline: cond.inline, isMatcher: true }) as Match
       }
       const action = command.action
       let run
@@ -45,7 +56,7 @@ export function commandBuilder (logger): [Respond[], CallableFunction] {
           break
         case 'exec':
           if (!action.names) action.names = {}
-          run = exec(action.code, action.names, { async: action.async, inline: action.inline })
+          run = exec(action.code, action.names, { async: action.async, inline: action.inline, isAction: true })
       }
       matches.push([matchRule, run])
     }
@@ -67,9 +78,25 @@ export function apply (ctx: Context, options: Options) {
     reader.forEach(builder)
     ctx.middleware(async (session, next) => {
       for (const [match, run] of matches) {
-        const matched = match(session, ctx)
-        if (!matched) continue
-        const rtn = await run(session, ctx)
+        let receivedMatcherResolvedValue = false
+        let matcherResolvedValue
+        const returnedValue = match(session, ctx, (result) => {
+          matcherResolvedValue = result
+          receivedMatcherResolvedValue = true
+        }, () => {
+          matcherResolvedValue = false
+          receivedMatcherResolvedValue = true
+        })
+
+        if (receivedMatcherResolvedValue) {
+          if (!matcherResolvedValue) {
+            continue
+          }
+        } else if (!returnedValue) {
+          continue
+        }
+
+        const rtn = await run(session, ctx, matcherResolvedValue || returnedValue)
         if (!rtn) return
         return rtn.toString()
       }
@@ -92,11 +119,16 @@ export function apply (ctx: Context, options: Options) {
       .example('resp2.explain $ -> true -> "ok!"')
       .action((_, syntax) => {
         try {
-          const transformNames = (ip) => {
+          const transformNames = (ip, isMatcher) => {
             const { names, inline, async: isAsync, code } = ip
             let rtn = `${isAsync ? '[async]' : ''} ${inline ? '[inline]' : ''} \n`
             rtn += `${isAsync ? '|| async ' : '|| '}`
-            if (!names || (names?.session && names.context)) { rtn += `(session, context) => ${inline ? code.trim() : `{ ${code.trim()} }`}` } else if (names.session && !names.context) { rtn += `session => ${inline ? code.trim() : `{ ${code.trim()} }`}` }
+            if (!names) {
+              if (isMatcher) rtn += `(session, context, resolve, reject) => ${inline ? code.trim() : `{ ${code.trim()} }`}`
+              else rtn += `(session, context, returnedValue) => ${inline ? code.trim() : `{ ${code.trim()} }`}`
+            } else {
+              rtn += `(${names.join(', ')}) => ${inline ? code.trim() : `{ ${code.trim()} }`}`
+            }
             return rtn
           }
           if (syntax === 'current') syntax = trigger
@@ -113,13 +145,13 @@ export function apply (ctx: Context, options: Options) {
               const equals = cond.eq.split('eq').join('=')
               rtn.push(`|| 触发条件:\n|| session.content ${equals} '${cond.content}'`)
             } else if (cond.type === 'exec') {
-              rtn.push(`|| 自定义触发函数: ${transformNames(cond)}`)
+              rtn.push(`|| 自定义触发函数: ${transformNames(cond, true)}`)
             }
             rtn.push('|| ⬇️')
             if (action.type === 'Literal') {
               rtn.push(`|| 固定回复:\n|| '${action.value}'`)
             } else if (action.type === 'exec') {
-              rtn.push(`|| 自定义回复函数: ${transformNames(action)}`)
+              rtn.push(`|| 自定义回复函数: ${transformNames(action, false)}`)
             }
             // if (index < parsed.length - 1) {
             // }

@@ -5,7 +5,7 @@ Line
   = _ @(Comment / Config) _
 
 
-Config "incomingMessage"
+Config 
   = type:(('incomingMessage' / 'on' / 'im' / '$') { return { type: 'incomingMessage' } })
     cond:Condition
     Do
@@ -18,7 +18,7 @@ Config "incomingMessage"
 
  
 
-Condition "condition"
+Condition 
   = IncludeCondition / StartsWithCondition / EqualCondition / ExecuteCondition
 
 ExecuteCondition
@@ -43,12 +43,18 @@ Do
   = _ '->' _
 
 
-Execute
+Execute "Executeable"
   = async:("async" { return true })? sp* 
-  names:(@(SessionName / SessionContextName / NoName) _ '=>' _ )?
+  names:(@FunctionVariables _ '=>' _ )?
   code:(code:Function { return { code }} / inline:InlineFunction { return { code: inline, inline: true }}) 
-  { return { type: 'exec', async: async || false, ...code, names }}
-InlineFunction
+  { 
+ 	return { 
+      type: 'exec', 
+      async: async || false, 
+      ...code, 
+      names
+  }}
+InlineFunction "inline function"
   = !Config !Do @$(!Config !Do [^\n])+
 Function
   = "{" _ @TextUntilTerminator _ "}"
@@ -58,27 +64,23 @@ TextUntilTerminator
 HaveTerminatorAhead
  = . _ !Config !Do (!"}" .)* "}" 
 
-// Reply
-//   = StringLiteral
-  
-NoName
-  = '()' { return { session: false, context: false }}
-SessionName
-  = name:(sp* @VariableName sp*
-  / sp* "(" sp* @VariableName sp* ")" sp*) { return { session: name } }
-  
-SessionContextName
-  = sp* "(" sp* session:VariableName sp* context:(")" / @("," sp* @VariableName sp* ')'))
-  {
-  	return { session, context }
+FunctionVariables "function variables"
+  = "(" @List ")" 
+List "variables"
+  = v0:VariableName? vLeft:(sp* "," sp* @VariableName)* {
+  	const rtn = []
+    if (v0) rtn.push(v0)
+    return rtn.concat(vLeft)
   }
+
 // utils
-VariableName
-  = &[^0-9] @$[a-zA-Z0-9]+
+VariableName "variable name"
+  = &[^0-9] @$[a-zA-Z0-9_]+
 
 sp = WhiteSpace+
 
-_ = WhiteSpace* LineTerminator* WhiteSpace*
+_ "new line"
+  = WhiteSpace* LineTerminator* WhiteSpace*
 
 SourceCharacter
   = .

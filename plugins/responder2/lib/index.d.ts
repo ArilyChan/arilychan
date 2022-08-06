@@ -1,7 +1,8 @@
 import { Context, Schema, Session } from 'koishi';
-export declare type CustomMatcher = (session: Session, context: Context) => Promise<boolean> | boolean;
+export declare type returnedValue = any;
+export declare type CustomMatcher = (session: Session, context: Context, resolve: (carry: returnedValue) => void, reject: () => void) => Promise<returnedValue> | returnedValue;
+export declare type Action = (session: Session, context: Context, returnedValue: returnedValue) => Promise<string | undefined>;
 export declare type Match = CustomMatcher;
-export declare type Action = (session: Session, context: Context) => string | Promise<string>;
 export declare type Respond = [Match, Action];
 export declare function commandBuilder(logger: any): [Respond[], CallableFunction];
 export declare const name = "yet-another-responder";

@@ -29,7 +29,7 @@ function commandBuilder(logger) {
                     if (cond.eq === 'equal')
                         matchRule = (session) => session.content == cond.content;
                     if (cond.eq === 'eq') {
-                        logger('responder2').warn(`got left assign in rules #${index}, auto-corret to double equal.`);
+                        logger('responder2').warn(`got 'assignment operator' in rules #${index}, auto-corret to double equal.`);
                         // eslint-disable-next-line eqeqeq
                         matchRule = (content) => content == cond.content;
                     }
@@ -37,7 +37,7 @@ function commandBuilder(logger) {
                 case 'exec':
                     if (!cond.names)
                         cond.names = {};
-                    matchRule = (0, builder_1.build)(cond.code, cond.names, { async: cond.async, inline: cond.inline });
+                    matchRule = (0, builder_1.build)(cond.code, cond.names, { async: cond.async, inline: cond.inline, isMatcher: true });
             }
             const action = command.action;
             let run;
@@ -48,7 +48,7 @@ function commandBuilder(logger) {
                 case 'exec':
                     if (!action.names)
                         action.names = {};
-                    run = (0, builder_1.build)(action.code, action.names, { async: action.async, inline: action.inline });
+                    run = (0, builder_1.build)(action.code, action.names, { async: action.async, inline: action.inline, isAction: true });
             }
             matches.push([matchRule, run]);
         }
@@ -67,10 +67,24 @@ function apply(ctx, options) {
         reader.forEach(builder);
         ctx.middleware(async (session, next) => {
             for (const [match, run] of matches) {
-                const matched = match(session, ctx);
-                if (!matched)
+                let receivedMatcherResolvedValue = false;
+                let matcherResolvedValue;
+                const returnedValue = match(session, ctx, (result) => {
+                    matcherResolvedValue = result;
+                    receivedMatcherResolvedValue = true;
+                }, () => {
+                    matcherResolvedValue = false;
+                    receivedMatcherResolvedValue = true;
+                });
+                if (receivedMatcherResolvedValue) {
+                    if (!matcherResolvedValue) {
+                        continue;
+                    }
+                }
+                else if (!returnedValue) {
                     continue;
-                const rtn = await run(session, ctx);
+                }
+                const rtn = await run(session, ctx, matcherResolvedValue || returnedValue);
                 if (!rtn)
                     return;
                 return rtn.toString();
@@ -95,15 +109,18 @@ function apply(ctx, options) {
             .example('resp2.explain $ -> true -> "ok!"')
             .action((_, syntax) => {
             try {
-                const transformNames = (ip) => {
+                const transformNames = (ip, isMatcher) => {
                     const { names, inline, async: isAsync, code } = ip;
                     let rtn = `${isAsync ? '[async]' : ''} ${inline ? '[inline]' : ''} \n`;
                     rtn += `${isAsync ? '|| async ' : '|| '}`;
-                    if (!names || (names?.session && names.context)) {
-                        rtn += `(session, context) => ${inline ? code.trim() : `{ ${code.trim()} }`}`;
+                    if (!names) {
+                        if (isMatcher)
+                            rtn += `(session, context, resolve, reject) => ${inline ? code.trim() : `{ ${code.trim()} }`}`;
+                        else
+                            rtn += `(session, context, returnedValue) => ${inline ? code.trim() : `{ ${code.trim()} }`}`;
                     }
-                    else if (names.session && !names.context) {
-                        rtn += `session => ${inline ? code.trim() : `{ ${code.trim()} }`}`;
+                    else {
+                        rtn += `(${names.join(', ')}) => ${inline ? code.trim() : `{ ${code.trim()} }`}`;
                     }
                     return rtn;
                 };
@@ -126,14 +143,14 @@ function apply(ctx, options) {
                         rtn.push(`|| 触发条件:\n|| session.content ${equals} '${cond.content}'`);
                     }
                     else if (cond.type === 'exec') {
-                        rtn.push(`|| 自定义触发函数: ${transformNames(cond)}`);
+                        rtn.push(`|| 自定义触发函数: ${transformNames(cond, true)}`);
                     }
                     rtn.push('|| ⬇️');
                     if (action.type === 'Literal') {
                         rtn.push(`|| 固定回复:\n|| '${action.value}'`);
                     }
                     else if (action.type === 'exec') {
-                        rtn.push(`|| 自定义回复函数: ${transformNames(action)}`);
+                        rtn.push(`|| 自定义回复函数: ${transformNames(action, false)}`);
                     }
                     // if (index < parsed.length - 1) {
                     // }

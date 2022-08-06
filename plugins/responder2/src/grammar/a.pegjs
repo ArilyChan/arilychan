@@ -45,14 +45,14 @@ Do
 
 Execute "Executeable"
   = async:("async" { return true })? sp* 
-  names:(@FunctionVariables _ '=>' _ )?
+  variables:(@FunctionVariables _ '=>' _ )?
   code:(code:Function { return { code }} / inline:InlineFunction { return { code: inline, inline: true }}) 
   { 
  	return { 
       type: 'exec', 
       async: async || false, 
       ...code, 
-      names
+      variables
   }}
 InlineFunction "inline function"
   = !Config !Do @$(!Config !Do [^\n])+
@@ -65,13 +65,46 @@ HaveTerminatorAhead
  = . _ !Config !Do (!"}" .)* "}" 
 
 FunctionVariables "function variables"
-  = "(" @List ")" 
+  = "(" @List ")"
+
 List "variables"
-  = v0:VariableName? vLeft:(sp* "," sp* @VariableName)* {
+  = v0:Variable? vLeft:(_ "," _ @Variable)* _ {
   	const rtn = []
     if (v0) rtn.push(v0)
     return rtn.concat(vLeft)
   }
+  
+Variable
+ = name: VariableName renameOrDestruct:(":" _ @Variable)? {
+ 	if (!renameOrDestruct) {
+    	return name
+    } else {
+    	if (typeof renameOrDestruct === 'string') {
+        	return {
+            	type: 'rename',
+                from: name,
+                to: renameOrDestruct
+            }
+        } else {
+        	return {
+              destructed: name,
+              ...renameOrDestruct
+            }
+        }
+    }
+ }
+ / @ObjectDestructuring
+ / @ArrayDestructuring
+
+ObjectDestructuring
+ = "{" _ variables:List _ "}" {
+  	return { type: 'object-destructuring', variables }
+   }
+ArrayDestructuring
+ = ("[" _ variables:List _ "]" {
+  	return { type: 'array-destructuring', variables }
+   })
+
 
 // utils
 VariableName "variable name"
@@ -87,10 +120,10 @@ SourceCharacter
   
 StringLiteral "string"
   = '"' chars:DoubleStringCharacter* '"' {
-      return { type: "Literal", value: chars.join("") };
+      return { type: "literal", value: chars.join("") };
     }
   / "'" chars:SingleStringCharacter* "'" {
-      return { type: "Literal", value: chars.join("") };
+      return { type: "literal", value: chars.join("") };
     }
 
 DoubleStringCharacter

@@ -2,6 +2,43 @@ import { Context, Schema, Session, segment } from 'koishi'
 import { parser } from './grammar'
 import { build as exec } from './runtime/builder'
 
+export type Variable = string | {
+  type: 'object-destructuring' | 'array-destructuring'
+  destructed: string
+  variables: Variable[]
+} | {
+  type: 'rename'
+  from: string
+  to: string
+}
+export interface literal {
+  type: 'literal'
+  value: string
+}
+export interface Executable {
+  type: 'exec'
+
+  async: boolean
+  inline: boolean
+
+  code: string
+  variables?: Variable[]
+}
+
+export type ConditionalMatcher = ({
+  type: 'startsWith' | 'includes'
+} | {
+  type: 'equals'
+  eq: string
+}) & {
+  content: string
+}
+export interface Command {
+  type: string
+  cond: Executable | ConditionalMatcher
+  action: Executable | literal
+}
+
 export type returnedValue = any
 export type CustomMatcher = (
   session: Session,
@@ -9,23 +46,23 @@ export type CustomMatcher = (
   resolve: (carry: returnedValue) => void,
   reject: () => void
 ) => Promise<returnedValue> | returnedValue
-export type Action = (
+export type ActionFunction = (
   session: Session,
   context: Context,
   returnedValue: returnedValue
 ) => Promise<string | undefined>
 
-export type Match = CustomMatcher
-export type Respond = [Match, Action]
+export type MatchFunction = CustomMatcher
+export type Respond = [MatchFunction, ActionFunction]
 
 export function commandBuilder (logger): [Respond[], CallableFunction] {
   const matches: Respond[] = []
   return [
     matches,
-    (command, index) => {
+    (command: Command, index) => {
       if (Array.isArray(command)) return
       if (command.type !== 'incomingMessage') return
-      let matchRule: Match
+      let matchRule: MatchFunction
       const cond = command.cond
       switch (cond.type) {
         case 'startsWith':
@@ -41,22 +78,22 @@ export function commandBuilder (logger): [Respond[], CallableFunction] {
           if (cond.eq === 'eq') {
             logger('responder2').warn(`got 'assignment operator' in rules #${index}, auto-corret to double equal.`)
             // eslint-disable-next-line eqeqeq
-            matchRule = (content) => content == cond.content
+            matchRule = (session) => session.content == cond.content
           }
           break
         case 'exec':
-          if (!cond.names) cond.names = {}
-          matchRule = exec(cond.code, cond.names, { async: cond.async, inline: cond.inline, isMatcher: true }) as Match
+          if (!cond.variables) cond.variables = []
+          matchRule = exec(cond.code, cond.variables, { async: cond.async, inline: cond.inline, isMatcher: true }) as MatchFunction
       }
       const action = command.action
       let run
       switch (action.type) {
-        case 'Literal':
+        case 'literal':
           run = () => action.value
           break
         case 'exec':
-          if (!action.names) action.names = {}
-          run = exec(action.code, action.names, { async: action.async, inline: action.inline, isAction: true })
+          if (!action.variables) action.variables = []
+          run = exec(action.code, action.variables, { async: action.async, inline: action.inline, isAction: true })
       }
       matches.push([matchRule, run])
     }
@@ -131,15 +168,15 @@ export function apply (ctx: Context, options: Options) {
       .example('resp2.explain $ -> true -> "ok!"')
       .action((_, syntax) => {
         try {
-          const transformNames = (ip, isMatcher) => {
-            const { names, inline, async: isAsync, code } = ip
+          const transformvariables = (ip, isMatcher) => {
+            const { variables, inline, async: isAsync, code } = ip
             let rtn = `${isAsync ? '[async]' : ''} ${inline ? '[inline]' : ''} \n`
             rtn += `${isAsync ? '|| async ' : '|| '}`
-            if (!names) {
+            if (!variables) {
               if (isMatcher) rtn += `(session, context, resolve, reject) => ${inline ? code.trim() : `{ ${code.trim()} }`}`
               else rtn += `(session, context, returnedValue) => ${inline ? code.trim() : `{ ${code.trim()} }`}`
             } else {
-              rtn += `(${names.join(', ')}) => ${inline ? code.trim() : `{ ${code.trim()} }`}`
+              rtn += `(${variables.join(', ')}) => ${inline ? code.trim() : `{ ${code.trim()} }`}`
             }
             return rtn
           }
@@ -159,13 +196,13 @@ export function apply (ctx: Context, options: Options) {
               const equals = cond.eq.split('eq').join('=')
               rtn.push(`|| 触发条件:\n|| session.content ${equals} '${cond.content}'`)
             } else if (cond.type === 'exec') {
-              rtn.push(`|| 自定义触发函数: ${transformNames(cond, true)}`)
+              rtn.push(`|| 自定义触发函数: ${transformvariables(cond, true)}`)
             }
             rtn.push('|| ⬇️')
-            if (action.type === 'Literal') {
+            if (action.type === 'literal') {
               rtn.push(`|| 固定回复:\n|| '${action.value}'`)
             } else if (action.type === 'exec') {
-              rtn.push(`|| 自定义回复函数: ${transformNames(action, false)}`)
+              rtn.push(`|| 自定义回复函数: ${transformvariables(action, false)}`)
             }
           })
           return rtn.join('\n')

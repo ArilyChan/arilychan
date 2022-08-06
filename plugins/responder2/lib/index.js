@@ -31,24 +31,24 @@ function commandBuilder(logger) {
                     if (cond.eq === 'eq') {
                         logger('responder2').warn(`got 'assignment operator' in rules #${index}, auto-corret to double equal.`);
                         // eslint-disable-next-line eqeqeq
-                        matchRule = (content) => content == cond.content;
+                        matchRule = (session) => session.content == cond.content;
                     }
                     break;
                 case 'exec':
-                    if (!cond.names)
-                        cond.names = {};
-                    matchRule = (0, builder_1.build)(cond.code, cond.names, { async: cond.async, inline: cond.inline, isMatcher: true });
+                    if (!cond.variables)
+                        cond.variables = [];
+                    matchRule = (0, builder_1.build)(cond.code, cond.variables, { async: cond.async, inline: cond.inline, isMatcher: true });
             }
             const action = command.action;
             let run;
             switch (action.type) {
-                case 'Literal':
+                case 'literal':
                     run = () => action.value;
                     break;
                 case 'exec':
-                    if (!action.names)
-                        action.names = {};
-                    run = (0, builder_1.build)(action.code, action.names, { async: action.async, inline: action.inline, isAction: true });
+                    if (!action.variables)
+                        action.variables = [];
+                    run = (0, builder_1.build)(action.code, action.variables, { async: action.async, inline: action.inline, isAction: true });
             }
             matches.push([matchRule, run]);
         }
@@ -119,18 +119,18 @@ function apply(ctx, options) {
             .example('resp2.explain $ -> true -> "ok!"')
             .action((_, syntax) => {
             try {
-                const transformNames = (ip, isMatcher) => {
-                    const { names, inline, async: isAsync, code } = ip;
+                const transformvariables = (ip, isMatcher) => {
+                    const { variables, inline, async: isAsync, code } = ip;
                     let rtn = `${isAsync ? '[async]' : ''} ${inline ? '[inline]' : ''} \n`;
                     rtn += `${isAsync ? '|| async ' : '|| '}`;
-                    if (!names) {
+                    if (!variables) {
                         if (isMatcher)
                             rtn += `(session, context, resolve, reject) => ${inline ? code.trim() : `{ ${code.trim()} }`}`;
                         else
                             rtn += `(session, context, returnedValue) => ${inline ? code.trim() : `{ ${code.trim()} }`}`;
                     }
                     else {
-                        rtn += `(${names.join(', ')}) => ${inline ? code.trim() : `{ ${code.trim()} }`}`;
+                        rtn += `(${variables.join(', ')}) => ${inline ? code.trim() : `{ ${code.trim()} }`}`;
                     }
                     return rtn;
                 };
@@ -153,14 +153,14 @@ function apply(ctx, options) {
                         rtn.push(`|| 触发条件:\n|| session.content ${equals} '${cond.content}'`);
                     }
                     else if (cond.type === 'exec') {
-                        rtn.push(`|| 自定义触发函数: ${transformNames(cond, true)}`);
+                        rtn.push(`|| 自定义触发函数: ${transformvariables(cond, true)}`);
                     }
                     rtn.push('|| ⬇️');
-                    if (action.type === 'Literal') {
+                    if (action.type === 'literal') {
                         rtn.push(`|| 固定回复:\n|| '${action.value}'`);
                     }
                     else if (action.type === 'exec') {
-                        rtn.push(`|| 自定义回复函数: ${transformNames(action, false)}`);
+                        rtn.push(`|| 自定义回复函数: ${transformvariables(action, false)}`);
                     }
                 });
                 return rtn.join('\n');

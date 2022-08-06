@@ -160,6 +160,7 @@ $ -> { resolve(session.content  === 'hi') } -> { session.send('hello~') }
 `im`  | `im includes 'sb'`|
 `on`  | `on includes 'sb'`|
 `$`   | `$includes 'sb'`|
+
 一些例子：
 ```js
 $ equals 'sb' -> 'sb'

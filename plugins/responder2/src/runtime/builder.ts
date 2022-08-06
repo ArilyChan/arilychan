@@ -1,4 +1,11 @@
-export function build (code, variables, options) {
+import { Variable } from '../'
+export interface BuilderOptions {
+  async: boolean
+  inline: boolean
+  isMatcher?: boolean
+  isAction?: boolean
+}
+export function build (code: string, variables: Variable[], options: BuilderOptions) {
   let Constructor = Function
   const { async, isMatcher, isAction } = options
   if (async) {

@@ -1,4 +1,4 @@
-import { Context, Schema, Session } from 'koishi'
+import { Context, Schema, Session, segment } from 'koishi'
 import { parser } from './grammar'
 import { build as exec } from './runtime/builder'
 
@@ -77,10 +77,21 @@ export function apply (ctx: Context, options: Options) {
     const reader = parser.parse(trigger)
     reader.forEach(builder)
     ctx.middleware(async (session, next) => {
+      const escapedSession = new Proxy(session, {
+        get (target, key, receiver) {
+          if (key === 'content') {
+            return segment.unescape(target.content)
+          } else {
+            return target[key]
+          }
+        }
+      })
+
       for (const [match, run] of matches) {
         let receivedMatcherResolvedValue = false
         let matcherResolvedValue
-        const returnedValue = match(session, ctx, (result) => {
+
+        const returnedValue = match(escapedSession, ctx, (result) => {
           matcherResolvedValue = result
           receivedMatcherResolvedValue = true
         }, () => {
@@ -96,12 +107,13 @@ export function apply (ctx: Context, options: Options) {
           continue
         }
 
-        const rtn = await run(session, ctx, matcherResolvedValue || returnedValue)
+        const rtn = await run(escapedSession, ctx, matcherResolvedValue ?? returnedValue)
         if (!rtn) return
         return rtn.toString()
       }
       return await next()
     })
+
     const resp2 = ctx.command('responder2').alias('resp2').usage('可以在配置里写函数的应答器')
     resp2.subcommand('.test <reallyLongString:text>')
       .usage('测试responder2语法是否合法')
@@ -131,7 +143,9 @@ export function apply (ctx: Context, options: Options) {
             }
             return rtn
           }
+
           if (syntax === 'current') syntax = trigger
+
           const parsed = parser.parse(syntax)
           const rtn = []
           parsed.forEach((line, index) => {
@@ -153,8 +167,6 @@ export function apply (ctx: Context, options: Options) {
             } else if (action.type === 'exec') {
               rtn.push(`|| 自定义回复函数: ${transformNames(action, false)}`)
             }
-            // if (index < parsed.length - 1) {
-            // }
           })
           return rtn.join('\n')
         } catch (err) {

@@ -66,10 +66,20 @@ function apply(ctx, options) {
         const reader = grammar_1.parser.parse(trigger);
         reader.forEach(builder);
         ctx.middleware(async (session, next) => {
+            const escapedSession = new Proxy(session, {
+                get(target, key, receiver) {
+                    if (key === 'content') {
+                        return koishi_1.segment.unescape(target.content);
+                    }
+                    else {
+                        return target[key];
+                    }
+                }
+            });
             for (const [match, run] of matches) {
                 let receivedMatcherResolvedValue = false;
                 let matcherResolvedValue;
-                const returnedValue = match(session, ctx, (result) => {
+                const returnedValue = match(escapedSession, ctx, (result) => {
                     matcherResolvedValue = result;
                     receivedMatcherResolvedValue = true;
                 }, () => {
@@ -84,7 +94,7 @@ function apply(ctx, options) {
                 else if (!returnedValue) {
                     continue;
                 }
-                const rtn = await run(session, ctx, matcherResolvedValue || returnedValue);
+                const rtn = await run(escapedSession, ctx, matcherResolvedValue ?? returnedValue);
                 if (!rtn)
                     return;
                 return rtn.toString();
@@ -152,8 +162,6 @@ function apply(ctx, options) {
                     else if (action.type === 'exec') {
                         rtn.push(`|| 自定义回复函数: ${transformNames(action, false)}`);
                     }
-                    // if (index < parsed.length - 1) {
-                    // }
                 });
                 return rtn.join('\n');
             }

@@ -2,7 +2,7 @@
   "name": "koishi-plugin-responder2",
   "description": "最新应答机！你可以在conf里写函数！",
   "author": "arily <arily@arily.moe>",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [

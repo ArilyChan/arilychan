@@ -1,1 +1,1 @@
-export declare function build(code: any, names: any, options: any): Function;
+export declare function build(code: any, variables: any, options: any): Function;

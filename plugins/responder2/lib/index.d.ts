@@ -34,10 +34,14 @@ export interface Command {
 }
 export declare type returnedValue = any;
 export declare type CustomMatcher = (session: Session, context: Context, resolve: (carry: returnedValue) => void, reject: () => void) => Promise<returnedValue> | returnedValue;
-export declare type ActionFunction = (session: Session, context: Context, returnedValue: returnedValue) => Promise<string | undefined>;
+export declare type ActionFunction = (session: Session, context: Context, returnedValue: returnedValue) => Promise<string | undefined | {
+    toString: () => string;
+}> | string | {
+    toString: () => string;
+};
 export declare type MatchFunction = CustomMatcher;
-export declare type Respond = [MatchFunction, ActionFunction];
-export declare function commandBuilder(logger: any): [Respond[], CallableFunction];
+export declare type Entry = [MatchFunction, ActionFunction];
+export declare function commandBuilder(logger: any): [Entry[], CallableFunction];
 export declare const name = "yet-another-responder";
 export declare const schema: Schema<{
     rules?: string[];

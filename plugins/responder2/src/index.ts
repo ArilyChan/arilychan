@@ -40,6 +40,7 @@ export interface Command {
 }
 
 export type returnedValue = any
+
 export type CustomMatcher = (
   session: Session,
   context: Context,
@@ -50,16 +51,16 @@ export type ActionFunction = (
   session: Session,
   context: Context,
   returnedValue: returnedValue
-) => Promise<string | undefined>
+) => Promise<string | undefined | { toString: () => string }> | string | { toString: () => string }
 
 export type MatchFunction = CustomMatcher
-export type Respond = [MatchFunction, ActionFunction]
+export type Entry = [MatchFunction, ActionFunction]
 
-export function commandBuilder (logger): [Respond[], CallableFunction] {
-  const matches: Respond[] = []
+export function commandBuilder (logger): [Entry[], CallableFunction] {
+  const matches: Entry[] = []
   return [
     matches,
-    (command: Command, index) => {
+    (command: Command, index): void => {
       if (Array.isArray(command)) return
       if (command.type !== 'incomingMessage') return
       let matchRule: MatchFunction
@@ -86,14 +87,14 @@ export function commandBuilder (logger): [Respond[], CallableFunction] {
           matchRule = exec(cond.code, cond.variables, { async: cond.async, inline: cond.inline, isMatcher: true }) as MatchFunction
       }
       const action = command.action
-      let run
+      let run: ActionFunction
       switch (action.type) {
         case 'literal':
           run = () => action.value
           break
         case 'exec':
           if (!action.variables) action.variables = []
-          run = exec(action.code, action.variables, { async: action.async, inline: action.inline, isAction: true })
+          run = exec(action.code, action.variables, { async: action.async, inline: action.inline, isAction: true }) as ActionFunction
       }
       matches.push([matchRule, run])
     }

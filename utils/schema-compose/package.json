@@ -1,0 +1,14 @@
+{
+  "name": "schema-compose",
+  "version": "0.0.1",
+  "description": "schema compose",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "peerDependencies": {
+    "koishi": "^4.0.0"
+  },
+  "author": "arily",
+  "license": "MIT"
+}

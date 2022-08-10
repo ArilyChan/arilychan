@@ -191,6 +191,6 @@ export function schema(template: TemplateStringsArray, ...args: any[]) {
   );
   const parsed = parser.parse(def);
   const built = buildSchema(parsed, args);
-  console.log(built?.toString());
+  // console.log(built?.toString());
   return built;
 }

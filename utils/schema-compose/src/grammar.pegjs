@@ -27,8 +27,10 @@ SchemaWithoutUnionAndIntersect =
   / SchemaBoolean
   / SchemaIs
 SchemaDecorator =
-  "@" decorator: VariableName sp* value:('(' @List ')')?
-  { return { decorator, values: value?.values } }
+  "@" decorator: VariableName sp* values:('(' list:List ')'{
+  	return list.values
+  })?
+  { return { decorator, values } }
 
 SchemaObject = 
   "{" _
@@ -72,9 +74,23 @@ SchemaString =
 
 SchemaConstValue =
   value:(
-    SchemaNumber
-  / SchemaString
-  / true / false
+    num:SchemaNumber {
+      return {
+        ...num,
+        type: 'const'
+      }
+    }
+  / str:SchemaString {
+    return {
+      ...str.value,
+      type: 'const'
+    }
+  }
+  / bool:(true / false) {
+    return {
+      value: bool
+    }
+  }
   / value:VariableName {
     return {
       type: 'variable',
@@ -83,8 +99,8 @@ SchemaConstValue =
   }
   ) {
     return {
+      type: 'const',
       ...value,
-      type: "const"
     }
   }
 
@@ -124,57 +140,51 @@ SchemaTemplate =
     }
   }
 
-Union = 
-  '|'? _ item:SchemaWithoutUnionAndIntersect _ items:('|' _ @SchemaWithoutUnionAndIntersect _ )+
+SchemaUnion = 
+   '|'? _ decorator:SchemaDecorator? item:SchemaWithoutUnionAndIntersect _ 
+  items:('|' _ decorator2:SchemaDecorator? _ value2:SchemaWithoutUnionAndIntersect _ {
+    return {
+     	decorator: decorator2,
+        schema: value2
+    }
+  })+
   {
     const returnValue = []
-    if (item) { returnValue.push(item)}
+    if (item) { returnValue.push({schema: item})}
     if (items.length) returnValue.push(...items)
     return {
       type: 'union',
-      value: {
-        schema: {
-          type: 'tuple',
-          values: returnValue.map(value => ({schema: value}))
-        }
-      }
+      values: returnValue
     }
   }
-
-SchemaUnion = 
-  Union
   
-Intersect = 
-  '&'? _ item:SchemaWithoutUnionAndIntersect _ items:('&' _ @SchemaWithoutUnionAndIntersect _ )+
+SchemaIntersect = 
+   '&'? _ decorator:SchemaDecorator? item:SchemaWithoutUnionAndIntersect _ 
+  items:('&' _ decorator2:SchemaDecorator? _ value2:SchemaWithoutUnionAndIntersect _ {
+    return {
+     	decorator: decorator2,
+        schema: value2
+    }
+  })+
   {
     const returnValue = []
-    if (item) { returnValue.push(item)}
+    if (item) { returnValue.push({schema: item})}
     if (items.length) returnValue.push(...items)
     return {
       type: 'intersect',
-      value: {
-        schema: {
-          type: 'tuple',
-          values: returnValue.map(value => ({schema: value}))
-        }
-      }
+      values: returnValue
     }
   }
-
-SchemaIntersect = 
-  Intersect
 
 
 SchemaWithList = 
   kw:(
     'union'i
     / 'intersect'i
-  ) _ '(' _ value:SchemaTuple _ ')'
+  ) _ '(' _ values:SchemaTuple _ ')'
   {
     return {
-      value: {
-        schema: value
-      },
+      values: values.values,
       type: kw
     }
   }
@@ -200,6 +210,7 @@ SchemaWithNoValue =
    / 'boolean'
    / 'bool'
    / 'string'
+   / 'const'
  )
  {
    return { type: kw }

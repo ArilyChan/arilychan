@@ -28,5 +28,7 @@ export function build (code: string, variables: Variable[], options: BuilderOpti
   if (!variables.length && isMatcher) return new Constructor('session', 'context', 'resolve', 'reject', code)
   else if (!variables.length && isAction) return new Constructor('session', 'context', 'returnedValue', code)
   // TODO: support destructuring
-  return new Constructor(...variables.map(rebuildVariableString), code)
+  const returnValue = Constructor(...variables.map(rebuildVariableString), code)
+  console.log(returnValue)
+  return returnValue
 }

@@ -38,6 +38,10 @@ function commandBuilder(logger) {
                     if (!cond.variables)
                         cond.variables = [];
                     matchRule = (0, builder_1.build)(cond.code, cond.variables, { async: cond.async, inline: cond.inline, isMatcher: true });
+                    break;
+                default:
+                    console.log(cond);
+                    throw new Error('unexpected condition type: ' + cond.type);
             }
             const action = command.action;
             let run;
@@ -95,7 +99,6 @@ function apply(ctx, options) {
                 }
             });
             for (const [match, run] of matches) {
-                console.log(match);
                 let receivedMatcherResolvedValue = false;
                 let matcherResolvedValue;
                 const returnedValue = match(escapedSession, ctx, (result) => {

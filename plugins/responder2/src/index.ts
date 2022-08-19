@@ -85,6 +85,10 @@ export function commandBuilder (logger): [Entry[], CallableFunction] {
         case 'exec':
           if (!cond.variables) cond.variables = []
           matchRule = exec(cond.code, cond.variables, { async: cond.async, inline: cond.inline, isMatcher: true }) as MatchFunction
+          break
+        default: 
+          console.log(cond)
+          throw new Error('unexpected condition type: ' + (cond as {type: string}).type)
       }
       const action = command.action
       let run: ActionFunction
@@ -145,7 +149,7 @@ export function apply (ctx: Context, options: Options) {
       })
 
       for (const [match, run] of matches) {
-        console.log(match)
+
         let receivedMatcherResolvedValue = false
         let matcherResolvedValue
 

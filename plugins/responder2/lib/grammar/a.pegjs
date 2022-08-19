@@ -5,50 +5,56 @@ Line
   = _ @(Comment / Config) _
 
 
-Config "incomingMessage"
+Config 
   = type:(('incomingMessage' / 'on' / 'im' / '$') { return { type: 'incomingMessage' } })
     cond:Condition
     Do
     _
-    action:(Reply / Execute)
+    action:(StringLiteral / Execute)
     _
   {
-  	return {...type, cond, action}
+  	return {...type, cond, action }
   }
 
  
 
-Condition "condition"
+Condition 
   = IncludeCondition / StartsWithCondition / EqualCondition / ExecuteCondition
 
 ExecuteCondition
   = sp* (Do / 'exec') @Execute
 
 IncludeCondition
-  = sp* 'includes' _ content:StringLiteral _ { return {type: 'includes' , content: content.value }}
+  = sp* 'includes' _ content:StringLiteral _ { return { type: 'includes' , content: content.value }}
 
 StartsWithCondition
-  = sp* 'startsWith' _ content:StringLiteral _ { return {type: 'startsWith' , content: content.value }}
+  = sp* 'startsWith' _ content:StringLiteral _ { return { type: 'startsWith' , content: content.value }}
 
 EqualCondition
   = sp* eq:( 
-  '===' { return 'eqeqeq' }
-  / '==' { return 'eqeq' }
+  '===' { return 'strictEqual' }
+  / '==' { return 'equal' }
   / '=' { return 'eq' }
-  / 'is' { return 'eqeqeq' }
-  / 'equals' { return 'eqeqeq' }
-  ) _ content:StringLiteral _ { return {type: 'equals' , eq, content: content.value }}
+  / 'is' { return 'strictEqual' }
+  / 'equals' { return 'strictEqual' }
+  ) _ content:StringLiteral _ { return { type: 'equals' , eq, content: content.value }}
   
 Do
   = _ '->' _
 
 
-Execute
+Execute "Executeable"
   = async:("async" { return true })? sp* 
-  names:(@(SessionName / SessionContextName / NoName) _ '=>' _ )?
-  code:(code:Function {return { code }} / inline:InlineFunction { return {code: inline, inline: true}}) 
-  { return {type: 'exec', async: async || false, ...code, names}}
-InlineFunction
+  variables:(@FunctionVariables _ '=>' _ )?
+  code:(code:Function { return { code }} / inline:InlineFunction { return { code: inline, inline: true }}) 
+  { 
+ 	return { 
+      type: 'exec', 
+      async: async || false, 
+      ...code, 
+      variables
+  }}
+InlineFunction "inline function"
   = !Config !Do @$(!Config !Do [^\n])+
 Function
   = "{" _ @TextUntilTerminator _ "}"
@@ -58,36 +64,66 @@ TextUntilTerminator
 HaveTerminatorAhead
  = . _ !Config !Do (!"}" .)* "}" 
 
-Reply
-  = StringLiteral
-  
-NoName
-  = '()' { return {session: false, context: false}}
-SessionName
-  = name:VariableName { return { session: name } }
-  
-SessionContextName
-  = sp* "(" sp* session:VariableName sp* context:(")" / @("," sp* @VariableName sp* ')'))
-  {
-  	return {session, context}
+FunctionVariables "function variables"
+  = "(" @List ")"
+
+List "variables"
+  = v0:Variable? vLeft:(_ "," _ @Variable)* _ {
+  	const rtn = []
+    if (v0) rtn.push(v0)
+    return rtn.concat(vLeft)
   }
+  
+Variable
+ = name: VariableName renameOrDestruct:(":" _ @Variable)? {
+ 	if (!renameOrDestruct) {
+    	return name
+    } else {
+    	if (typeof renameOrDestruct === 'string') {
+        	return {
+            	type: 'rename',
+                from: name,
+                to: renameOrDestruct
+            }
+        } else {
+        	return {
+              destructed: name,
+              ...renameOrDestruct
+            }
+        }
+    }
+ }
+ / @ObjectDestructuring
+ / @ArrayDestructuring
+
+ObjectDestructuring
+ = "{" _ variables:List _ "}" {
+  	return { type: 'object-destructuring', variables }
+   }
+ArrayDestructuring
+ = ("[" _ variables:List _ "]" {
+  	return { type: 'array-destructuring', variables }
+   })
+
+
 // utils
-VariableName
-  = &[^0-9] @$[a-zA-Z0-9]+
+VariableName "variable name"
+  = &[^0-9] @$[a-zA-Z0-9_]+
 
 sp = WhiteSpace+
 
-_ = WhiteSpace* LineTerminator* WhiteSpace*
+_ "new line"
+  = WhiteSpace* LineTerminator* WhiteSpace*
 
 SourceCharacter
   = .
   
 StringLiteral "string"
   = '"' chars:DoubleStringCharacter* '"' {
-      return { type: "Literal", value: chars.join("") };
+      return { type: "literal", value: chars.join("") };
     }
   / "'" chars:SingleStringCharacter* "'" {
-      return { type: "Literal", value: chars.join("") };
+      return { type: "literal", value: chars.join("") };
     }
 
 DoubleStringCharacter

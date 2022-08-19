@@ -29,6 +29,8 @@ function build(code, variables, options) {
     else if (!variables.length && isAction)
         return new Constructor('session', 'context', 'returnedValue', code);
     // TODO: support destructuring
-    return new Constructor(...variables.map(exports.rebuildVariableString), code);
+    const returnValue = Constructor(...variables.map(exports.rebuildVariableString), code);
+    console.log(returnValue);
+    return returnValue;
 }
 exports.build = build;

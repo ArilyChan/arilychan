@@ -57,10 +57,19 @@ function commandBuilder(logger) {
 exports.commandBuilder = commandBuilder;
 exports.name = 'yet-another-responder';
 exports.schema = koishi_1.Schema.object({
-    rules: koishi_1.Schema.array(String).description('match rules.').default(['// add more down below', '// don\'t leave rules empty'])
+    rules: koishi_1.Schema.array(koishi_1.Schema.object({
+        enabled: koishi_1.Schema.boolean().default(true),
+        content: koishi_1.Schema.string().role('textarea')
+    })).description('match rules.').default([{
+            enabled: false,
+            content: '// add more down below'
+        }, {
+            enabled: false,
+            content: '// don\'t leave rules empty'
+        }])
 });
 function apply(ctx, options) {
-    const trigger = options.rules.join('\n');
+    const trigger = options.rules.filter(rule => rule.enabled).map(rule => rule.content).join('\n');
     try {
         const [matches, builder] = commandBuilder(ctx.logger('responder2/builder'));
         const reader = grammar_1.parser.parse(trigger);
@@ -130,7 +139,9 @@ function apply(ctx, options) {
                             rtn += `(session, context, returnedValue) => ${inline ? code.trim() : `{ ${code.trim()} }`}`;
                     }
                     else {
-                        rtn += `(${variables.join(', ')}) => ${inline ? code.trim() : `{ ${code.trim()} }`}`;
+                        // this throws an error if the code is invalid
+                        (0, builder_1.build)(ip.code, ip.variables, { async: ip.async, inline: ip.inline, isAction: true });
+                        rtn += `(${variables.map(builder_1.rebuildVariableString).join(', ')}) => ${inline ? code.trim() : `{ ${code.trim()} }`}`;
                     }
                     return rtn;
                 };

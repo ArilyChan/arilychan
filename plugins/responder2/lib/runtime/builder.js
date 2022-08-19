@@ -1,6 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.build = void 0;
+exports.build = exports.rebuildVariableString = void 0;
+const rebuildVariableString = (variable) => {
+    if (typeof variable === 'string')
+        return variable;
+    else if (variable.type === 'array-destructuring') {
+        return `[ ${variable.variables.map(exports.rebuildVariableString).join(', ')} ]`;
+    }
+    else if (variable.type === 'object-destructuring') {
+        return `{ ${variable.variables.map(exports.rebuildVariableString).join(', ')} }`;
+    }
+    else if (variable.type === 'rename') {
+        return `${variable.from}: ${variable.to}`;
+    }
+};
+exports.rebuildVariableString = rebuildVariableString;
 function build(code, variables, options) {
     let Constructor = Function;
     const { async, isMatcher, isAction } = options;
@@ -15,6 +29,6 @@ function build(code, variables, options) {
     else if (!variables.length && isAction)
         return new Constructor('session', 'context', 'returnedValue', code);
     // TODO: support destructuring
-    return new Constructor(...variables, code);
+    return new Constructor(...variables.map(exports.rebuildVariableString), code);
 }
 exports.build = build;

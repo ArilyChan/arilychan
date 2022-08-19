@@ -130,3 +130,5 @@ accounts/*
 
 package-lock.json
 yarn.lock
+
+.vite

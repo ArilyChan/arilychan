@@ -103,14 +103,32 @@ export function commandBuilder (logger): [Entry[], CallableFunction] {
 
 export const name = 'yet-another-responder'
 export const schema = Schema.object({
-  rules: Schema.array(String).description('match rules.').default(['// add more down below', '// don\'t leave rules empty'])
+  rules: Schema.array(Schema.intersect([
+    Schema.object({
+      enabled: Schema.boolean().default(false)
+    }),
+    Schema.union([
+      Schema.object({
+        enabled: Schema.const(true).required(),
+        content: Schema.string().role('textarea')
+      }),
+      Schema.object({})
+    ])
+  ])).description('match rules.').default([{
+    enabled: true,
+    content: '// add more down below'
+  }, {
+    enabled: true,
+    content: '// don\'t leave rules empty'
+  }])
 })
 export interface Options {
-  rules: string[]
+  rules: Array<{enabled: boolean, content: string }>
 }
 export function apply (ctx: Context, options: Options) {
-  const trigger = options.rules.join('\n')
   try {
+    const trigger = options.rules.filter(rule => rule.enabled).map(rule => rule.content).join('\n')
+    console.log(trigger)
     const [matches, builder] = commandBuilder(ctx.logger('responder2/builder'))
     const reader = parser.parse(trigger)
     reader.forEach(builder)

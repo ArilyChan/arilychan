@@ -2,7 +2,7 @@
   "files": [],
   "references": [
     {
-      "path": "./plugins/responder2"
+      "path": "./utils/schema-compose"
     }
   ]
 }

@@ -36,7 +36,7 @@ export declare type returnedValue = any;
 export declare type CustomMatcher = (session: Session, context: Context, resolve: (carry: returnedValue) => void, reject: () => void) => Promise<returnedValue> | returnedValue;
 export declare type ActionFunction = (session: Session, context: Context, returnedValue: returnedValue) => Promise<string | undefined | {
     toString: () => string;
-}> | string | {
+}> | string | undefined | {
     toString: () => string;
 };
 export declare type MatchFunction = CustomMatcher;
@@ -44,11 +44,20 @@ export declare type Entry = [MatchFunction, ActionFunction];
 export declare function commandBuilder(logger: any): [Entry[], CallableFunction];
 export declare const name = "yet-another-responder";
 export declare const schema: Schema<{
-    rules?: string[];
+    rules?: ({
+        enabled?: boolean;
+        content?: string;
+    } & import("cosmokit").Dict<any, string>)[];
 } & import("cosmokit").Dict<any, string>, {
-    rules: string[];
+    rules: ({
+        enabled: boolean;
+        content: string;
+    } & import("cosmokit").Dict<any, string>)[];
 } & import("cosmokit").Dict<any, string>>;
 export interface Options {
-    rules: string[];
+    rules: Array<{
+        enabled: boolean;
+        content: string;
+    }>;
 }
 export declare function apply(ctx: Context, options: Options): void;

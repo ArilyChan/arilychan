@@ -2425,9 +2425,9 @@
   dependencies:
     vue-demi "*"
 
-"@xornot/run-script@^0.1.2":
+"@xornot/npm run@^0.1.2":
   version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@xornot/run-script/-/run-script-0.1.2.tgz#5d515cb7353486b7959ecd1b56f2dcc3544d50ef"
+  resolved "https://registry.yarnpkg.com/@xornot/npm run/-/npm run-0.1.2.tgz#5d515cb7353486b7959ecd1b56f2dcc3544d50ef"
   integrity sha512-a+BjLP5/Lz4ntxMpyvBLWvUJexDkYZZcI5L1Z1rilMe68xAcJK1++VJ4hGKP2wDtwLL5lSvcab/Mx9s/22NYDA==
   dependencies:
     "@types/source-map-support" "^0.5.0"

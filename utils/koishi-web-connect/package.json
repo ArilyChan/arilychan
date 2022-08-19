@@ -1,7 +1,7 @@
 {
   "name": "koishi-web-connect",
   "description": "connect web backends for koishi",
-  "version": "4.2.5",
+  "version": "4.2.6",
   "license": "MIT",
   "author": {
     "name": "arily",
@@ -21,17 +21,17 @@
     "lib/"
   ],
   "scripts": {
-    "test": "run-script eslint && run-script tsc --noEmit && run-script jest",
+    "test": "npm run eslint && npm run tsc --noEmit && npm run jest",
     "clean": "del-cli lib lib-commonjs dist css coverage && jest --clearCache",
-    "build": "run-script clean && run-script build:js && run-script build:commonjs && run-script build:d.ts && run-script build:cleanup",
+    "build": "npm run clean && npm run build:js && npm run build:commonjs && npm run build:d.ts && npm run build:cleanup",
     "build:cleanup": "del-cli \"lib?(-*)/**/@(__demo__|__snapshots__|?(*.)test.@(ts|tsx|js|jsx))\"",
     "build:commonjs": "cross-env NODE_ENV=production BABEL_MODULES=cjs babel src --out-dir lib-commonjs --extensions .ts,.tsx,.js,.jsx --copy-files --source-maps",
-    "build:d.ts": "run-script tsc --emitDeclarationOnly && run-script tsc --emitDeclarationOnly --outDir lib-commonjs",
+    "build:d.ts": "npm run tsc --emitDeclarationOnly && npm run tsc --emitDeclarationOnly --outDir lib-commonjs",
     "build:js": "cross-env NODE_ENV=production BABEL_MODULES=false babel src --out-dir lib --extensions .ts,.tsx,.js,.jsx --copy-files --source-maps",
     "eslint": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --ignore-pattern \"/__demo__/\" --no-error-on-unmatched-pattern",
     "jest": "cross-env NODE_ENV=test jest --passWithNoTests",
-    "prepack": "run-script build",
-    "reformat": "run-script eslint --fix --quiet",
+    "prepack": "npm run build",
+    "reformat": "npm run eslint --fix --quiet",
     "tsc": "tsc"
   },
   "peerDependencies": {
@@ -48,7 +48,6 @@
     "@babel/preset-env": "^7.17.10",
     "@types/jest": "^27.4.1",
     "@types/node": "^17.0.30",
-    "@xornot/run-script": "^0.1.2",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^27.5.1",
     "babel-plugin-const-enum": "^1.2.0",

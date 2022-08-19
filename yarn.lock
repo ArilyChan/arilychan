@@ -1366,7 +1366,7 @@
     methods "^1.1.2"
     path-to-regexp "^6.1.0"
 
-"@koishijs/cli@^4.8.3":
+"@koishijs/cli@^4.8.5":
   version "4.8.5"
   resolved "https://registry.yarnpkg.com/@koishijs/cli/-/cli-4.8.5.tgz#0d23bc54991994e3349f41ca4e33285ecc69a5c1"
   integrity sha512-A1guxzJYHIDdln5h+sTq0Z2mm1X28dsMekTN7JK0YR1frToJx/Qy4DUbfHckNDmS2RnW5GpPUIlbZXidV6bDDw==
@@ -1491,10 +1491,10 @@
   resolved "https://registry.yarnpkg.com/@koishijs/plugin-chat/-/plugin-chat-3.1.1.tgz#6bdf521baad370a6f2c9b7041dc3135f93c0dc6c"
   integrity sha512-FPwXBKyhAijQD/Ck/RkKQCfjGKem4ekNxUebRzj09N8L61hs1wgzxPQEm41yiTld+qgCpybxapXzRCfLN6cWKw==
 
-"@koishijs/plugin-console@^4.3.3":
-  version "4.3.3"
-  resolved "https://registry.yarnpkg.com/@koishijs/plugin-console/-/plugin-console-4.3.3.tgz#bd651fe0101438c12d57452592646e76165af76b"
-  integrity sha512-0YZ70oBlrht3foQOAMc01b+Sjo+cQoCfUMzOYscYHQGmnLoSEf6c27/tbLbnn3/UuA/xLWMVuBh0QySlr04epA==
+"@koishijs/plugin-console@^4.3.10":
+  version "4.3.10"
+  resolved "https://registry.yarnpkg.com/@koishijs/plugin-console/-/plugin-console-4.3.10.tgz#a07011ba9413be9b4f068cec17bb161d0de4c0fd"
+  integrity sha512-BQC56SI6FM+G6sY9+T7TcukzoJiC0zIWBXGjjjL7ZIbKT+RCKWpbeBPNotXDLxrW4CQ4gk7+GlB/NPRnn+uwOg==
   dependencies:
     open "^8.4.0"
     uuid "^8.3.2"
@@ -5955,7 +5955,7 @@ koishi@*:
     file-type "^16.5.3"
     ns-require "^1.1.4"
 
-koishi@^4.8.3:
+koishi@^4.8.5:
   version "4.8.5"
   resolved "https://registry.yarnpkg.com/koishi/-/koishi-4.8.5.tgz#d0e38c48e29b6a8eea917134af105c57807e8e44"
   integrity sha512-jbyD1slGKudH6G8tVH/oCYuiVUDqGn7sJhdLOt4Y1qYchx33CsXGaaeuUUclt6WLNzd/JsNIqBrlaBdGb5tvFA==

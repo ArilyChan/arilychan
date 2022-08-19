@@ -1,5 +1,5 @@
 {
-  "name": "koishi-plugin-adapter-mail",
+  "name": "~koishi-plugin-adapter-mail",
   "description": "koishi mail adapter/service",
   "private": true,
   "version": "1.0.0",

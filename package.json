@@ -45,7 +45,7 @@
   "license": "MIT",
   "workspaces": [
     "adapters/*",
-    "plugins/koishi*",
+    "plugins/*",
     "utils/*"
   ],
   "dependencies": {

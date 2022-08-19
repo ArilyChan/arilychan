@@ -1536,12 +1536,12 @@
   resolved "https://registry.yarnpkg.com/@koishijs/plugin-logger/-/plugin-logger-2.1.1.tgz#4152c27f12057ea1a5b9572cdcb2f54fa5db2e5a"
   integrity sha512-vfMKbrRT6rhsUJu3wRdj5wGtZ/Y1HVbbEZnOu2g149rvkQbBYkq/PpTnUTCxKjBwWyN0gddCFlZb4wyVTTMwhA==
 
-"@koishijs/plugin-market@^1.1.3":
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/@koishijs/plugin-market/-/plugin-market-1.1.3.tgz#caab989310ffdc580d99dba7f1da85afdd7eee1d"
-  integrity sha512-KtxOcxfLBAUE92cjskJ4+WwR1vAW07PDGoM8a/rKUAZlQTQtg/BKN/iIfhVG2y+x2oNuUmLw0ut7IG7b3Gl3fQ==
+"@koishijs/plugin-market@^1.2.4":
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/@koishijs/plugin-market/-/plugin-market-1.2.4.tgz#959a89d07c0818fcd4ffbd2145f7565988a4dcf2"
+  integrity sha512-Kgvw7/zssosggLIWezxjEQg+EQAGBbamRHVBFrnnNQwnq3NF/LSJLfplZdZEM0lSlbjFFMyd73Q2Rxsit5vRxw==
   dependencies:
-    "@koishijs/registry" "^2.2.3"
+    "@koishijs/registry" "^3.1.0"
     cross-spawn "^7.0.3"
     ns-require "^1.1.4"
     semver "^7.3.7"
@@ -1584,12 +1584,13 @@
   resolved "https://registry.yarnpkg.com/@koishijs/plugin-verifier/-/plugin-verifier-1.0.5.tgz#3f8892099cafca47246a49504f6a9e88b504f778"
   integrity sha512-t1Bud6zVH6JrUhq36T1OhKY23OYxfT0HkqpGmzVzSqw89DwNbq9+C/Enilv/flwf3EwkNZJ8vwmpN8SgWvRWfQ==
 
-"@koishijs/registry@^2.2.3":
-  version "2.2.3"
-  resolved "https://registry.yarnpkg.com/@koishijs/registry/-/registry-2.2.3.tgz#83c3e07ff35390f929542954eacab1b73e09afdb"
-  integrity sha512-ROF/5+4wuBN1avn4RfNVRss4aYq+acnWaw2ZpvRs7UuD19+lm+HwIHPJqpAVmWqliz7/s11RHWtuxZGUSyoOBg==
+"@koishijs/registry@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@koishijs/registry/-/registry-3.1.0.tgz#a31444392310c6824fd95c332024f10164645e62"
+  integrity sha512-TcuKjPfKUzb13w721ED/Qifz05nblvpnXFUb3gILQqAoc77YyepbmoCINI4JAueObywjnqYOt/MOYCrcIRO79w==
   dependencies:
     cosmokit "^1.2.1"
+    cross-spawn "^7.0.3"
     p-map "^4.0.0"
     semver "^7.3.7"
 

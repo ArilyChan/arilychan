@@ -62,7 +62,7 @@
     "@koishijs/plugin-help": "^1.1.0",
     "@koishijs/plugin-locales": "^1.0.1",
     "@koishijs/plugin-logger": "^2.1.1",
-    "@koishijs/plugin-market": "^1.1.3",
+    "@koishijs/plugin-market": "^1.2.4",
     "@koishijs/plugin-recall": "1.1.1",
     "@koishijs/plugin-respondent": "5.0.1",
     "@koishijs/plugin-sandbox": "^2.1.1",

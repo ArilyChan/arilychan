@@ -57,20 +57,29 @@ function commandBuilder(logger) {
 exports.commandBuilder = commandBuilder;
 exports.name = 'yet-another-responder';
 exports.schema = koishi_1.Schema.object({
-    rules: koishi_1.Schema.array(koishi_1.Schema.object({
-        enabled: koishi_1.Schema.boolean().default(true),
-        content: koishi_1.Schema.string().role('textarea')
-    })).description('match rules.').default([{
-            enabled: false,
+    rules: koishi_1.Schema.array(koishi_1.Schema.intersect([
+        koishi_1.Schema.object({
+            enabled: koishi_1.Schema.boolean().default(false)
+        }),
+        koishi_1.Schema.union([
+            koishi_1.Schema.object({
+                enabled: koishi_1.Schema.const(true).required(),
+                content: koishi_1.Schema.string().role('textarea')
+            }),
+            koishi_1.Schema.object({})
+        ])
+    ])).description('match rules.').default([{
+            enabled: true,
             content: '// add more down below'
         }, {
-            enabled: false,
+            enabled: true,
             content: '// don\'t leave rules empty'
         }])
 });
 function apply(ctx, options) {
-    const trigger = options.rules.filter(rule => rule.enabled).map(rule => rule.content).join('\n');
     try {
+        const trigger = options.rules.filter(rule => rule.enabled).map(rule => rule.content).join('\n');
+        console.log(trigger);
         const [matches, builder] = commandBuilder(ctx.logger('responder2/builder'));
         const reader = grammar_1.parser.parse(trigger);
         reader.forEach(builder);
@@ -86,6 +95,7 @@ function apply(ctx, options) {
                 }
             });
             for (const [match, run] of matches) {
+                console.log(match);
                 let receivedMatcherResolvedValue = false;
                 let matcherResolvedValue;
                 const returnedValue = match(escapedSession, ctx, (result) => {

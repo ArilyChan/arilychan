@@ -44,15 +44,9 @@ export declare type Entry = [MatchFunction, ActionFunction];
 export declare function commandBuilder(logger: any): [Entry[], CallableFunction];
 export declare const name = "yet-another-responder";
 export declare const schema: Schema<{
-    rules?: ({
-        enabled?: boolean;
-        content?: string;
-    } & import("cosmokit").Dict<any, string>)[];
+    rules?: ({} & import("cosmokit").Dict<any, string>)[];
 } & import("cosmokit").Dict<any, string>, {
-    rules: ({
-        enabled: boolean;
-        content: string;
-    } & import("cosmokit").Dict<any, string>)[];
+    rules: ({} & import("cosmokit").Dict<any, string>)[];
 } & import("cosmokit").Dict<any, string>>;
 export interface Options {
     rules: Array<{

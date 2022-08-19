@@ -131,6 +131,7 @@ export function apply (ctx: Context, options: Options) {
     console.log(trigger)
     const [matches, builder] = commandBuilder(ctx.logger('responder2/builder'))
     const reader = parser.parse(trigger)
+
     reader.forEach(builder)
     ctx.middleware(async (session, next) => {
       const escapedSession = new Proxy(session, {
@@ -144,6 +145,7 @@ export function apply (ctx: Context, options: Options) {
       })
 
       for (const [match, run] of matches) {
+        console.log(match)
         let receivedMatcherResolvedValue = false
         let matcherResolvedValue
 

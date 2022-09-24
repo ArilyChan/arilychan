@@ -1,6 +1,6 @@
 {
   "name": "koishi-plugin-blame",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "notice you when unhandled error",
   "main": "index.js",
   "scripts": {

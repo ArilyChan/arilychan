@@ -9,6 +9,7 @@
   "peerDependencies": {
     "koishi": ">=1.0.0"
   },
+  "homepage": "https://github.com/arilychan/arilychan",
   "author": "arily",
   "license": "MIT"
 }

@@ -20,7 +20,7 @@ function apply(app, options) {
     const screenshot = async (url) => {
         const screen = await cluster.screenshot.base64(url);
         return (0, koishi_1.segment)('image', {
-            file: `base64://${screen}`
+            url: `base64://${screen}`
         });
     };
     const params = (params) => {

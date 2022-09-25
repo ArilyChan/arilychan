@@ -15,7 +15,7 @@ export function apply (app: Context, options) {
   const screenshot = async (url) => {
     const screen = await cluster.screenshot.base64(url)
     return s('image', {
-      url: `base64://${screen}`
+      file: `base64://${screen}`
     })
   }
 

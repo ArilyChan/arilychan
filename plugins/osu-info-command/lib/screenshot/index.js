@@ -16,7 +16,7 @@ function apply(app, options) {
     const { tryUser } = (0, tryUser_1.default)(options);
     // @ts-expect-error we got this
     const cluster = app.puppeteerCluster;
-    cluster.options.screenshot.type = 'jpg';
+    cluster.options.screenshot.type = 'jpeg';
     const screenshot = async (url) => {
         const screen = await cluster.screenshot.base64(url);
         return (0, koishi_1.segment)('image', {

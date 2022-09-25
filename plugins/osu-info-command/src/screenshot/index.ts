@@ -1,4 +1,4 @@
-import { Context, Command, Session } from 'koishi'
+import { Context, Command, Session, segment as s } from 'koishi'
 import injectOsuOptions from '../command-inject-options'
 import TryMode from '../utils/tryMode'
 import TryUser from '../utils/tryUser'
@@ -10,9 +10,13 @@ export function apply (app: Context, options) {
   const { tryUser } = TryUser(options)
   // @ts-expect-error we got this
   const cluster = app.puppeteerCluster
+  cluster.options.screenshot.type = 'jpg'
+
   const screenshot = async (url) => {
     const screen = await cluster.screenshot.base64(url)
-    return `[CQ:image,url=base64://${screen}]`
+    return s('image', {
+      url: `base64://${screen}`
+    })
   }
 
   const params = (params) => {

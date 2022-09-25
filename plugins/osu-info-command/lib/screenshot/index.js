@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.apply = exports.name = exports.using = void 0;
+const koishi_1 = require("koishi");
 const command_inject_options_1 = __importDefault(require("../command-inject-options"));
 const tryMode_1 = __importDefault(require("../utils/tryMode"));
 const tryUser_1 = __importDefault(require("../utils/tryUser"));
@@ -15,9 +16,12 @@ function apply(app, options) {
     const { tryUser } = (0, tryUser_1.default)(options);
     // @ts-expect-error we got this
     const cluster = app.puppeteerCluster;
+    cluster.options.screenshot.type = 'jpg';
     const screenshot = async (url) => {
         const screen = await cluster.screenshot.base64(url);
-        return `[CQ:image,url=base64://${screen}]`;
+        return (0, koishi_1.segment)('image', {
+            url: `base64://${screen}`
+        });
     };
     const params = (params) => {
         return `?${new URLSearchParams(params)}`;

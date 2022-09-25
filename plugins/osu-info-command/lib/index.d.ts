@@ -13,23 +13,23 @@ export interface Options {
 export declare const schema: Schema<{
     screenshot?: {
         base?: string;
-    } & import("koishi").Dict<any, string>;
-    server?: import("koishi").Dict<{
+    } & import("cosmokit").Dict<any, string>;
+    server?: import("cosmokit").Dict<{
         default?: boolean;
         server?: string;
         mode?: string[];
-    } & import("koishi").Dict<any, string>, string>;
-    modeAlias?: import("koishi").Dict<string[], string>;
-} & import("koishi").Dict<any, string>, {
+    } & import("cosmokit").Dict<any, string>, string>;
+    modeAlias?: import("cosmokit").Dict<string[], string>;
+} & import("cosmokit").Dict<any, string>, {
     screenshot: {
         base: string;
-    } & import("koishi").Dict<any, string>;
-    server: import("koishi").Dict<{
+    } & import("cosmokit").Dict<any, string>;
+    server: import("cosmokit").Dict<{
         default: boolean;
         server: string;
         mode: string[];
-    } & import("koishi").Dict<any, string>, string>;
-    modeAlias: import("koishi").Dict<string[], string>;
-} & import("koishi").Dict<any, string>>;
+    } & import("cosmokit").Dict<any, string>, string>;
+    modeAlias: import("cosmokit").Dict<string[], string>;
+} & import("cosmokit").Dict<any, string>>;
 export declare const name = "osu-info-command";
 export declare function apply(ctx: Context, options: Options): void;

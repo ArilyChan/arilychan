@@ -2,7 +2,6 @@
   "name": "koishi-plugin-nyan",
   "version": "1.2.1",
   "description": "append nyan",
-  "main": "index.js",
   "peerDependencies": {
     "koishi": ">=3.0.0"
   },
@@ -20,6 +19,12 @@
     "cat",
     "moe",
     "nya"
+  ],
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "dist"
   ],
   "author": "arily",
   "license": "MIT"

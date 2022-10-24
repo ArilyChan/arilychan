@@ -11,7 +11,7 @@ export type Variable = string | {
   from: string
   to: string
 }
-export interface literal {
+export interface Literal {
   type: 'literal'
   value: string
 }
@@ -36,22 +36,23 @@ export type ConditionalMatcher = ({
 export interface Command {
   type: string
   cond: Executable | ConditionalMatcher
-  action: Executable | literal
+  action: Executable | Literal
 }
 
 export type returnedValue = any
+type Awaitable<T> = Promise<T> | T
 
 export type CustomMatcher = (
   session: Session,
   context: Context,
   resolve: (carry: returnedValue) => void,
   reject: () => void
-) => Promise<returnedValue> | returnedValue
+) => Awaitable<returnedValue>
 export type ActionFunction = (
   session: Session,
   context: Context,
   returnedValue: returnedValue
-) => Promise<string | undefined | { toString: () => string }> | string | undefined | { toString: () => string }
+) => Awaitable<string | undefined | { toString: () => string }>
 
 export type MatchFunction = CustomMatcher
 export type Entry = [MatchFunction, ActionFunction]
@@ -193,7 +194,7 @@ export function apply (ctx: Context, options: Options) {
       .example('resp2.explain $ -> true -> "ok!"')
       .action((_, syntax) => {
         try {
-          const transformvariables = (ip, isMatcher) => {
+          const transformVariables = (ip, isMatcher) => {
             const { variables, inline, async: isAsync, code } = ip
             let rtn = `${isAsync ? '[async]' : ''} ${inline ? '[inline]' : ''} \n`
             rtn += `${isAsync ? '|| async ' : '|| '}`
@@ -224,13 +225,13 @@ export function apply (ctx: Context, options: Options) {
               const equals = cond.eq.split('eq').join('=')
               rtn.push(`|| 触发条件:\n|| session.content ${equals} '${cond.content}'`)
             } else if (cond.type === 'exec') {
-              rtn.push(`|| 自定义触发函数: ${transformvariables(cond, true)}`)
+              rtn.push(`|| 自定义触发函数: ${transformVariables(cond, true)}`)
             }
             rtn.push('|| ⬇️')
             if (action.type === 'literal') {
               rtn.push(`|| 固定回复:\n|| '${action.value}'`)
             } else if (action.type === 'exec') {
-              rtn.push(`|| 自定义回复函数: ${transformvariables(action, false)}`)
+              rtn.push(`|| 自定义回复函数: ${transformVariables(action, false)}`)
             }
           })
           return rtn.join('\n')

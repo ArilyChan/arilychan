@@ -1,5 +1,53 @@
 import { Schema, Context, Session } from 'koishi'
 
+export const name = 'nyan'
+
+type Opt = {
+  noises: string[]
+  transformLastLineOnly: boolean
+  trailing: {
+    append: string
+    transform: Array<{
+      occurrence: string
+      replaceWith: string
+    }>
+  }
+}
+
+export const schema = Schema.object({
+  noises: Schema.array(String)
+    .default(['喵'])
+    .description('您的bot会在最后发出什么声音?'),
+
+  transformLastLineOnly: Schema.boolean()
+    .default(false)
+    .description('只在最后一行卖萌，默认每行都卖。'),
+
+  trailing: Schema.object({
+    append: Schema.string()
+      .default('')
+      .description('没有标点的句末后面会被加上这个，可以设置为比如`~`'),
+
+    transform: Schema.array(
+      Schema.object({
+        occurrence: Schema.string()
+          .required()
+          .description('要被替换掉的标点符号'),
+        replaceWith: Schema.string()
+          .required()
+          .description('要替换为的标点符号')
+      })
+    )
+      .default([
+        { occurrence: '.', replaceWith: '~' },
+        { occurrence: '。', replaceWith: '～' }
+      ])
+      .description(
+        '替换掉据尾的标点符号，两个以上连在一起的标点符号不会被换掉。*只对标点符号有反应！*'
+      )
+  }).description('设置如何处理句尾')
+})
+
 // non-handling matches
 const madeNoise = /喵([^\p{L}\d\s@#]+)?( +)?$/u
 const trailingURL =
@@ -116,54 +164,6 @@ const makeNoise = (noises: string[]) => {
     return randomNoise.pop()
   }
 }
-
-type Opt = {
-  noises: string[]
-  transformLastLineOnly: boolean
-  trailing: {
-    append: string
-    transform: Array<{
-      occurrence: string
-      replaceWith: string
-    }>
-  }
-}
-
-export const schema = Schema.object({
-  noises: Schema.array(String)
-    .default(['喵'])
-    .description('您的bot会在最后发出什么声音?'),
-
-  transformLastLineOnly: Schema.boolean()
-    .default(false)
-    .description('只在最后一行卖萌，默认每行都卖。'),
-
-  trailing: Schema.object({
-    append: Schema.string()
-      .default('')
-      .description('没有标点的句末后面会被加上这个，可以设置为比如`~`'),
-
-    transform: Schema.array(
-      Schema.object({
-        occurrence: Schema.string()
-          .required()
-          .description('要被替换掉的标点符号'),
-        replaceWith: Schema.string()
-          .required()
-          .description('要替换为的标点符号')
-      })
-    )
-      .default([
-        { occurrence: '.', replaceWith: '~' },
-        { occurrence: '。', replaceWith: '～' }
-      ])
-      .description(
-        '替换掉据尾的标点符号，两个以上连在一起的标点符号不会被换掉。*只对标点符号有反应！*'
-      )
-  }).description('设置如何处理句尾')
-})
-
-export const name = 'nyan'
 
 export function apply (ctx: Context, options: Opt) {
   const { noises } = options

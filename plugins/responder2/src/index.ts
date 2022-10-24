@@ -78,7 +78,7 @@ export function commandBuilder (logger): [Entry[], CallableFunction] {
           // eslint-disable-next-line eqeqeq
           if (cond.eq === 'equal') matchRule = (session) => session.content == cond.content
           if (cond.eq === 'eq') {
-            logger('responder2').warn(`got 'assignment operator' in rules #${index}, auto-corret to double equal.`)
+            logger('responder2').warn(`got 'assignment operator' in rules #${index}, auto-correct to double equal.`)
             // eslint-disable-next-line eqeqeq
             matchRule = (session) => session.content == cond.content
           }
@@ -87,7 +87,7 @@ export function commandBuilder (logger): [Entry[], CallableFunction] {
           if (!cond.variables) cond.variables = []
           matchRule = exec(cond.code, cond.variables, { async: cond.async, inline: cond.inline, isMatcher: true }) as MatchFunction
           break
-        default: 
+        default:
           console.log(cond)
           throw new Error('unexpected condition type: ' + (cond as {type: string}).type)
       }
@@ -150,7 +150,6 @@ export function apply (ctx: Context, options: Options) {
       })
 
       for (const [match, run] of matches) {
-
         let receivedMatcherResolvedValue = false
         let matcherResolvedValue
 

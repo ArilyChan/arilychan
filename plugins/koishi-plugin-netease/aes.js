@@ -15,7 +15,7 @@ const encrypt = (word, okey, oiv) => {
   if (typeof word === 'string') {
     const srcs = CryptoJS.enc.Utf8.parse(word)
     encrypted = CryptoJS.AES.encrypt(srcs, key, {
-      iv: iv,
+      iv,
       mode: CryptoJS.mode.CBC
     })
   } else if (typeof word === 'object') {
@@ -23,7 +23,7 @@ const encrypt = (word, okey, oiv) => {
     const data = JSON.stringify(word)
     const srcs = CryptoJS.enc.Utf8.parse(data)
     encrypted = CryptoJS.AES.encrypt(srcs, key, {
-      iv: iv,
+      iv,
       mode: CryptoJS.mode.CBC
     })
   }
@@ -37,7 +37,7 @@ const decrypt = (word, okey, oiv) => {
   const key = CryptoJS.enc.Utf8.parse(okey)
   const iv = CryptoJS.enc.Utf8.parse(oiv)
   const decrypted = CryptoJS.AES.decrypt(word, key, {
-    iv: iv,
+    iv,
     mode: CryptoJS.mode.CBC
   })
   const decryptedStr = decrypted.toString(CryptoJS.enc.Utf8)

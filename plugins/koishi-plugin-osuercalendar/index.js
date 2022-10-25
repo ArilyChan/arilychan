@@ -1,5 +1,5 @@
 'use strict'
-const { Schema } = require('koishi')
+const { Schema, segment } = require('koishi')
 const run = require('./run')
 const path = require('path')
 const EventsJson = require('./lib/eventsJson')
@@ -69,9 +69,8 @@ module.exports.apply = (ctx, options) => {
           await page.goto(`${options.web.path}/daily?seed=${meta.userId}&lang=zh-cn&displayName=${meta.author?.nickname || meta.author?.username || '你'}`)
           await page.setViewport({ width: 992, height: 100, deviceScaleFactor: 1.5 })
           const e = await page.$('#__next > div > div > div')
-          const ss = await e.screenshot({ encoding: 'base64', type: 'jpeg' })
-          const cqcode = `[CQ:image,url=base64://${ss}]`
-          meta.send(cqcode).catch(_ => meta.send('发送图片失败。'))
+          const cqCode = segment.image(await e.screenshot({ type: 'jpeg' }))
+          meta.send(cqCode).catch(_ => meta.send('发送图片失败。'))
         } catch (error) {
           logger.error(error)
           await run.koishiHandler(meta, eventPath, new Date())

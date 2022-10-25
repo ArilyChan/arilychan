@@ -20,7 +20,7 @@
     "moe",
     "nya"
   ],
-  "main": "lib/index.js",
+  "main": "index.js",
   "typings": "lib/index.d.ts",
   "files": [
     "lib",

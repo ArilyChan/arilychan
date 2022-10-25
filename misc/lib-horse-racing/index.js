@@ -34,28 +34,28 @@ const models = {
     // 借贷
     collateral: 0,
     // 风险率
-    get margin() {
+    get margin () {
       const net = this.net + state.credit
       const overBorrow = net * state.leverage / this.collateral < state.liquidate
       return overBorrow ? Infinity : this.collateral / net / state.leverage
     },
-    get net() {
+    get net () {
       return this.balance + this.unrealizedGain - this.collateral
     },
     history: []
   },
   horse: {
-    get id() {
+    get id () {
       return this._id || assignId(this)
     },
     name: '',
-    get seed() { return Math.random() }
+    get seed () { return Math.random() }
   },
   pool: {
-    get id() {
+    get id () {
       return this._id || assignId(this)
     },
-    get odds() {
+    get odds () {
       return new Map([...this.balance.entries()].map(([horseId, balance]) => {
         const ratio = (balance && this.totalBalance / balance * (1 - state.commission)) || 0
         return [horseId, ratio]
@@ -74,7 +74,7 @@ const models = {
     amount: 0
   },
   match: {
-    get id() {
+    get id () {
       return this._id || assignId(this)
     },
     horses: [],
@@ -84,20 +84,20 @@ const models = {
   }
 }
 
-function initHorses() {
+function initHorses () {
   [1, 2, 3, 4, 5, 6, 7, 8]
     .map(id => ({ _id: id, name: `horse-${id}` }))
     .map(horse => state.horses.set(horse._id, Object.assign(Object.create(models.horse), horse)))
 }
 
-function createGambler(id, deposit = undefined) {
+function createGambler (id, deposit = undefined) {
   const gambler = Object.assign(Object.create(models.gambler), { id, balance: deposit ?? 0, deposit, withdraw: 0 })
   gambler.history = []
   state.gamblers.set(id, gambler)
   return gambler
 }
 
-function createMatch(horseIds = []) {
+function createMatch (horseIds = []) {
   const match = Object.assign(Object.create(models.match), {})
   match.pools = []
   match.horses = horseIds.map(id => state.horses.get(id)).filter(_ => _)
@@ -105,7 +105,7 @@ function createMatch(horseIds = []) {
 }
 
 // 下注时资金不变，未实现余额为负。
-function createPool(match, poolName,
+function createPool (match, poolName,
   // 结算函数 返回Map<bettorId, delta> 只结算收益，未实现损益由赌场负责结算
   resolveFunc = (match, pool, gamblers) => {
     if (!match.finished) return new Map()
@@ -157,7 +157,7 @@ function lend (bettorId, lending) {
   }
 }
 
-function bet(pool, bettorId, amount, horseId) {
+function bet (pool, bettorId, amount, horseId) {
   const gambler = state.gamblers.get(bettorId)
   const lending = amount - gambler.balance
   if (lending > 0) {
@@ -174,7 +174,7 @@ function bet(pool, bettorId, amount, horseId) {
   }
 }
 
-function* createResult(match, step) {
+function * createResult (match, step) {
   let current = 0
   const result = match.horses.map(horse => ({ id: horse.id, result: Math.random() / 2 + 0.5 }))
   const resultMin = Math.min(...result.map(r => r.result))
@@ -199,7 +199,7 @@ function* createResult(match, step) {
   return horseProgress
 }
 
-function settleMatch(match) {
+function settleMatch (match) {
   const result = createResult(match, 50)
   let current = result.next()
   while (!current.done) {
@@ -210,25 +210,25 @@ function settleMatch(match) {
   match.pools = []
 }
 
-function settlePool(pool) {
+function settlePool (pool) {
   const payment = pool.settle(pool.match, pool, state.gamblers)
   let totalPayment = 0
     ;[...payment.entries()].map(([bettorId, amount]) => {
-      console.log(bettorId)
-      const gambler = state.gamblers.get(bettorId)
-      // pay debt first
-      if (gambler.collateral > 0) {
-        const amountReturn = Math.min(gambler.collateral, amount)
-        amount -= amountReturn
-        gambler.unrealizedGain += amountReturn
-        gambler.collateral -= amountReturn
-        state.lending -= amountReturn
-      }
+    console.log(bettorId)
+    const gambler = state.gamblers.get(bettorId)
+    // pay debt first
+    if (gambler.collateral > 0) {
+      const amountReturn = Math.min(gambler.collateral, amount)
+      amount -= amountReturn
+      gambler.unrealizedGain += amountReturn
+      gambler.collateral -= amountReturn
+      state.lending -= amountReturn
+    }
 
-      gambler.balance += amount
+    gambler.balance += amount
 
-      totalPayment += amount
-    })
+    totalPayment += amount
+  })
   pool.bets.map(({ bettorId, amount }) => {
     const gambler = state.gamblers.get(bettorId)
     gambler.balance -= amount
@@ -246,7 +246,7 @@ createGambler(1, 100 * 100)
 createGambler(2, 10000 * 100)
 createGambler(3, 10000 * 100)
 createGambler(4, 100000 * 100)
-function logBalance() {
+function logBalance () {
   // console.log([...state.gamblers.values()].map(gambler => {
   //   return [`id: ${gambler.id}`, `入金-出金: ${(gambler.deposit - gambler.withdraw) / state.float}`, `资金: ${gambler.balance / state.float}`, `未实现盈亏: ${gambler.unrealizedGain / state.float}`, `借贷:${gambler.collateral / state.float}`, `借贷风险率:${gambler.margin}`].join('\n\t')
   // }).join('\n'))
@@ -259,7 +259,7 @@ function logBalance() {
     margin
   })))
 }
-function round(params) {
+function round (params) {
   const match = createMatch([1, 2, 3, 4])
   const pool = createPool(match, `${new Date().toUTCString()}-单胜`)
   bet(pool, 1, Math.floor(Math.random() * 10000), Math.round(Math.random() * 3) + 1)

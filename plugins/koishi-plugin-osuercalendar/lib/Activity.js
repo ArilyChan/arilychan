@@ -1,6 +1,6 @@
 'use strict'
 const XorShift = require('xorshift').constructor
-const seedrandom = require('seedrandom')
+const random = require('seedrandom')
 const shuffleSeed = require('shuffle-seed')
 
 class FortuneResult {
@@ -9,7 +9,7 @@ class FortuneResult {
     this.today = day
     // this.iday = (this.today.getFullYear() * 10000 + (this.today.getMonth() + 1) * 100 + this.today.getDate()).toString()
     // this.seed = Math.ceil(seedrandom(this.seedString + this.iday)() * 1000000)
-    this.seed = Math.ceil(seedrandom(this.seedString)() * 1000000)
+    this.seed = Math.ceil(random(this.seedString)() * 1000000)
     // this.rng = new XorShift([this.seed, 0, 1, 0])
     // this.rng.random() // 第一次随机数一般不怎么随机，取后续随机数
     this.luck = events.luck

@@ -114,9 +114,9 @@ class eventsJsonUtils {
       if (result) {
         let output = '请审核活动：' + name + ' 宜：' + good + ' 忌：' + bad + '\n'
         output = output + '输入 "确认/取消 待审核活动名称" 以审核活动'
-        users.admin.map((user) => {
-          app.sender.sendPrivateMsgAsync(user, output)
-        })
+        return Promise.all(users.admin.map((user) => {
+          return app.sender.sendPrivateMsgAsync(user, output)
+        }))
       }
     }
   }

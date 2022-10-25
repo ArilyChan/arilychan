@@ -4,7 +4,7 @@ const parser = require('./')
 
 const tester = fs.readFileSync(path.join(__dirname, 'test.txt')).toString()
 try {
-  const result = parser.parse(tester)
+  parser.parse(tester)
   process.exit(0)
 } catch (error) {
   console.error(error.message)

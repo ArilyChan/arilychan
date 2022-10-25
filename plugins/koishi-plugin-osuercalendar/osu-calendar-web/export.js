@@ -12,7 +12,7 @@ const build = async () => {
     await nextBuild.default(__dirname, require('./next.config.js'))
     return {
       job: 'build-nextjs',
-      successed: true
+      succeed: true
     }
 }
 

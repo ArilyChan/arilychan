@@ -1,7 +1,7 @@
 export type BuildingFunction = CallableFunction | Promise<CallableFunction>
 export type BuildResult = {
   job: String,
-  successed: Boolean,
+  succeed: Boolean,
   finished: Boolean,
   error?: Error
 }

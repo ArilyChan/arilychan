@@ -80,7 +80,14 @@
     "@satorijs/core": "^1.1.6",
     "cordis": "2.2.0",
     "dotenv": "^16.0.1",
+<<<<<<< HEAD
     "koishi": "4.9.3",
+=======
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.3.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "koishi": "^4.9.2",
+>>>>>>> 57145410cddb594b9e532733f77c50567de19252
     "koishi-plugin-aircon": "1.0.1",
     "koishi-plugin-alipay-voice": "1.0.1",
     "koishi-plugin-changelog": "^2.0.1",

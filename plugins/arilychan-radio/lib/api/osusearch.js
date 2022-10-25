@@ -1,10 +1,10 @@
 'use strict'
 
 const querystring = require('querystring')
-const https = require("https")
+const https = require('https')
 const axios = require('axios')
-const axios_ru = axios.create({
-  httpsAgent: new https.Agent({  
+const axiosRu = axios.create({
+  httpsAgent: new https.Agent({
     rejectUnauthorized: false
   })
 })
@@ -46,8 +46,8 @@ class OsusearchApi {
   static async apiRequest (options) {
     const contents = (options) ? querystring.stringify(options) : ''
     const url = 'https://osusearch.com/query/?' + contents
-    const result = await axios_ru.get(url);
-    return result.data;
+    const result = await axiosRu.get(url)
+    return result.data
   }
 
   static findtheMostSuitable (result, params) {

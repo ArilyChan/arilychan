@@ -1,16 +1,16 @@
 'use strict'
 
 const querystring = require('querystring')
-const https = require("https")
+const https = require('https')
 const axios = require('axios')
-const axios_ru = axios.create({
-  httpsAgent: new https.Agent({  
+const axiosRu = axios.create({
+  httpsAgent: new https.Agent({
     rejectUnauthorized: false
   })
 })
 
 class BeatmapInfo {
-  constructor (data, SpecDiff = "") {
+  constructor (data, SpecDiff = '') {
     this.artist = data.artist
     this.artistU = (data.artistU) ? data.artistU : data.artist
     this.title = data.title
@@ -21,10 +21,10 @@ class BeatmapInfo {
     this.source = data.source
     if (!SpecDiff) this.beatmap = data.bid_data.pop()
     else {
-      data.bid_data.map((bdata) => {
-        const version = bdata.version.toLowerCase();
-        const diff = SpecDiff.toLowerCase();
-        if (version.indexOf(diff) >= 0) this.beatmap = bdata
+      data.bid_data.forEach((bData) => {
+        const version = bData.version.toLowerCase()
+        const diff = SpecDiff.toLowerCase()
+        if (version.indexOf(diff) >= 0) this.beatmap = bData
       })
       if (!this.beatmap) this.beatmap = data.bid_data.pop()
     }
@@ -58,22 +58,22 @@ class SearchResult {
   }
 }
 
-class SayabotApi {
+class sayobotApi {
   static async apiRequestV2 (options) {
     const contents = (options) ? querystring.stringify(options) : ''
     const url = 'https://api.sayobot.cn/v2/beatmapinfo?' + contents
-    let result = await axios_ru.get(url);
-    return result.data;
+    const result = await axiosRu.get(url)
+    return result.data
   }
 
   static async apiRequestList (keyword) {
     const url = 'https://api.sayobot.cn/beatmaplist?0=1&1=0&2=4&' + querystring.stringify({ 3: keyword })
-    let result = await axios_ru.get(url);
-    return result.data;
+    const result = await axiosRu.get(url)
+    return result.data
   }
 
   /**
-     * sayabot搜索谱面信息
+     * sayobot搜索谱面信息
      * @param {Number} sid setId
      * @param {String} diffName 难度名，为了获取指定难度的音频
      * @returns {BeatmapInfo|{code, message}} 返回BeatmapInfo，出错时返回 {code: "error"} 或 {code: 404}
@@ -87,7 +87,7 @@ class SayabotApi {
       if (!searchResult.success()) return { code: 404, message: '查不到该谱面信息（谱面setId：' + sid + '）' }
       return searchResult.beatmapInfo
     } catch (ex) {
-      console.log('[sayabot] ' + ex)
+      console.log('[sayobot] ' + ex)
       return { code: 'error', message: '获取谱面详情出错' }
     }
   }
@@ -104,10 +104,10 @@ class SayabotApi {
       if (!result.data) return { code: 404, message: '找不到任何谱面（关键词：' + keyword + '）' }
       return result.data.pop().sid
     } catch (ex) {
-      console.log('[sayabot] ' + ex)
+      console.log('[sayobot] ' + ex)
       return { code: 'error', message: '搜索谱面出错' }
     }
   }
 }
 
-module.exports = SayabotApi
+module.exports = sayobotApi

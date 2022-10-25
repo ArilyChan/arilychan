@@ -15,7 +15,7 @@ const crash = (code = 1) => {
 }
 
 const loopProtector = () => {
-  let lastError = undefined
+  let lastError
   return (err) => {
     if (lastError === err) {
       return true
@@ -30,7 +30,7 @@ let installed = false
 // module.exports.name = "blame";
 module.exports.v1 = {
   name: 'blame-koishi-v1',
-  apply(ctx, options) {
+  apply (ctx, options) {
     if (installed) return
 
     options = { ...defaultOptions, ...options }
@@ -59,7 +59,7 @@ module.exports.v1 = {
 
 module.exports.v2 = {
   name: 'blame-koishi-v2',
-  apply(ctx, options) {
+  apply (ctx, options) {
     if (installed) return
 
     options = { ...defaultOptions, ...options }
@@ -87,7 +87,7 @@ module.exports.v2 = {
 
 module.exports.v3 = {
   name: 'blame-koishi-v3',
-  apply(ctx, options) {
+  apply (ctx, options) {
     if (installed) return
     const findSamePlatformBots = (platform) =>
       ctx.bots.filter((bot) => bot.platform === platform)
@@ -168,7 +168,7 @@ try {
       sender: Schema.array(String).description('send blames from these bots'),
       crash: Schema.boolean().default(false).description('crash app after sent message')
     }),
-    apply(ctx, options) {
+    apply (ctx, options) {
       const logger = ctx.logger('blame')
       if (installed) return
       const findSamePlatformBots = (platform) =>
@@ -255,11 +255,9 @@ try {
       installed = true
     }
   }
-
 } catch (err) {
   // noop
 }
-
 
 // const { version } = require('koishi-core')
 let version

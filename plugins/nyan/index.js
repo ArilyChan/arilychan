@@ -1,16 +1,13 @@
+"use strict"
 const { Schema } = require('koishi')
-// const { Logger } = require('koishi')
 
 const nyaned = /喵([^\p{L}\d\s@#]+)?( +)?$/u
 const trailingChars = /(?<content>.*?)(?<trailing>[^\p{L}\d\s@#]+)?(?<trailingSpace> +)?$/u
 const trailingURL = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{2,6}\b([-a-zA-Z0-9()@:%_+.~#?&//<>{}]*)?$/u
 const endsWithCQCode = /\[[cqCQ](.*)\]$/u
 
-// const logger = new Logger('nyan')
-// loggerlevel = 3
-
 const _transform = (trailing, transforms) => {
-  // expect transforms is unempty
+  // expect transforms is not empty
   const last = trailing.slice(-1)
   if (trailing.length > 1) {
     const secondLast = trailing.slice(-2, -1)
@@ -24,6 +21,7 @@ const _transform = (trailing, transforms) => {
 }
 
 const nyan = (message, noiseMaker, { trailing: { append, transform }, transformLastLineOnly }) => {
+  if (!message?.length) return message
   // preserve empty lines at the end of the message. It's totally useless but why not?
   message = message?.split?.('\n')
   const end = []
@@ -36,29 +34,22 @@ const nyan = (message, noiseMaker, { trailing: { append, transform }, transformL
   // transform message
   message = message.map((line, index, lines) => {
     if (transformLastLineOnly && index < lines.length - 1) {
-      // loggerdebug(line, 'unhandled due to `transformLastLineOnly`')
       return line
     }
     if (line.trim() === '') {
-      // loggerdebug(line, 'unhandled due to empty line')
       return line
     }
     if (nyaned.test(line)) {
-      // loggerdebug(line, 'unhandled due to \'nyaned\'')
       return line
     }
     if (endsWithCQCode.test(line)) {
-      // loggerdebug(line, 'unhandled due to \'ends with cqcode\'')
       return line
     }
     if (trailingURL.test(line)) {
-      // loggerdebug(line, 'unhandled due to \'trailing with url\'')
       return line
     }
     const noise = noiseMaker()
-    // loggerdebug('noise going to make this time:', noise)
     let { groups: { content, trailing, trailingSpace } } = line.match(trailingChars)
-    // loggerdebug('analyzed message:', { content, trailing, trailingSpace })
     if (!trailing) trailing = append
     else if (transform.length) trailing = _transform(trailing, transform)
     line = `${content ?? ''}${noise}${trailing ?? ''}${trailingSpace ?? ''}`

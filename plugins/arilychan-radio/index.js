@@ -2,7 +2,7 @@
 // const manual = require('sb-bot-manual')
 const api = require('./lib/server/api')
 const server = require('./lib/server/server')
-const aggeregations = require('./lib/server/database/aggregations')
+const aggregations = require('./lib/server/database/aggregations')
 const utils = require('./lib/utils')
 const { v4: uuidv4 } = require('uuid')
 const { Schema } = require('koishi')
@@ -71,7 +71,7 @@ module.exports.apply = async (ctx, options) => {
         // const expiredDate = new Date(now - options.removeAfterDays * 24 * 60 * 60 * 1000 || 7 * 24 * 60 * 60 * 1000)
         const oneHourBefore = new Date(now - 60 * 60 * 1000)
         const p = await storage.database.collection.aggregate([
-          ...aggeregations.newerThan(oneHourBefore),
+          ...aggregations.newerThan(oneHourBefore),
           { $match: { sid: beatmapInfo.sid, uploader: { id: argv.session.userId } } }
         ]).toArray()
         if (p.length) {
@@ -114,7 +114,7 @@ module.exports.apply = async (ctx, options) => {
         const expiredDate = new Date(now - options.removeAfterDays * 24 * 60 * 60 * 1000 || 7 * 24 * 60 * 60 * 1000)
 
         let p = await storage.database.collection.aggregate([
-          ...aggeregations.newerThan(expiredDate),
+          ...aggregations.newerThan(expiredDate),
           { $match: { sid } }
         ]).toArray()
 
@@ -189,7 +189,7 @@ module.exports.apply = async (ctx, options) => {
   //               // const expiredDate = new Date(now - options.removeAfterDays * 24 * 60 * 60 * 1000 || 7 * 24 * 60 * 60 * 1000)
   //             const oneHourBefore = new Date(now - 60 * 60 * 1000)
   //             const p = await storage.database.collection.aggregate([
-  //               ...aggeregations.newerThan(oneHourBefore),
+  //               ...aggregations.newerThan(oneHourBefore),
   //               { $match: { sid: beatmapInfo.sid, uploader: { id: userId } } }
   //             ]).toArray()
   //             if (p.length) {
@@ -233,7 +233,7 @@ module.exports.apply = async (ctx, options) => {
   //             const expiredDate = new Date(now - options.removeAfterDays * 24 * 60 * 60 * 1000 || 7 * 24 * 60 * 60 * 1000)
 
   //             let p = await storage.database.collection.aggregate([
-  //               ...aggeregations.newerThan(expiredDate),
+  //               ...aggregations.newerThan(expiredDate),
   //               { $match: { sid } }
   //             ]).toArray()
 

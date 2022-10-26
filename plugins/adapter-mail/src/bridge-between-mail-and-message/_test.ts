@@ -11,7 +11,7 @@ test.useSender(test.createSender(Senders.TestSender))
 test.bridge()
 testReceiver._fakeMail({
   text: null,
-  html: `
+  html: /* html */`
   <html>
     <head>
       <style>
@@ -19,7 +19,7 @@ testReceiver._fakeMail({
       </style>
     </head>
     <body>
-    % reply beyond this line %
+    <p>% reply beyond this line %</p>
     <h1>Test Message</h1>
     <img src="http://example.com/pic1.jpg">
     <span>huh</span>

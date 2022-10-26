@@ -55,11 +55,14 @@ const abstractMessage = (mail: IncomingMail) => {
 type Separator = string | RegExp
 const separate = (separator: Separator, idTemplate: RegExp) => async (text: string) => {
   let content
-  const endsAt = text.match(separator)?.index
-  if (endsAt) content = text.slice(0, endsAt)
-  else content = text
-  text = text.slice(endsAt)
-  const ids = idTemplate.exec(text)
+
+  if (typeof separator === 'string') {
+    separator = new RegExp(`(?<before>.*)(${separator})(?<after>.*)`, 's')
+  }
+  const matchResult = text.match(separator)
+
+  content = matchResult.groups.before + matchResult.groups.after
+  const ids = idTemplate.exec(content)
   if (ids) content = content.replace(idTemplate, '')
   return { content, id: ids?.[1] }
 }

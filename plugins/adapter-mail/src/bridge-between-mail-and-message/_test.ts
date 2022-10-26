@@ -5,8 +5,8 @@ import { Bridge } from './'
 const test = new Bridge()
 const testReceiver = test.createReceiver(Receivers.TestReceiver)
 test.useClient(test.createClient({}))
-void test.useReceiver(testReceiver)
-void test.useSender(test.createSender(Senders.TestSender))
+test.useReceiver(testReceiver)
+test.useSender(test.createSender(Senders.TestSender))
 
 test.bridge()
 testReceiver._fakeMail()

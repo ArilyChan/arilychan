@@ -1,6 +1,6 @@
-export function html (strs, ...args) {
-  if (!Array.isArray(strs)) strs = [strs]
-  return strs.map((str, i) => {
+export function html (template, ...args) {
+  if (!Array.isArray(template)) template = [template]
+  return template.map((str, i) => {
     const variable = args[i]
     if (Array.isArray(variable)) {
       return `${str}${html(new Array(variable.length).fill(''), ...variable)}`

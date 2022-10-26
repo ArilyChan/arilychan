@@ -53,7 +53,7 @@ const abstractMessage = (mail: IncomingMail) => {
 }
 
 type Separator = string | RegExp
-const seprate = (separator: Separator, idTemplate: RegExp) => async (text: string) => {
+const separate = (separator: Separator, idTemplate: RegExp) => async (text: string) => {
   let content
   const endsAt = text.match(separator)?.index
   if (endsAt) content = text.slice(0, endsAt)
@@ -66,7 +66,7 @@ const seprate = (separator: Separator, idTemplate: RegExp) => async (text: strin
 
 export function pipeline ({ separator = '% reply beyond this line %', messageIdExtractor = /#k-id=([^$]+)#/ }: {separator?: Separator, messageIdExtractor?: RegExp} = { }) {
   return async (mail: IncomingMail) => {
-    const { content, id } = await Promise.resolve(mail).then(abstractMessage).then(seprate(separator, messageIdExtractor))
+    const { content, id } = await Promise.resolve(mail).then(abstractMessage).then(separate(separator, messageIdExtractor))
     return { content, id }
   }
 }

@@ -6,13 +6,13 @@ import { segment, Logger } from 'koishi'
 import { pipeline as toMessagePipeline } from './toMessage'
 import { html } from '../bootleg-html-template'
 
-type Separator = string | RegExp;
+type Separator = string;
 export class Bridge {
   client?: MailClient
   subscribers = new Set<MessageSubscriber>()
   logger = new Logger('adapter-mail/bridge')
 
-  #separator: Separator = '% reply beyond this line %'
+  #separator: Separator = '% reply before this line %'
   #toMessagePipeline: ReturnType<typeof toMessagePipeline> = toMessagePipeline({
     separator: this.#separator
   })
@@ -96,13 +96,23 @@ export class Bridge {
   }
 
   async sendMessage (to: { id: string }, message: string) {
+    const messageId = (Math.random() * 114514 * 1919810).toFixed()
     const segs = segment.parse(message)
     const h = html`
       <!DOCTYPE html>
       <html>
+        <head>
+          <style>
+            p {
+              white-space: pre;
+            }
+          </style>
+        </head>
         <body>
-          ${segs}
+<p>${this.#separator}</p>
+<section class="bot-reply-container">${segs}</section>
         </body>
+        #k-id=${messageId}#
       </html>
     `
 

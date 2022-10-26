@@ -30,7 +30,7 @@ const abstractMessageFromHtml = async ({ html, attachments }: IncomingMail) => {
         const src = attribs.src
         const b64 = resolveAttachment(src, attachments)?.toString('base64')
         skip = false
-        return segments.push(s('image', { url: (b64 && `base64://${b64}`) || src }))
+        return segments.push(s('image', { url: (b64 && `data:image/png;base64, ${b64}`) || src }))
       }
       skip = false
     },
@@ -52,13 +52,9 @@ const abstractMessage = (mail: IncomingMail) => {
   else return Promise.reject(Error('unable to process message'))
 }
 
-type Separator = string | RegExp
-const separate = (separator: Separator, idTemplate: RegExp) => async (text: string) => {
+const separate = (_separator: string, idTemplate: RegExp) => async (text: string) => {
   let content
-
-  if (typeof separator === 'string') {
-    separator = new RegExp(`(?<before>.*)(${separator})(?<after>.*)`, 's')
-  }
+  const separator = new RegExp(`(?<before>.*)(${_separator})(?<after>.*)`, 's')
   const matchResult = text.match(separator)
 
   content = matchResult.groups.before + matchResult.groups.after
@@ -67,7 +63,7 @@ const separate = (separator: Separator, idTemplate: RegExp) => async (text: stri
   return { content, id: ids?.[1] }
 }
 
-export function pipeline ({ separator = '% reply beyond this line %', messageIdExtractor = /#k-id=([^$]+)#/ }: {separator?: Separator, messageIdExtractor?: RegExp} = { }) {
+export function pipeline ({ separator = '% reply beyond this line %', messageIdExtractor = /#k-id=([^$]+)#/ }: {separator?: string, messageIdExtractor?: RegExp} = { }) {
   return async (mail: IncomingMail) => {
     const { content, id } = await Promise.resolve(mail).then(abstractMessage).then(separate(separator, messageIdExtractor))
     return { content, id }

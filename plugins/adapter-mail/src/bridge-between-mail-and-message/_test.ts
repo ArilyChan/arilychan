@@ -15,16 +15,18 @@ testReceiver._fakeMail({
   <html>
     <head>
       <style>
-        html {color: white}
+        p {
+          white-space: pre;
+        }
       </style>
     </head>
     <body>
-    <p>% reply beyond this line %</p>
-    <h1>Test Message</h1>
-    <img src="http://example.com/pic1.jpg">
-    <span>huh</span>
-    <img src="cid:attach1.jpg">
-    test2
+      <h1>Test Message</h1>
+      <img src="http://example.com/pic1.jpg">
+      <span>huh</span>
+      <img src="cid:attach1.jpg">
+      test2
+      <p>% reply before this line %</p>
     </body>
     #k-id=14583#
   </html>

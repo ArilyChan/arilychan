@@ -14,7 +14,7 @@ export function html (template, ...args) {
     if (!variable?.type) return defaultToEmptyString`${str}${variable}`
     switch (variable.type) {
       case 'text':
-        return defaultToEmptyString`${str}${variable.data.content}`
+        return defaultToEmptyString/* html */`<p>${str}${variable.data.content}</p>`
       case 'image':
         return defaultToEmptyString/* html */`${str}<img src="${variable.data.url}">`
       default:

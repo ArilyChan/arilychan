@@ -6,22 +6,24 @@ import { segment, Logger } from 'koishi'
 import { pipeline as toMessagePipeline } from './toMessage'
 import { html } from '../bootleg-html-template'
 
-type Seprator = string | RegExp
+type Separator = string | RegExp;
 export class Bridge {
   client?: MailClient
   subscribers = new Set<MessageSubscriber>()
   logger = new Logger('adapter-mail/bridge')
 
-  #seprator: Seprator = '% reply beyond this line %'
-  #toMessagePipeline: ReturnType<typeof toMessagePipeline> = toMessagePipeline({ seprator: this.#seprator })
+  #separator: Separator = '% reply beyond this line %'
+  #toMessagePipeline: ReturnType<typeof toMessagePipeline> = toMessagePipeline({
+    separator: this.#separator
+  })
 
-  get seprator (): Seprator {
-    return this.#seprator
+  get separator (): Separator {
+    return this.#separator
   }
 
-  set seprator (value: Seprator) {
-    this.#seprator = value
-    this.#toMessagePipeline = toMessagePipeline({ seprator: value })
+  set separator (value: Separator) {
+    this.#separator = value
+    this.#toMessagePipeline = toMessagePipeline({ separator: value })
   }
 
   createClient (mailClientOption) {
@@ -32,7 +34,10 @@ export class Bridge {
     this.client = mailClient
   }
 
-  createSender<T extends Senders.Abstractor<any>> (Sender: T | string, ...args: ConstructorParameters<T>) {
+  createSender<T extends Senders.Abstractor<any>> (
+    Sender: T | string,
+    ...args: ConstructorParameters<T>
+  ) {
     if (typeof Sender === 'string') {
       return new Senders[Sender](...args)
     }
@@ -43,7 +48,10 @@ export class Bridge {
     await this.client?.useSender(sender)
   }
 
-  createReceiver<T extends Receivers.Abstractor<any>> (Receiver: T | string, ...args: ConstructorParameters<T>) {
+  createReceiver<T extends Receivers.Abstractor<any>> (
+    Receiver: T | string,
+    ...args: ConstructorParameters<T>
+  ) {
     if (typeof Receiver === 'string') {
       return new Receivers[Receiver](...args)
     }
@@ -55,7 +63,7 @@ export class Bridge {
   }
 
   bridge () {
-    this.client?.subscribe(this.handleRecievedMail.bind(this))
+    this.client?.subscribe(this.handleReceivedMail.bind(this))
   }
 
   subscribe (subscriber: MessageSubscriber) {
@@ -66,10 +74,10 @@ export class Bridge {
     this.subscribers.delete(subscriber)
   }
 
-  async handleRecievedMail (mail: IncomingMail) {
+  async handleReceivedMail (mail: IncomingMail) {
     try {
       const message = await this.toMessage(mail)
-      this.subscribers.forEach(subscriber => subscriber(message))
+      this.subscribers.forEach((subscriber) => subscriber(message))
     } catch (e) {
       this.logger.error(e)
     }
@@ -87,17 +95,19 @@ export class Bridge {
     }
   }
 
-  async sendMessage (to: {id: string}, message: string) {
+  async sendMessage (to: { id: string }, message: string) {
     const segs = segment.parse(message)
-    const h = html`<!DOCTYPE html>
-  <html>
-    <body>
-    ${segs}
-    </body>
-  </html>
-`
-    console.log(h)
+    const h = html`
+      <!DOCTYPE html>
+      <html>
+        <body>
+          ${segs}
+        </body>
+      </html>
+    `
+
+    console.log('created html:', h)
   }
 }
 
-export type BridgeOptions = ConstructorParameters<typeof Bridge>
+export type BridgeOptions = ConstructorParameters<typeof Bridge>;

@@ -14,8 +14,7 @@
     "pub": "koishi-scripts pub",
     "setup": "koishi-scripts setup",
     "dev": "cross-env NODE_ENV=development koishi start -r esbuild-register -r yaml-register -r tsconfig-paths --watch",
-    "start": "koishi start",
-    "tsc": "tsc"
+    "start": "koishi start"
   },
   "devDependencies": {
     "@koishijs/client": "^4.6.9",
@@ -28,6 +27,7 @@
     "esbuild-register": "^3.3.3",
     "eslint": "^8.14.0",
     "eslint-config-standard": "^17.0.0",
+    "ts-node": "^10.9.1",
     "tsconfig-paths": "^3.14.1",
     "typescript": "^4.8.3",
     "yakumo": "^0.3.6",

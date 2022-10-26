@@ -9,7 +9,6 @@ test.useReceiver(testReceiver)
 test.useSender(test.createSender(Senders.TestSender))
 
 test.bridge()
-testReceiver._fakeMail()
 testReceiver._fakeMail({
   text: null,
   html: `
@@ -20,13 +19,13 @@ testReceiver._fakeMail({
       </style>
     </head>
     <body>
+    % reply beyond this line %
     <h1>Test Message</h1>
     <img src="http://example.com/pic1.jpg">
     <span>huh</span>
     <img src="cid:attach1.jpg">
     test2
     </body>
-    % reply beyond this line %
     #k-id=14583#
   </html>
   `,
@@ -46,6 +45,6 @@ testReceiver._fakeMail({
 })
 
 test.subscribe((message) => {
-  console.log(message)
-  void test.sendMessage({ id: 'a@ri.mk' }, message.content)
+  console.log('received message:', message)
+  test.sendMessage({ id: 'a@ri.mk' }, message.content)
 })

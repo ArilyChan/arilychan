@@ -52,10 +52,10 @@ const abstractMessage = (mail: IncomingMail) => {
   else return Promise.reject(Error('unable to process message'))
 }
 
-type Seprator = string | RegExp
-const seprate = (seprator: Seprator, idTemplate: RegExp) => async (text: string) => {
+type Separator = string | RegExp
+const seprate = (separator: Separator, idTemplate: RegExp) => async (text: string) => {
   let content
-  const endsAt = text.match(seprator)?.index
+  const endsAt = text.match(separator)?.index
   if (endsAt) content = text.slice(0, endsAt)
   else content = text
   text = text.slice(endsAt)
@@ -64,9 +64,9 @@ const seprate = (seprator: Seprator, idTemplate: RegExp) => async (text: string)
   return { content, id: ids?.[1] }
 }
 
-export function pipeline ({ seprator = '% reply beyond this line %', messageIdExtractor = /#k-id=([^$]+)#/ }: {seprator?: Seprator, messageIdExtractor?: RegExp} = { }) {
+export function pipeline ({ separator = '% reply beyond this line %', messageIdExtractor = /#k-id=([^$]+)#/ }: {separator?: Separator, messageIdExtractor?: RegExp} = { }) {
   return async (mail: IncomingMail) => {
-    const { content, id } = await Promise.resolve(mail).then(abstractMessage).then(seprate(seprator, messageIdExtractor))
+    const { content, id } = await Promise.resolve(mail).then(abstractMessage).then(seprate(separator, messageIdExtractor))
     return { content, id }
   }
 }

@@ -38,7 +38,8 @@ export class TestReceiver<T extends never> extends BaseReceiver<T> {
     return await Promise.all(all)
   }
 
-  async _fakeMail (context: Partial<IncomingMail> = {}) {
+  async _fakeMail (context: Partial<IncomingMail>) {
+    if (!context) throw new Error('No context provided')
     const mail: IncomingMail = {
       to: this.contact,
       from: new MailContact({
@@ -46,7 +47,6 @@ export class TestReceiver<T extends never> extends BaseReceiver<T> {
         address: 'unknown-sender@koishi.js'
       }),
       subject: 'hello',
-      text: 'hi',
       attachments: [],
       headers: new Map(),
       headerLines: [],

@@ -115,8 +115,6 @@ export class Bridge {
         #k-id=${messageId}#
       </html>
     `
-
-    console.log('created html:', h)
   }
 }
 

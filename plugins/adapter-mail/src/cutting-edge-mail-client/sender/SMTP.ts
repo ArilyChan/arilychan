@@ -1,10 +1,10 @@
 import nodemailer from 'nodemailer'
 import { OutgoingMail } from '../../types'
 import { BaseSender } from './base-sender'
-import { LocalMailContact } from '../contact'
+import { LocalMailAddress } from '../address'
 type ParamType<T> = T extends (...args: infer P) => any ? P : T
 export class SMTPSender extends BaseSender {
-  contact = new Map<string, LocalMailContact>()
+  contact = new Map<string, LocalMailAddress>()
   conn: nodemailer.Transporter
   #constructionArgs: ParamType<typeof nodemailer.createTransport>
   constructor (...args: ParamType<typeof nodemailer.createTransport>) {

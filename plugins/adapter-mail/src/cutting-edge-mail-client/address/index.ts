@@ -1,10 +1,10 @@
-import { MailContactInterface, LocalMailContactInterface } from '../../types'
+import { MailAddressInterface, LocalMailAddressInterface } from '../../types'
 const customInspectSymbol = Symbol.for('nodejs.util.inspect.custom')
-export class MailContact implements MailContactInterface {
+export class MailAddress implements MailAddressInterface {
   name?: string
   address: string
   static _printName = 'Mail'
-  constructor ({ name, address }: MailContactInterface) {
+  constructor ({ name, address }: MailAddressInterface) {
     this.name = name
     this.address = address
   }
@@ -15,13 +15,17 @@ export class MailContact implements MailContactInterface {
     // @ts-expect-error not so sure about this.
     return `${stylize(this.constructor._printName, 'special')}\`${formattedAddress}\``
   }
+
+  toString () {
+    return `${this.name} <${this.address}>`
+  }
 }
 
-export class LocalMailContact extends MailContact implements LocalMailContactInterface {
+export class LocalMailAddress extends MailAddress implements LocalMailAddressInterface {
   folders
   local: true = true
   static _printName = 'Mail<Local>'
-  constructor ({ name, address, folders }: MailContactInterface & Partial<LocalMailContactInterface>) {
+  constructor ({ name, address, folders }: MailAddressInterface & Partial<LocalMailAddressInterface>) {
     super({ name, address })
     this.folders = folders
   }

@@ -1,25 +1,25 @@
 import type { ParsedMail } from 'mailparser'
-export interface MailContactInterface {
+export interface MailAddressInterface {
   local?: boolean
   name?: string
   address: string
 }
 
-export interface LocalMailContactInterface extends MailContactInterface {
+export interface LocalMailAddressInterface extends MailAddressInterface {
   local: true
   folders?: string[]
 }
 
-export interface Mail<T extends MailContactInterface = any> extends Omit<ParsedMail, 'from' | 'to'>{
+export interface Mail<T extends MailAddressInterface = MailAddressInterface> extends Omit<ParsedMail, 'from' | 'to'>{
   from: T
   to: T | T[]
 }
 
-export interface OutgoingMail<T extends LocalMailContactInterface = any> extends Mail<T> {
+export interface OutgoingMail<T extends LocalMailAddressInterface = LocalMailAddressInterface> extends Mail<T> {
   from: T
 }
 
-export interface IncomingMail<T extends LocalMailContactInterface = any> extends Mail<T> {
+export interface IncomingMail<T extends LocalMailAddressInterface = LocalMailAddressInterface> extends Mail<T> {
   to: T | T[]
 }
 

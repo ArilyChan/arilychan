@@ -1,10 +1,10 @@
-import { MailSubscriber, OutgoingMail, LocalMailContactInterface } from '../types'
+import { MailSubscriber, OutgoingMail, LocalMailAddressInterface } from '../types'
 import { BaseSender } from './sender/base-sender'
 import { BaseReceiver } from './receiver/base-receiver'
 import { Logger } from 'koishi'
 export default class MailClient {
-  senders = new Map<LocalMailContactInterface, BaseSender>()
-  receivers = new Map<LocalMailContactInterface, BaseReceiver>()
+  senders = new Map<LocalMailAddressInterface, BaseSender>()
+  receivers = new Map<LocalMailAddressInterface, BaseReceiver>()
   logger = new Logger('adapter-mail/client')
   options: {
     receiver: {
@@ -63,7 +63,7 @@ export default class MailClient {
     return await sender.send(mail as OutgoingMail)
   }
 
-  findSender (contact: LocalMailContactInterface): BaseSender {
+  findSender (contact: LocalMailAddressInterface): BaseSender {
     return (contact.local && this.senders.get(contact)) ??
     ([...this.senders.entries()].find(([c]) => c === contact)[1])
   }

@@ -16,7 +16,7 @@ const resolveAttachment = (url: string, attachments: Attachment[]): Buffer | und
   return attachment.content
 }
 
-const abstractMessageFromHtml = async ({ html, attachments }: IncomingMail) => {
+const extractMessageFromHtml = async ({ html, attachments }: IncomingMail) => {
   const segments = []
   let skip = false
   const parser = new htmlparser2.Parser({
@@ -45,9 +45,9 @@ const abstractMessageFromHtml = async ({ html, attachments }: IncomingMail) => {
   parser.write(html)
   return segments.join('\n')
 }
-const abstractMessage = (mail: IncomingMail) => {
+const extractMessage = (mail: IncomingMail) => {
   if (mail.html) {
-    return abstractMessageFromHtml(mail as IncomingMail & {html: string})
+    return extractMessageFromHtml(mail as IncomingMail & {html: string})
   } else if (mail.text) return mail.text
   else return Promise.reject(Error('unable to process message'))
 }
@@ -65,7 +65,7 @@ const separate = (_separator: string, idTemplate: RegExp) => async (text: string
 
 export function pipeline ({ separator = '% reply beyond this line %', messageIdExtractor = /#k-id=([^$]+)#/ }: {separator?: string, messageIdExtractor?: RegExp} = { }) {
   return async (mail: IncomingMail) => {
-    const { content, id } = await Promise.resolve(mail).then(abstractMessage).then(separate(separator, messageIdExtractor))
+    const { content, id } = await Promise.resolve(mail).then(extractMessage).then(separate(separator, messageIdExtractor))
     return { content, id }
   }
 }

@@ -1,11 +1,11 @@
 import type { ParsedMail } from 'mailparser'
-export interface MailAddressInterface {
-  local?: boolean
+export interface MailAddressInterface<Local extends boolean = boolean> {
+  local?: Local
   name?: string
   address: string
 }
 
-export interface LocalMailAddressInterface extends MailAddressInterface {
+export interface LocalMailAddressInterface extends MailAddressInterface<true> {
   local: true
   folders?: string[]
 }

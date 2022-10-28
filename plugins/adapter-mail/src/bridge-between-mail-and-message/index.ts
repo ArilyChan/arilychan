@@ -1,3 +1,4 @@
+import { MailAddress } from '../cutting-edge-mail-client/address'
 import MailClient from '../cutting-edge-mail-client'
 import * as Senders from '../cutting-edge-mail-client/sender'
 import * as Receivers from '../cutting-edge-mail-client/receiver'
@@ -95,9 +96,9 @@ export class Bridge {
     }
   }
 
-  async sendMessage (to: { id: string }, message: string) {
+  async sendMessage (to: { id: string; name?: string }, content: string) {
     const messageId = (Math.random() * 114514 * 1919810).toFixed()
-    const segs = segment.parse(message)
+    const segs = segment.parse(content)
     const h = html`
       <!DOCTYPE html>
       <html>
@@ -109,12 +110,17 @@ export class Bridge {
           </style>
         </head>
         <body>
-<p>${this.#separator}</p>
-<section class="bot-reply-container">${segs}</section>
+          <p>${this.#separator}</p>
+          <section class="bot-reply-container">${segs}</section>
         </body>
         #k-id=${messageId}#
       </html>
     `
+    const message = {
+      to: new MailAddress({ address: to.id, name: to.name }),
+      html: h
+    }
+    console.log('sending message', message)
   }
 }
 

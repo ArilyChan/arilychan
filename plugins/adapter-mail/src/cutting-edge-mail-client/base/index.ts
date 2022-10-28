@@ -1,5 +1,5 @@
 import { LocalMailAddressInterface } from '../../types'
 export abstract class BaseIO {
-  abstract contact: Map<string, LocalMailAddressInterface>
+  abstract address: LocalMailAddressInterface
   readyState: Boolean = false
 }

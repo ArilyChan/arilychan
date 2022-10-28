@@ -2,12 +2,12 @@ import { Logger } from 'koishi'
 import { BaseReceiver } from './base-receiver'
 import { MailSubscriber, IncomingMail } from '../../types'
 
-import { LocalMailAddress, MailAddress } from '../address'
+import { LocalMailAddress } from '../address'
 
 export class TestReceiver<T extends never> extends BaseReceiver<T> {
   logger = new Logger('adapter-mail/debug-client/receiver')
   subscribers: Set<MailSubscriber> = new Set()
-  contact: LocalMailAddress = new LocalMailAddress({
+  address = new LocalMailAddress({
     name: 'self',
     address: 'self@koishi.js',
     folders: ['inbox']
@@ -41,8 +41,8 @@ export class TestReceiver<T extends never> extends BaseReceiver<T> {
   async _fakeMail (context: Partial<IncomingMail>) {
     if (!context) throw new Error('No context provided')
     const mail: IncomingMail = {
-      to: this.contact,
-      from: new MailAddress({
+      to: this.address,
+      from: new LocalMailAddress({
         name: 'unknown sender',
         address: 'unknown-sender@koishi.js'
       }),

@@ -17,11 +17,11 @@ export default class MailClient {
   }
 
   async useSender<T extends BaseSender> (sender: T): Promise<any> {
-    if (!Array.isArray(sender.contact)) {
-      if (this.senders.has(sender.contact)) return
-      this.senders.set(sender.contact, sender)
+    if (!Array.isArray(sender.address)) {
+      if (this.senders.has(sender.address)) return
+      this.senders.set(sender.address, sender)
     } else {
-      sender.contact.forEach(c => {
+      sender.address.forEach(c => {
         if (this.senders.has(c)) return
         this.senders.set(c, sender)
       })
@@ -32,11 +32,11 @@ export default class MailClient {
   // TODO: unuseSender
 
   async useReceiver<T extends BaseReceiver> (receiver: T): Promise<any> {
-    if (!Array.isArray(receiver.contact)) {
-      if (this.receivers.has(receiver.contact)) return
-      this.receivers.set(receiver.contact, receiver)
+    if (!Array.isArray(receiver.address)) {
+      if (this.receivers.has(receiver.address)) return
+      this.receivers.set(receiver.address, receiver)
     } else {
-      receiver.contact.forEach(c => {
+      receiver.address.forEach(c => {
         if (this.receivers.has(c)) return
         this.receivers.set(c, receiver)
       })
@@ -58,13 +58,13 @@ export default class MailClient {
     if (!mail.to) { return this.logger.error('Cannot send mail. missing `to`.') }
     if (!mail.from && !sender) { return this.logger.error('Cannot send mail. missing sender.') }
     sender = sender ?? this.findSender(mail.from) as T
-    mail.from = mail.from ?? sender.contact
+    mail.from = mail.from ?? sender.address
     if (!sender || !mail.from) { return this.logger.error('Cannot send mail, cannot find sender.') }
     return await sender.send(mail as OutgoingMail)
   }
 
-  findSender (contact: LocalMailAddressInterface): BaseSender {
-    return (contact.local && this.senders.get(contact)) ??
-    ([...this.senders.entries()].find(([c]) => c === contact)[1])
+  findSender (address: LocalMailAddressInterface): BaseSender {
+    return (address.local && this.senders.get(address)) ??
+    ([...this.senders.entries()].find(([c]) => c === address)[1])
   }
 }

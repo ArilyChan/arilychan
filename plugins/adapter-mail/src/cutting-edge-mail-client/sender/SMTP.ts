@@ -4,7 +4,7 @@ import { BaseSender } from './base-sender'
 import { LocalMailAddress } from '../address'
 type ParamType<T> = T extends (...args: infer P) => any ? P : T
 export class SMTPSender extends BaseSender {
-  contact = new Map<string, LocalMailAddress>()
+  address: LocalMailAddress
   conn: nodemailer.Transporter
   #constructionArgs: ParamType<typeof nodemailer.createTransport>
   constructor (...args: ParamType<typeof nodemailer.createTransport>) {
@@ -18,7 +18,7 @@ export class SMTPSender extends BaseSender {
   }
 
   async send (mail: OutgoingMail) {
-    if (!this.contact.has(mail.from.address)) throw new Error('not a')
+    if (!this.address) throw new Error('what\'s your address?')
     return await Promise.resolve()
   }
 }

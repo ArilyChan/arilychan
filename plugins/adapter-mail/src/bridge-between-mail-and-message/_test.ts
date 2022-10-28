@@ -48,5 +48,5 @@ testReceiver._fakeMail({
 
 test.subscribe((message) => {
   console.log('received message:', message)
-  test.sendMessage({ id: 'a@ri.mk' }, message.content)
+  test.sendMessage({ id: message.from.id, name: message.from.name }, message.content)
 })

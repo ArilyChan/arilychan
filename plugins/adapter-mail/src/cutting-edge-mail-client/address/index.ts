@@ -1,12 +1,14 @@
 import { MailAddressInterface, LocalMailAddressInterface } from '../../types'
 const customInspectSymbol = Symbol.for('nodejs.util.inspect.custom')
-export class MailAddress implements MailAddressInterface {
+export class MailAddress<Local extends boolean> implements MailAddressInterface<Local> {
   name?: string
   address: string
+  local?: Local
   static _printName = 'Mail'
-  constructor ({ name, address }: MailAddressInterface) {
+  constructor ({ name, address, local }: MailAddressInterface<Local>) {
     this.name = name
     this.address = address
+    this.local = local
   }
 
   [customInspectSymbol] (depth, inspectOptions, inspect) {
@@ -21,7 +23,7 @@ export class MailAddress implements MailAddressInterface {
   }
 }
 
-export class LocalMailAddress extends MailAddress implements LocalMailAddressInterface {
+export class LocalMailAddress extends MailAddress<true> implements LocalMailAddressInterface {
   folders
   local: true = true
   static _printName = 'Mail<Local>'

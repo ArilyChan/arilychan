@@ -2,7 +2,7 @@
   "files": [],
   "references": [
     {
-      "path": "./plugins/nyan"
+      "path": "./plugins/koishi-plugin-puppeteer-cluster"
     }
   ]
 }

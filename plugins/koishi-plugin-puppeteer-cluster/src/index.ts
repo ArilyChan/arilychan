@@ -1,13 +1,35 @@
-const { Context, Schema } = require('koishi')
-const { Cluster } = require('puppeteer-cluster')
+import { Page, PuppeteerLifeCycleEvent, ScreenshotOptions, Viewport, WaitForOptions } from 'puppeteer'
+
+import { Context, Schema } from 'koishi'
+import { Cluster } from 'puppeteer-cluster'
 
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 const VIEWPORT = { width: 992, height: 100, deviceScaleFactor: 1.5 }
-// const crash = (str) => { throw new Error(str || 'something went wrong') }
-// Context.delegate && Context.delegate('puppeteerCluster')
+
 Context.service('puppeteerCluster')
-module.exports.name = 'koishi-plugin-puppeteer-cluster'
-module.exports.schema = Schema.object({
+export const name = 'koishi-plugin-puppeteer-cluster'
+
+type config = {
+  cluster: {
+    launch: {
+      concurrency: number,
+      maxConcurrency: number,
+      puppeteerOptions: {
+        headless: boolean,
+        args: string[]
+      }
+    }
+  },
+  viewport: {
+    width: number,
+    height: number,
+    deviceScaleFactor: number
+  },
+  navigation: {
+    waitUntil: PuppeteerLifeCycleEvent
+  }
+}
+export const schema = Schema.object({
   cluster: Schema.object({
     launch: Schema.object({
       concurrency: Schema.number().default(Cluster.CONCURRENCY_CONTEXT).description('concurrency'),
@@ -30,7 +52,7 @@ module.exports.schema = Schema.object({
     waitUntil: Schema.string().default('networkidle0').description('wait until')
   })
 })
-module.exports.apply = async (ctx, options) => {
+export const apply = async (ctx, options: config) => {
   const { cluster: { launch }, viewport, navigation } = options
   const status = {
     cluster: {
@@ -40,25 +62,31 @@ module.exports.apply = async (ctx, options) => {
   }
   try {
     const cluster = await Cluster.launch(launch)
-    const c = ctx.puppeteerCluster = {
+    const c = {
       instance: cluster,
 
       options: {
         navigation,
         viewport,
         screenshot: {
-          type: 'png',
-          encoding: 'base64',
+          type: 'png' as const,
+          encoding: 'base64' as const,
           fullPage: true
         }
       },
       _defaultCallback: undefined,
-      get defaultCallback () { return c._defaultCallback ?? ctx.puppeteerCluster.utils.screenshot },
+      get defaultCallback () { return c._defaultCallback ?? (ctx.puppeteerCluster as typeof c).utils.screenshot },
       set defaultCallback (newVal) { c._defaultCallback = newVal },
 
       utils: {
         wait,
-        screenshot: async ({ page, data: { url, screenshot, navigation, viewport } = {} }) => {
+        screenshot: async ({ page, data: { url, screenshot, navigation, viewport } = {} }: {
+          page?: Page, data?: {
+            url?: string, screenshot?: ScreenshotOptions, navigation?: WaitForOptions & {
+              referer?: string;
+            }, viewport?: Viewport
+          }
+        }) => {
           if (!url) return
           await page.setViewport(viewport || c.options.viewport)
           await page.goto(url, navigation || c.options.navigation)
@@ -67,13 +95,16 @@ module.exports.apply = async (ctx, options) => {
       },
 
       screenshot: {
-        base64: (url, options) => cluster.execute({ url, screenshot: { ...c.options.screenshot, encoding: 'base64' }, ...options || {} }, c.utils.screenshot),
-        binary: (url, options) => cluster.execute({ url, screenshot: { ...c.options.screenshot, encoding: undefined }, ...options || {} }, c.utils.screenshot),
-        save: (url, path, options) => cluster.execute({ url, screenshot: { ...c.options.screenshot, encoding: undefined, path }, ...options || {} }, c.utils.screenshot)
+        base64: (url: string | URL, options: ScreenshotOptions) => cluster.execute({ url, screenshot: { ...c.options.screenshot, encoding: 'base64' }, ...options || {} }, c.utils.screenshot),
+        binary: (url: string | URL, options: ScreenshotOptions) => cluster.execute({ url, screenshot: { ...c.options.screenshot, encoding: undefined }, ...options || {} }, c.utils.screenshot),
+        save: (url: string | URL, path: string, options: ScreenshotOptions) => cluster.execute({ url, screenshot: { ...c.options.screenshot, encoding: undefined, path }, ...options || {} }, c.utils.screenshot)
       },
 
       status
     }
+
+    ctx.puppeteerCluster = c
+
     cluster.task(c.defaultCallback)
     status.cluster.inited = true
     status.cluster.injectedToContext = true

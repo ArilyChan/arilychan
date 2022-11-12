@@ -10,7 +10,7 @@ function split (str, separator, limit) {
   str = str.split(separator)
 
   if (str.length > limit) {
-    var ret = str.splice(0, limit)
+    const ret = str.splice(0, limit)
     ret.push(str.join(separator))
 
     return ret
@@ -20,7 +20,7 @@ function split (str, separator, limit) {
 }
 
 const compileMenu = async ({ storage }) => {
-  Object.entries(storage.originalMenu).map(([menu, recipes]) => {
+  Object.entries(storage.originalMenu).forEach(([menu, recipes]) => {
     compiledMenu.push(...recipes.map(recipe => ({
       name: recipe,
       nsfw: false,
@@ -229,7 +229,7 @@ const markNSFWMenu = async function (storage, name, isNSFW) {
   await menu.save()
   compiledMenu
     .filter(recipe => recipe.menu._id === menu._id)
-    .map(recipe => { recipe.menu.nsfw = isNSFW })
+    .forEach(recipe => { recipe.menu.nsfw = isNSFW })
   return true
 }
 

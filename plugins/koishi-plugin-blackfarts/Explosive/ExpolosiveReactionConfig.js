@@ -739,7 +739,7 @@ module.exports = {
   // 'team.findbyrank': findTeamsByRank,
   // findteamsbyrank: findTeamsByRank,
   // findteambyrank: findTeamsByRank,
-  dad: dad,
+  dad,
   dad_of: dad
   // policeadd: async ({ command, meta, app}) => meta.send(await addUser(command.slice(1).join(' ')).then(_ => 'added')),
   // forceupdate: async ({ command, meta, app}) => meta.send(await addUser(command.slice(1).join(' '), true).then(_ => 'updated').catch(e => Promise.resolve(e.toString()))),

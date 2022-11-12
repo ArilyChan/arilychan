@@ -1,18 +1,17 @@
+/* eslint-disable no-throw-literal */
 const [Score, Beatmap, Result] = ['Score', 'Beatmap', 'Result'].map(obj => require(`./Objects/${obj}.js`))
 const fetch = require('node-fetch')
 const utils = require('../../../utils/utils.js')
 const fs = require('fs').promises
-const fsold = require('fs')
-
-const memorize = require('memorize')
+const fsOld = require('fs')
 
 function Deranker () {
 
 }
 Deranker.prototype.getScoreFresh = async function (user) {
-  const pppolice_base = (username) => `https://o.ri.mk/api/pppolice/v1/BPrange/${username}/2007/2029`
-  const score = await fetch(pppolice_base(user)).then(res => res.json()).catch(e => Promise.resolve([]))
-  score.map(result => {
+  const pppoliceBase = (username) => `https://o.ri.mk/api/pppolice/v1/BPrange/${username}/2007/2029`
+  const score = await fetch(pppoliceBase(user)).then(res => res.json()).catch(e => Promise.resolve([]))
+  score.forEach(result => {
     result.__proto__ = Result.prototype
     result.beatmap.__proto__ = Beatmap.prototype
     result.newScore.__proto__ = Score.prototype
@@ -37,10 +36,10 @@ Deranker.prototype.calculatePPChange = async function (user) {
   const derankingPP = utils.calculateBP({ bp: derankingBPBuffed })
 
   const overrankingBPNerfed = await Promise.all(user.bp.map(result => {
-    const owpercent = result.newScore.getOverWeightPercentage()
-    // console.log(owpercent,result.beatmap.toString())
-    if (owpercent > 0 && !result.newScore.isDeranking()) {
-      result.newScore.pp = result.newScore.pp * (1 - owpercent)
+    const overRankingPercentage = result.newScore.getOverWeightPercentage()
+    // console.log(overRankingPercentage,result.beatmap.toString())
+    if (overRankingPercentage > 0 && !result.newScore.isDeranking()) {
+      result.newScore.pp = result.newScore.pp * (1 - overRankingPercentage)
       if (result.newScore.pp < 0) result.newScore.pp = 0
     }
     return result
@@ -56,11 +55,11 @@ Deranker.prototype.calculatePPChange = async function (user) {
 Deranker.prototype.getScore = async function (user) {
   try {
     const file = `${__dirname}/Datas/CachedResult/${user}.json`
-    if (fsold.existsSync(file)) {
+    if (fsOld.existsSync(file)) {
       // console.log('use cache:', user);
       const score = JSON.parse(await fs.readFile(file))
       if (score.length <= 0) throw 'calc'
-      score.map(result => {
+      score.forEach(result => {
         result.__proto__ = Result.prototype
         result.beatmap.__proto__ = Beatmap.prototype
         result.newScore.__proto__ = Score.prototype
@@ -100,26 +99,14 @@ async function rank () {
     return acc
   }, [])
   const results = await Promise.all(players.map(async user => {
-    	await fetch(`https://o.ri.mk/api/pppolice/v1/register/${user}`)
-    	return calcUser(user)
+    await fetch(`https://o.ri.mk/api/pppolice/v1/register/${user}`)
+    return calcUser(user)
   }))
   results.sort((a, b) => (b.overrankingPPPercentage + b.derankingPPPercentage) - (a.overrankingPPPercentage + a.derankingPPPercentage))
-  const average = arr => arr.reduce((p, c) => p + c, 0) / arr.length
 
-  function middle (array) {
-    const args = array
-    args.sort() // 排序
-    if (args.length % 2 === 0) { // 判断数字个数是奇数还是偶数
-      return ((args[args.length / 2] + args[args.length / 2 - 1]) / 2) // 偶数个取中间两个数的平均数
-    } else {
-      return args[parseInt(args.length / 2)] // 奇数个取最中间那个数
-    }
-  }
   const avg = 0.04
   console.log('average overrank percentage', `${Math.round(avg * 10000) / 100}%`)
   console.log('overall rank (average overranking offsetted)')
-  // strs = results.map(({ name, overrankingPPDelta, derankingPPDelta, overrankingPPPercentage, derankingPPPercentage }, index) => `${name}: #${index + 1}, ${Math.round((overrankingPPPercentage - avg + derankingPPPercentage ) * 10000) / 100}%, ${ Math.round(overrankingPPDelta)}, ${ Math.round(derankingPPDelta) }`);
-  // strs.map(str => console.log(str));
   console.table(results.reduce((acc, { name, overrankingPPDelta, derankingPPDelta, overrankingPPPercentage, derankingPPPercentage, now, overrankingPP }, index) => {
     acc[`#${index + 1}`] = {
       // rank: index + 1,
@@ -131,6 +118,5 @@ async function rank () {
     }
     return acc
   }, {}))
-  // `${name}: #${index + 1}, ${Math.round((overrankingPPPercentage - avg + derankingPPPercentage ) * 10000) / 100}%, ${ Math.round(overrankingPPDelta)}, ${ Math.round(derankingPPDelta) }`))
 }
 rank()

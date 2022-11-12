@@ -1,3 +1,4 @@
+// @ts-check
 const [Score, Beatmap, Result] = ['Score', 'Beatmap', 'Result'].map(obj => require(`./Objects/${obj}.js`))
 const fetch = require('node-fetch')
 const utils = require('./utils.js')
@@ -6,7 +7,6 @@ const fs = require('fs').promises
 const fsold = require('fs')
 const path = require('path')
 const glob = require('glob-promise')
-const memorize = require('memorize')
 const pEvent = require('p-event')
 const { Worker } = require('worker_threads')
 

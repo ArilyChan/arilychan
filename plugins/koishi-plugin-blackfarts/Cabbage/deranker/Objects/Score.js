@@ -1,4 +1,4 @@
-const memorize = require('memorize')
+// @ts-check
 const Mods = {
   None: 0,
   NoFail: 1,
@@ -104,10 +104,10 @@ Score.prototype.getOverWeightPercentage = function () {
   }
 }
 Score.prototype.acc = function () {
-  count300 = parseInt(this.counts[300])
-  count100 = parseInt(this.counts[100])
-  count50 = parseInt(this.counts[50])
-  countmiss = parseInt(this.counts.miss)
+  const count300 = parseInt(this.counts[300])
+  const count100 = parseInt(this.counts[100])
+  const count50 = parseInt(this.counts[50])
+  const countmiss = parseInt(this.counts.miss)
   return (count300 * 300 + count100 * 100 + count50 * 50 + countmiss * 0) / ((count300 + count100 + count50 + countmiss) * 300)
 }
 module.exports = Score

@@ -1,4 +1,4 @@
-import { Schema, Context, Session } from 'koishi'
+import { Schema, Context, segment } from 'koishi'
 
 export const name = 'nyan'
 
@@ -95,8 +95,70 @@ const _transform = (
   return trailingChars
 }
 
-// TODO: use element api, only handles string content.
 const nyan = (
+  _elements: segment[] | undefined,
+  noiseMaker: () => string,
+  { trailing: { append, transform }, transformLastLineOnly }: Opt
+) => {
+  if (!_elements?.length) return _elements
+
+  const elements = [..._elements]
+
+  console.log(elements)
+
+  // preserve empty lines at the end of the message. It's totally useless but why not?
+  const end: segment[] = []
+  for (let i = elements.length - 1; i >= 0; i--) {
+    const line = elements[i]
+    if (line.type === 'text' && line.attrs.content !== '') { break }
+    end.push(line)
+    elements.pop()
+  }
+
+  // transform message
+  const returnValue = elements
+    .map((seg: segment, index: number, lines: segment[]): segment => {
+      // unhandled conditions
+      if (transformLastLineOnly && index < lines.length - 1) {
+        return seg
+      }
+      if (seg.type !== 'text') return seg
+
+      let line = seg.attrs.content
+
+      if (line.trim() === '') {
+        return seg
+      }
+      if (madeNoise.test(line)) {
+        return seg
+      }
+      if (endsWithCQCode.test(line)) {
+        return seg
+      }
+      if (trailingURL.test(line)) {
+        return seg
+      }
+
+      // handled
+      const noise = noiseMaker()
+      let {
+        groups: { content, trailing, trailingSpace }
+      } = line.match(trailingChars)
+
+      if (!trailing) trailing = append
+      else if (transform.length) trailing = _transform(trailing, transform)
+
+      line = withDefault('')`${content}${noise}${trailing}${trailingSpace}`
+      seg.attrs.content = line
+      return seg
+    })
+    // append trailing spaces
+    .concat(end.reverse())
+  return returnValue
+}
+
+// TODO: use element api, only handles string content.
+const nyanLegacy = (
   _message: string,
   noiseMaker: () => string,
   { trailing: { append, transform }, transformLastLineOnly }: Opt
@@ -167,8 +229,20 @@ const makeNoise = (noises: string[]) => {
 
 export function apply (ctx: Context, options: Opt) {
   const { noises } = options
-  ctx.any().before('send', (session: Session) => {
-    const noiseMaker = makeNoise(noises)
-    session.content = nyan(session.content, noiseMaker, options)
+  console.log('loaded')
+
+  ctx.middleware((session, next) => {
+    if (session.content === 'nyan') {
+      return 'i am here'
+    }
   })
+
+  ctx.any().on('before-send', (session) => {
+    console.log('triggered')
+    const noiseMaker = makeNoise(noises)
+    session.elements = nyan(session.elements, noiseMaker, options)
+    session.content = session.elements.join('')
+  })
+
+  ctx.on('send', (session) => console.log(session))
 }

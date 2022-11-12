@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 const { Schema } = require('koishi')
 
 const nyaned = /喵([^\p{L}\d\s@#]+)?( +)?$/u
@@ -70,7 +70,7 @@ const shuffle = (arr) => {
 
 const makeNoise = (noises) => {
   let randomNoise = shuffle([...noises])
-  return function makeNoise () {
+  return function makeNoise() {
     if (randomNoise.length === 0) randomNoise = shuffle([...noises])
     return randomNoise.pop()
   }
@@ -90,7 +90,7 @@ const schema = Schema.object({
 module.exports = {
   name: 'nyan',
   schema,
-  apply (ctx, options) {
+  apply(ctx, options) {
     const { noises } = options
     ctx.any().before('send', (session) => {
       const noiseMaker = makeNoise(noises)

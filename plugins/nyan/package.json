@@ -20,8 +20,8 @@
     "moe",
     "nya"
   ],
-  "main": "index.js",
-  "typings": "lib/index.d.ts",
+  "main": "lib/elements-next.js",
+  "typings": "lib/elements-next.d.ts",
   "files": [
     "lib",
     "dist"

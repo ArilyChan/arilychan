@@ -2,7 +2,7 @@
   "files": [],
   "references": [
     {
-      "path": "./plugins/osu-info-command"
+      "path": "./plugins/nyan"
     }
   ]
 }

@@ -139,8 +139,8 @@ const addRecipe = async ({ command, meta, storage }, consumptionMethod = '吃') 
       menu = new MenuModel({ name })
       menu = await menu.save()
     }
-    let newrecipe = await RecipeModel.findOne({ name: recipe, menu: menu._id }).exec()
-    if (newrecipe) return meta.send('menu exists!').catch(e => console.error.bind(console))
+    let newRecipe = await RecipeModel.findOne({ name: recipe, menu: menu._id }).exec()
+    if (newRecipe) return meta.send('menu exists!').catch(e => console.error.bind(console))
     const recipeContent = {
       name: recipe,
       description,
@@ -152,12 +152,12 @@ const addRecipe = async ({ command, meta, storage }, consumptionMethod = '吃') 
       },
       menu: menu._id
     }
-    newrecipe = new RecipeModel(recipeContent)
-    newrecipe.save((err, saved) => {
+    newRecipe = new RecipeModel(recipeContent)
+    newRecipe.save((err, saved) => {
       if (err) meta.send(err).catch(e => console.error.bind(console))
       else meta.send('ok').catch(e => console.error.bind(console))
       if (!storage.menu[name]) storage.menu[name] = []
-      storage.menu[name].push(newrecipe.name)
+      storage.menu[name].push(newRecipe.name)
       compiledMenu.push({
         ...recipeContent,
         menu

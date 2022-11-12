@@ -1,3 +1,4 @@
+// @ts-check
 const os = require('os')
 // const ip = require('ip')
 // const cTable = require('console.table')

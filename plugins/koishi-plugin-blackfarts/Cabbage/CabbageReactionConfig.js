@@ -4,7 +4,7 @@ const config = require('./cabbageReactionUser')
 const manual = require('sb-bot-manual')
 
 const usage = {
-  anotherelo: '!anotherelo <osu用户名或id>',
+  anotherElo: '!anotherelo <osu用户名或id>',
   'elo.upload': '!elo.upload <mp id> [比赛名]:格式示例: EloWeeklyCup Season0 1400-1800。',
   sendMatchResult: '!elo.result <MatchId>',
   // '排': `【叹号】(排, join) <osu用户名或id> `,
@@ -27,7 +27,7 @@ const usage = {
   'recipe.marksfw': '!recipe.marksfw <菜单> <菜名>'
 }
 const desc = {
-  anotherelo: '查询elo',
+  anotherElo: '查询elo',
   'elo.upload': '上传成绩给爆炸',
   sendMatchResult: '查询比赛结果',
   排: '加入匹配 ',
@@ -53,7 +53,6 @@ const blackfart = ({ meta, app }) => {
   }
 }
 
-// const helpcontents = Object.entries(usage).map(([name, usage]) => `${usage}: ${(desc[name] !== undefined) ? desc[name] : '未添加命令说明'}`)
 function poke ({ command, meta, app }) {
   const qq = command.slice(1).join(' ').trim()
   const cqcode = `${new CQ.Poke().qq(qq)}`
@@ -81,7 +80,7 @@ module.exports = {
 }
 
 const cabbage = manual.section('black-farts').name('黑屁功能')
-Object.entries(usage).map(([name, usage]) => {
+Object.entries(usage).forEach(([name, usage]) => {
   const entry = cabbage
     .entry((desc[name] !== undefined) ? desc[name] : '未添加命令说明')
     .usage(usage)

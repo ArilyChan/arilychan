@@ -2,7 +2,6 @@ const { Schema } = require('koishi')
 const CabbageReaction = require('./Reaction')
 const Command = require('./Command')
 
-// const Help = require('./Help')
 const cabbageReaction = require('./Cabbage/CabbageReactionConfig')
 const gambleReaction = require('./EWC-Gamble/GambleReactionConfig')
 const recipeReaction = require('./Recipe/RecipeReactionConfig')
@@ -22,7 +21,6 @@ module.exports.apply = function (app, options) {
   // const explosive = new CabbageReaction(explosiveReaction)
   const gamble = new CabbageReaction(gambleReaction)
   const recipe = new CabbageReaction(recipeReaction)
-  // const help = new CabbageReaction(Help)
 
   const storage = {
     originalMenu: menu,

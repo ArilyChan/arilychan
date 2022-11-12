@@ -1,6 +1,6 @@
 'use strict'
 
-class sentMessageCollection {
+class SentMessageCollection {
   constructor () {
     this.sentMessages = [] // sendMessageObject 数组
     this.timeouts = {} // 计时器 数组
@@ -41,4 +41,4 @@ class sentMessageCollection {
   }
 }
 
-module.exports = sentMessageCollection
+module.exports = SentMessageCollection

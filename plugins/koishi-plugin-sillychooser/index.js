@@ -1,9 +1,9 @@
 'use strict'
 // @ts-check
-const AskObject = require('./objects/askObject')
+const AskObject = require('./objects/AskObject')
 const QuestionTypeHelper = require('./QuestionType/QuestionTypeHelper')
-const SendMessageObject = require('./objects/sendMessageObject')
-const SentMessageCollection = require('./objects/sentMessageCollection')
+const SendMessageObject = require('./objects/SendMessageObject')
+const SentMessageCollection = require('./objects/SentMessageCollection')
 
 class SillyChooser {
   /**

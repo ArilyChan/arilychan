@@ -1,6 +1,6 @@
 'use strict'
 
-class askObject {
+class AskObject {
   constructor (message) {
     this.ask = message
 
@@ -12,7 +12,7 @@ class askObject {
   }
 
   // 取最后一句话
-  getLastCentense () {
+  getLastSentence () {
     this.ask = this.ask.match(/[^,，。]+$/g)[0]
   }
 
@@ -32,7 +32,7 @@ class askObject {
     this.ask = this.ask.replace(/\[(.+?)\]/g, (matchString, group, index) => {
       const replacedIndex = this.replaceCQObjects.indexOf(matchString)
       if (replacedIndex < 0) {
-        const replaceText = '[cqObjcet' + index + ']'
+        const replaceText = '[cqObject' + index + ']'
         this.replaceCQTexts.push(replaceText)
         this.replaceCQObjects.push(matchString)
         return replaceText
@@ -46,7 +46,7 @@ class askObject {
     this.ask = this.ask.replace(/["'“【「『《](.+?)["'”】」』》]/g, (matchString, group, index) => {
       const replacedIndex = this.replaceQuoteObjects.indexOf(matchString)
       if (replacedIndex < 0) {
-        const replaceText = '[quoteObjcet' + index + ']'
+        const replaceText = '[quoteObject' + index + ']'
         this.replaceQuoteTexts.push(replaceText)
         this.replaceQuoteObjects.push(matchString)
         return replaceText
@@ -57,7 +57,7 @@ class askObject {
 
   // 将CQCode替换回去
   reputCQCode (replyMsg) {
-    return replyMsg.replace(/\[(cqObjcet[0-9]+)\]/g, (matchString) => {
+    return replyMsg.replace(/\[(cqObject[0-9]+)\]/g, (matchString) => {
       const replacedIndex = this.replaceCQTexts.indexOf(matchString)
       if (replacedIndex < 0) return matchString
       return this.replaceCQObjects[replacedIndex]
@@ -66,7 +66,7 @@ class askObject {
 
   // 将引用替换回去
   reputQuote (replyMsg) {
-    return replyMsg.replace(/\[(quoteObjcet[0-9]+)\]/g, (matchString) => {
+    return replyMsg.replace(/\[(quoteObject[0-9]+)\]/g, (matchString) => {
       const replacedIndex = this.replaceQuoteTexts.indexOf(matchString)
       if (replacedIndex < 0) return matchString
       return this.replaceQuoteObjects[replacedIndex]
@@ -80,7 +80,7 @@ class askObject {
     this.removeReturn()
     this.cutCQCode()
     this.cutQuote()
-    this.getLastCentense()
+    this.getLastSentence()
     return this.ask
   }
 
@@ -91,4 +91,4 @@ class askObject {
   }
 }
 
-module.exports = askObject
+module.exports = AskObject

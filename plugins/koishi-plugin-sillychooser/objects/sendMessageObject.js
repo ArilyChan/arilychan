@@ -1,6 +1,6 @@
 'use strict'
 
-class sendMessageObject {
+class SendMessageObject {
   constructor (handle, userId, message, replyString) {
     // 随机回复抱怨语句
     this.botherLeastTimes = 4 // 相同提问第4+1次开始回复抱怨语句
@@ -45,4 +45,4 @@ class sendMessageObject {
   }
 }
 
-module.exports = sendMessageObject
+module.exports = SendMessageObject

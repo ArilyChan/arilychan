@@ -14,7 +14,7 @@ async function helps ({ command, meta, app }) {
   if (new Date() - recent[meta?.groupId || meta?.userId]?.timestamp < 1000 * 60) return `[CQ:quote,id=${recent[meta?.groupId || meta?.userId].messageId}] 刚刚发过，很长，往上面翻一翻`
   await meta.send(manual.renderAsString())
   recent[meta?.groupId || meta?.userId] = {
-    messageId: meta.contentId,
+    messageId: meta.messageId,
     timestamp: new Date()
   }
   await meta.send('说明很长。建议使用关键字查询: !help <关键字>')

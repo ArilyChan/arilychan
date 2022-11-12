@@ -1,5 +1,5 @@
 'use strict'
-
+// @ts-check
 const AskObject = require('./objects/askObject')
 const QuestionTypeHelper = require('./QuestionType/QuestionTypeHelper')
 const SendMessageObject = require('./objects/sendMessageObject')
@@ -61,7 +61,7 @@ module.exports.apply = (ctx, options) => {
       const reply = sc.apply(meta.selfId, userId, message)
       if (!reply) return next()
       const replyMessage = []
-      if (meta.contentType !== 'private') replyMessage.push(`[CQ:quote,id=${meta.contentId}]`)
+      if (meta.contentType !== 'private') replyMessage.push(`[CQ:quote,id=${meta.messageId}]`)
       replyMessage.push(reply)
       // if (reply) return `[CQ:at,id=${userId}]` + '\n' + reply
       await meta.send(replyMessage.join(''))

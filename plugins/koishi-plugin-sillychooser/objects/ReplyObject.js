@@ -28,7 +28,7 @@ class ReplyObject {
   // get an string response as well as record them
   toString () {
     if (typeof this.formatter === 'function') {
-      // forceed to be String
+      // forced to be String
       return this.formatter().toString()
     }
     return null

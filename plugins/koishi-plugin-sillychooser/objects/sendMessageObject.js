@@ -20,7 +20,7 @@ class sendMessageObject {
   }
 
   replyNoBother (times = this.times) {
-    const replys = [
+    const replies = [
       '别再问我啦', '你已经问了好多遍了', '听不见吗', '还听不见吗', '别问啦！', '够啦！',
       '...', '？', '你好烦啊', '讨厌！', '不想回答', '你还问！', '好烦呀！', '哼！',
       '你是复读机吗？', '这个问题我拒绝回答', '我生气啦！', '你听不见吗！',
@@ -28,7 +28,7 @@ class sendMessageObject {
       'zzz', '您已被管理员禁言', '您已被移出群聊', '核弹已升空'
     ]
     // times越大，选择越靠后的语句
-    if (times < this.refuseReplyTimes) return replys[Math.floor(this.getRndInteger((times - this.botherLeastTimes - 1) * replys.length / (this.refuseReplyTimes - this.botherLeastTimes - 1), (times - this.botherLeastTimes) * replys.length / (this.refuseReplyTimes - this.botherLeastTimes - 1)))]
+    if (times < this.refuseReplyTimes) return replies[Math.floor(this.getRndInteger((times - this.botherLeastTimes - 1) * replies.length / (this.refuseReplyTimes - this.botherLeastTimes - 1), (times - this.botherLeastTimes) * replies.length / (this.refuseReplyTimes - this.botherLeastTimes - 1)))]
     if (times === this.refuseReplyTimes) return '小阿日不理你了'
     return ''
   }

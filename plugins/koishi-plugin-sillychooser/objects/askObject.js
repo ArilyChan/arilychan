@@ -56,8 +56,8 @@ class askObject {
   }
 
   // 将CQCode替换回去
-  reputCQCode (replymsg) {
-    return replymsg.replace(/\[(cqObjcet[0-9]+)\]/g, (matchString) => {
+  reputCQCode (replyMsg) {
+    return replyMsg.replace(/\[(cqObjcet[0-9]+)\]/g, (matchString) => {
       const replacedIndex = this.replaceCQTexts.indexOf(matchString)
       if (replacedIndex < 0) return matchString
       return this.replaceCQObjects[replacedIndex]
@@ -65,8 +65,8 @@ class askObject {
   }
 
   // 将引用替换回去
-  reputQuote (replymsg) {
-    return replymsg.replace(/\[(quoteObjcet[0-9]+)\]/g, (matchString) => {
+  reputQuote (replyMsg) {
+    return replyMsg.replace(/\[(quoteObjcet[0-9]+)\]/g, (matchString) => {
       const replacedIndex = this.replaceQuoteTexts.indexOf(matchString)
       if (replacedIndex < 0) return matchString
       return this.replaceQuoteObjects[replacedIndex]

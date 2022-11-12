@@ -1,7 +1,7 @@
 "use strict";
 
 const sillyChooser = require("../index");
-let sc = new sillyChooser({prefixs: ["?", "？"]});
+let sc = new sillyChooser({prefixes: ["?", "？"]});
 
 // 模拟meta
 console.log("你的QQ号是1了");

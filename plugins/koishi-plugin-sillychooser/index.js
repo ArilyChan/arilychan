@@ -8,10 +8,10 @@ const SentMessageCollection = require('./objects/sentMessageCollection')
 class SillyChooser {
   /**
      * @param {Object} params
-     * @param {Array<String>} [params.prefixs] 指令前缀，必须为单个字符，默认为["!","！"]
+     * @param {Array<String>} [params.prefixes] 指令前缀，必须为单个字符，默认为["!","！"]
      */
   constructor (params) {
-    this.prefixs = params.prefixs || ['!', '！']
+    this.prefixes = params.prefixes || ['!', '！']
     this.smc = new SentMessageCollection()
   }
 
@@ -26,7 +26,7 @@ class SillyChooser {
       if (!message.length || message.length < 2) return ''
       const atBot = `[CQ:at,id=${botId}]`
       if (message.substring(0, atBot.length) === atBot) message = message.substring(atBot.length).trim()
-      else if (this.prefixs.indexOf(message.substring(0, 1)) >= 0) message = message.substring(1).trim()
+      else if (this.prefixes.indexOf(message.substring(0, 1)) >= 0) message = message.substring(1).trim()
       else return ''
       if (!message) return ''
 

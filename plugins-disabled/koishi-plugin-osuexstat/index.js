@@ -7,13 +7,13 @@ class Osuexstat {
      * @param {Object} params
      * @param {String} params.apiKey osu apiKey，必要
      * @param {String} [params.host] osu网址，默认为"osu.ppy.sh"
-     * @param {Array<String>} [params.prefixs] 指令前缀，必须为单个字符，默认为[!,！]
+     * @param {Array<String>} [params.prefixes] 指令前缀，必须为单个字符，默认为[!,！]
      * @param {String} [params.mapFolder] 谱面存放路径，默认为根目录下的beatmap文件夹
      */
     constructor(params) {
         this.apiKey = params.apiKey || "";
         this.host = params.host || "osu.ppy.sh";
-        this.prefixs = params.prefixs || ["!", "！"];
+        this.prefixes = params.prefixes || ["!", "！"];
         this.mapFolder = params.mapFolder || "./beatmap/";
         this.bd = new BeatmapDownloader(this.mapFolder);
         this.commandsInfo = new CommandsInfo();
@@ -27,7 +27,7 @@ class Osuexstat {
     async apply(qqId, message, stat) {
         try {
             if (!message.length || message.length < 2) return "";
-            if (this.prefixs.indexOf(message.substring(0, 1)) < 0) return "";
+            if (this.prefixes.indexOf(message.substring(0, 1)) < 0) return "";
             const commandObject = new Command(message.substring(1).trim());
             const reply = await commandObject.apply(stat, this.host, this.apiKey, this.mapFolder, this.bd, this.commandsInfo);
             return reply;

@@ -8,9 +8,8 @@ on:
     branches:
       - publish
     paths:
-      - 'plugins/responder2/package.json'
+      - "plugins/responder2/package.json"
   workflow_dispatch:
-    inputs:
 
 jobs:
   publish-plugin-responder2:

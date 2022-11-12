@@ -1,6 +1,6 @@
 {
   "name": "koishi-plugin-nyan",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "append nyan",
   "peerDependencies": {
     "koishi": ">=4.0.0"

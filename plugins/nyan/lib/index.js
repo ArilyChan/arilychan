@@ -92,7 +92,6 @@ const processSingleLine = (noiseMaker, { trailing: { append, transform }, transf
     // handled
     const noise = noiseMaker();
     let { groups: { content, trailing, trailingSpace } } = line.match(trailingChars);
-    console.log(trailing);
     if (!trailing)
         trailing = append;
     else if (transform.length)

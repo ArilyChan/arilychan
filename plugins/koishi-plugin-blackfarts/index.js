@@ -4,26 +4,14 @@ const Command = require('./Command')
 
 // const Help = require('./Help')
 const cabbageReaction = require('./Cabbage/CabbageReactionConfig')
-// const explosiveReaction = require('./Explosive/ExpolosiveReactionConfig')
 const gambleReaction = require('./EWC-Gamble/GambleReactionConfig')
 const recipeReaction = require('./Recipe/RecipeReactionConfig')
 const { menu, models: menuModels } = require('./Recipe/menu')
+// const explosiveReaction = require('./Explosive/ExplosiveReactionConfig')
 // const RollReaction = require('./Roll/RollReaction')
-// const ExsperReaction = require('./Exsper/ExsperReaction');
 module.exports.name = 'blackfarts'
-// module.exports.init = (options) => ({
-//   originalMenu: menu,
-//   menu: {},
-//   menuModels
-// })
 
 const web = require('./server')
-// const webInited = false
-// module.exports.webApp = (options, storage, http) => {
-//   if (webInited) return undefined
-//   webInited = true
-//   return web(storage, http)
-// }
 module.exports.schema = Schema.object({
   web: Schema.object({
     prefix: Schema.string().default('/blackfarts').description('web server prefix')
@@ -44,7 +32,7 @@ module.exports.apply = function (app, options) {
 
   recipeReaction?.['recipe.init']?.({ storage })
 
-  app.using(['express'], function blackFartWebService({ express, _expressHttpServer }) {
+  app.using(['express'], function blackFartWebService ({ express, _expressHttpServer }) {
     express.use(options?.web?.prefix || '/blackfarts', web(storage, _expressHttpServer))
   })
 
@@ -58,7 +46,6 @@ module.exports.apply = function (app, options) {
         recipe
       }).some(([name, reaction]) => {
         if (reaction.reactTo(new Command({ meta, app, storage }))) {
-          // console.log(`${meta.content} Catched by subplugin: ${name}`);
           return true
         }
         return false

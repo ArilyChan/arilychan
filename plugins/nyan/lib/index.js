@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.apply = exports.schema = exports.name = void 0;
 const koishi_1 = require("koishi");
 exports.name = 'nyan';
+const [major, minor] = koishi_1.version.split('.').map(i => parseInt(i));
+const fallback = major === 4 && minor < 10;
 exports.schema = koishi_1.Schema.object({
     noises: koishi_1.Schema.array(String)
         .default(['喵'])
@@ -10,6 +12,9 @@ exports.schema = koishi_1.Schema.object({
     transformLastLineOnly: koishi_1.Schema.boolean()
         .default(false)
         .description('只在最后一行卖萌，默认每行都卖。'),
+    legacyMode: koishi_1.Schema.boolean()
+        .default(fallback)
+        .description('兼容性模式，非必要不需要开。4.10以后默认关闭。'),
     trailing: koishi_1.Schema.object({
         append: koishi_1.Schema.string()
             .default('')
@@ -67,11 +72,39 @@ const _transform = (trailingChars, transforms) => {
     }
     return trailingChars;
 };
-const nyan = (_elements, noiseMaker, { trailing: { append, transform }, transformLastLineOnly }) => {
+const processSingleLine = (noiseMaker, { trailing: { append, transform }, transformLastLineOnly }) => (line, index, lines) => {
+    // unhandled conditions
+    if (transformLastLineOnly && index < lines.length - 1) {
+        return line;
+    }
+    if (line.trim() === '') {
+        return line;
+    }
+    if (madeNoise.test(line)) {
+        return line;
+    }
+    if (endsWithCQCode.test(line)) {
+        return line;
+    }
+    if (trailingURL.test(line)) {
+        return line;
+    }
+    // handled
+    const noise = noiseMaker();
+    let { groups: { content, trailing, trailingSpace } } = line.match(trailingChars);
+    console.log(trailing);
+    if (!trailing)
+        trailing = append;
+    else if (transform.length)
+        trailing = _transform(trailing, transform);
+    line = withDefault('') `${content}${noise}${trailing}${trailingSpace}`;
+    return line;
+};
+const nyan = (_elements, noiseMaker, options) => {
+    const { transformLastLineOnly } = options;
     if (!_elements?.length)
         return _elements;
     const elements = [..._elements];
-    console.log(elements);
     // preserve empty lines at the end of the message. It's totally useless but why not?
     const end = [];
     for (let i = elements.length - 1; i >= 0; i--) {
@@ -91,28 +124,8 @@ const nyan = (_elements, noiseMaker, { trailing: { append, transform }, transfor
         }
         if (seg.type !== 'text')
             return seg;
-        let line = seg.attrs.content;
-        if (line.trim() === '') {
-            return seg;
-        }
-        if (madeNoise.test(line)) {
-            return seg;
-        }
-        if (endsWithCQCode.test(line)) {
-            return seg;
-        }
-        if (trailingURL.test(line)) {
-            return seg;
-        }
-        // handled
-        const noise = noiseMaker();
-        let { groups: { content, trailing, trailingSpace } } = line.match(trailingChars);
-        if (!trailing)
-            trailing = append;
-        else if (transform.length)
-            trailing = _transform(trailing, transform);
-        line = withDefault('') `${content}${noise}${trailing}${trailingSpace}`;
-        seg.attrs.content = line;
+        const _lines = seg.attrs.content.split('\n').map(processSingleLine(noiseMaker, options));
+        seg.attrs.content = _lines.join('\n');
         return seg;
     })
         // append trailing spaces
@@ -120,7 +133,7 @@ const nyan = (_elements, noiseMaker, { trailing: { append, transform }, transfor
     return returnValue;
 };
 // TODO: use element api, only handles string content.
-const nyanLegacy = (_message, noiseMaker, { trailing: { append, transform }, transformLastLineOnly }) => {
+const nyanLegacy = (_message, noiseMaker, options) => {
     if (!_message)
         return _message;
     // preserve empty lines at the end of the message. It's totally useless but why not?
@@ -135,33 +148,7 @@ const nyanLegacy = (_message, noiseMaker, { trailing: { append, transform }, tra
     }
     // transform message
     const returnValue = message
-        .map((line, index, lines) => {
-        // unhandled conditions
-        if (transformLastLineOnly && index < lines.length - 1) {
-            return line;
-        }
-        if (line.trim() === '') {
-            return line;
-        }
-        if (madeNoise.test(line)) {
-            return line;
-        }
-        if (endsWithCQCode.test(line)) {
-            return line;
-        }
-        if (trailingURL.test(line)) {
-            return line;
-        }
-        // handled
-        const noise = noiseMaker();
-        let { groups: { content, trailing, trailingSpace } } = line.match(trailingChars);
-        if (!trailing)
-            trailing = append;
-        else if (transform.length)
-            trailing = _transform(trailing, transform);
-        line = withDefault('') `${content}${noise}${trailing}${trailingSpace}`;
-        return line;
-    })
+        .map(processSingleLine(noiseMaker, options))
         // append trailing spaces
         .concat(end.reverse())
         .join('\n');
@@ -181,18 +168,14 @@ const makeNoise = (noises) => {
 };
 function apply(ctx, options) {
     const { noises } = options;
-    console.log('loaded');
-    ctx.middleware((session, next) => {
-        if (session.content === 'nyan') {
-            return 'i am here';
+    ctx.any().on('before-send', (session) => {
+        const noiseMaker = makeNoise(noises);
+        if (options.legacyMode) {
+            session.content = nyanLegacy(session.content, noiseMaker, options);
+        }
+        else {
+            session.elements = nyan(session.elements, noiseMaker, options);
         }
     });
-    ctx.any().on('before-send', (session) => {
-        console.log('triggered');
-        const noiseMaker = makeNoise(noises);
-        session.elements = nyan(session.elements, noiseMaker, options);
-        session.content = session.elements.join('');
-    });
-    ctx.on('send', (session) => console.log(session));
 }
 exports.apply = apply;

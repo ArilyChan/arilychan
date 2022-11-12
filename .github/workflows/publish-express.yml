@@ -8,21 +8,20 @@ on:
     branches:
       - publish
     paths:
-      - 'plugins/koishi-plugin-express/package.json'
+      - "plugins/koishi-plugin-express/package.json"
   workflow_dispatch:
-    inputs:
 
 jobs:
   publish-plugin-express:
     runs-on: ubuntu-latest
     defaults:
-      run: 
+      run:
         working-directory: ./plugins/koishi-plugin-express
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 16
           registry-url: https://registry.npmjs.org/
       - run: npm install && npm install --only=dev
       - run: npm run build

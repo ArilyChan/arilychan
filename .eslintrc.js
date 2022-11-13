@@ -14,5 +14,8 @@ module.exports = {
     ecmaVersion: 12
   },
   rules: {
+    '@typescript-eslint/no-redeclare': ['warn', {
+      ignoreDeclarationMerge: true
+    }]
   }
 }

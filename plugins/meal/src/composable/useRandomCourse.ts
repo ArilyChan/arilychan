@@ -51,4 +51,4 @@ const createScope = (ctx: Context, options: Config) => async (disabledFlags: Fla
 }
 
 export default createScope
-export type Return = ReturnType<ReturnType<typeof createScope>>
+export type ReturnValue = ReturnType<ReturnType<typeof createScope>>

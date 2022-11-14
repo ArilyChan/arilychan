@@ -39,4 +39,5 @@ export function apply (ctx: Context, options: Config) {
         return stringify.meal(m)
       }
     })
+  c.subcommand('add <message:text>')
 }

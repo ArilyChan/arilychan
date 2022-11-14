@@ -3,7 +3,7 @@ import { Context } from 'koishi'
 import { Config } from '..'
 import { random } from './useUtils'
 
-export default (ctx: Context, options: Config) => async (disabledFlags: Flags[] = ['nsfw', 'disabled'], section?: string | number) => {
+const createScope = (ctx: Context, options: Config) => async (disabledFlags: Flags[] = ['nsfw', 'disabled'], section?: string | number) => {
   const _int = parseInt(section as string)
   const or = [
     !isNaN(_int) && {
@@ -44,3 +44,6 @@ export default (ctx: Context, options: Config) => async (disabledFlags: Flags[] 
     section: _section
   }
 }
+
+export default createScope
+export type Return = ReturnType<ReturnType<typeof createScope>>

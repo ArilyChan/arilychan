@@ -3,7 +3,7 @@ import { Context } from 'koishi'
 import { Config } from '..'
 import { random } from './useUtils'
 
-export default (ctx: Context, options: Config) => async (disabledFlags: Flags[] = ['nsfw', 'disabled'], section?: string | number) => {
+const createScope = (ctx: Context, options: Config) => async (disabledFlags: Flags[] = ['nsfw', 'disabled'], section?: string | number) => {
   const courses = await ctx.database.get('course', {})
   const filteredCourses = courses.filter((item) => item.flags.every(flag => !disabledFlags.includes(flag)))
 
@@ -49,3 +49,6 @@ export default (ctx: Context, options: Config) => async (disabledFlags: Flags[] 
     }))
   }
 }
+
+export default createScope
+export type Return = ReturnType<ReturnType<typeof createScope>>

@@ -13,9 +13,9 @@ export function apply (ctx: Context, options: Config) {
     name: 'string',
     assets: 'list',
     description: 'list',
-    'source.user': 'string',
-    'source.channel': 'string',
-    'source.platform': 'string',
+    'source.user': 'char',
+    'source.channel': 'char',
+    'source.platform': 'char',
     flags: 'list',
     sectionId: idType
   }, {
@@ -39,10 +39,15 @@ export function apply (ctx: Context, options: Config) {
     name: 'string',
     flags: 'list'
   })
+  ctx.model.extend('meal-asset', {
+    id: idType,
+    file: 'string',
+    base64: 'string'
+  })
   ctx.model.extend('course-item', {
     id: idType,
     courseId: idType,
-    type: 'list',
+    type: 'char',
     mealId: idType
   }, {
     foreign: {

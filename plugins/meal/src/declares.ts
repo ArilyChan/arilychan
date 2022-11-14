@@ -5,7 +5,7 @@ export const flags = ['nsfw', 'sfw', 'disabled', 'new'] as const
 export type Flags = typeof flags[number]
 
 const courseCompositionTypes = ['appetizer', 'soup', 'main-dish', 'desert'] as const
-export type CourseCompositionTypes = typeof courseCompositionTypes[number]
+export type CourseCompositionType = typeof courseCompositionTypes[number]
 
 interface Base {
   id: IdType,
@@ -36,8 +36,14 @@ export interface Course {
 export interface CourseItem {
   id: IdType,
   courseId: IdType,
-  type: CourseCompositionTypes[],
+  type: CourseCompositionType,
   mealId: Meal['id']
+}
+
+export interface MealAsset {
+  id: IdType,
+  file?: string,
+  base64?: string
 }
 
 declare module 'koishi' {
@@ -46,6 +52,7 @@ declare module 'koishi' {
     section: Section,
     meal: Meal,
     course: Course,
-    'course-item': CourseItem
+    'course-item': CourseItem,
+    'meal-asset': MealAsset
   }
 }

@@ -18,7 +18,12 @@ export class SMTPSender extends BaseSender {
   }
 
   async send (mail: OutgoingMail) {
-    if (!this.address) throw new Error('what\'s your address?')
-    return await Promise.resolve()
+    if (!this.address && !mail.from) throw new Error('you didn\'t provide a address?')
+    if (!mail.html) throw new Error('no content')
+    return this.conn.sendMail({
+      to: mail.to,
+      from: mail.from || this.address,
+      html: mail.html
+    })
   }
 }

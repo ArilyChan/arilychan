@@ -43,7 +43,7 @@ export class TestReceiver<T extends never> extends BaseReceiver<T> {
     const mail: IncomingMail = {
       to: this.address,
       from: new LocalMailAddress({
-        name: 'unknown sender',
+        name: 'unknown',
         address: 'unknown-sender@koishi.js'
       }),
       subject: 'hello',

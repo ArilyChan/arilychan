@@ -1,7 +1,7 @@
 
-import * as Senders from '../cutting-edge-mail-client/sender'
-import * as Receivers from '../cutting-edge-mail-client/receiver'
-import { Bridge } from './'
+import * as Senders from './cutting-edge-mail-client/sender'
+import * as Receivers from './cutting-edge-mail-client/receiver'
+import { Bridge } from './bridge-between-mail-and-message'
 const test = new Bridge()
 const testReceiver = test.createReceiver(Receivers.TestReceiver)
 test.useClient(test.createClient({}))

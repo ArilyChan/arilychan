@@ -6,13 +6,15 @@ import { BaseSender, NodeMailer } from '../cutting-edge-mail-client/sender'
 import { BaseReceiver } from '../cutting-edge-mail-client/receiver'
 import { Bridge } from '../bridge-between-mail-and-message'
 import MailClient from '../cutting-edge-mail-client'
+import { IMAPReceiver } from '../cutting-edge-mail-client/receiver/imap'
 
 export interface Config extends Bot.Config {
   sender:
     | ['nodemailer', ...ConstructorParameters<typeof NodeMailer>]
     | ['test']
   receiver:
-    ['test']
+    | ['imap', ...ConstructorParameters<typeof IMAPReceiver>]
+    | ['test']
 }
 class MyBot extends Bot<Config> {
   logger: Logger = new Logger('adapter-mail')
@@ -78,8 +80,16 @@ export default class MailAdapter extends Adapter<MyBot> {
       }
     }
     switch (bot.config.receiver[0]) {
+      case 'imap': {
+        bot.receiver = new IMAPReceiver(bot.config.receiver[1])
+        break
+      }
       case 'test': {
         bot.receiver = new TestReceiver()
+        break
+      }
+      default: {
+        throw new Error('unknown receiver')
       }
     }
     bot.client.useReceiver(bot.receiver)

@@ -12,7 +12,7 @@ export interface LocalMailAddressInterface extends MailAddressInterface<true> {
 
 export interface Mail extends Omit<ParsedMail, 'from' | 'to'>{
   from: MailAddressInterface
-  to: MailAddressInterface | MailAddressInterface[]
+  to: MailAddressInterface | MailAddressInterface[],
 }
 
 export interface OutgoingMail extends Mail {

@@ -2,11 +2,12 @@
 import * as Senders from './cutting-edge-mail-client/sender'
 import * as Receivers from './cutting-edge-mail-client/receiver'
 import { Bridge } from './bridge-between-mail-and-message'
+import MailClient from './cutting-edge-mail-client'
 const test = new Bridge()
-const testReceiver = test.createReceiver(Receivers.TestReceiver)
-test.useClient(test.createClient({}))
+const testReceiver = new Receivers.TestReceiver()
+test.useClient(new MailClient())
+test.useSender(new Senders.TestSender())
 test.useReceiver(testReceiver)
-test.useSender(test.createSender(Senders.TestSender))
 
 test.bridge()
 testReceiver._fakeMail({
@@ -42,11 +43,19 @@ testReceiver._fakeMail({
         'base64'
       ),
 
-      cid: 'attach1.jpg' // should be as unique as possible
+      cid: 'attach1.jpg', // should be as unique as possible
+      related: true,
+      type: 'attachment',
+      contentType: 'image/png',
+      contentDisposition: 'attachment',
+      headers: new Map(),
+      headerLines: [],
+      checksum: '',
+      size: 9
     }]
 })
 
 test.subscribe((message) => {
   console.log('received message:', message)
-  test.sendMessage({ id: message.from.id, name: message.from.name }, message.content)
+  test.sendMessage({ to: { id: message.from.id, name: message.from.name }, content: message.content })
 })

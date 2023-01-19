@@ -1,4 +1,4 @@
-import { MailAddress } from '../cutting-edge-mail-client/address'
+import { LocalMailAddress, MailAddress } from '../cutting-edge-mail-client/address'
 import MailClient from '../cutting-edge-mail-client'
 import * as Senders from '../cutting-edge-mail-client/sender'
 import * as Receivers from '../cutting-edge-mail-client/receiver'
@@ -27,36 +27,12 @@ export class Bridge {
     this.#toMessagePipeline = toMessagePipeline({ separator: value })
   }
 
-  createClient (mailClientOption) {
-    return new MailClient(mailClientOption)
-  }
-
   useClient (mailClient: MailClient) {
     this.client = mailClient
   }
 
-  createSender<T extends Senders.Abstractor<any>> (
-    Sender: T | string,
-    ...args: ConstructorParameters<T>
-  ) {
-    if (typeof Sender === 'string') {
-      return new Senders[Sender](...args)
-    }
-    return new Sender(...args)
-  }
-
   async useSender (sender: Senders.BaseSender) {
     await this.client?.useSender(sender)
-  }
-
-  createReceiver<T extends Receivers.Abstractor<any>> (
-    Receiver: T | string,
-    ...args: ConstructorParameters<T>
-  ) {
-    if (typeof Receiver === 'string') {
-      return new Receivers[Receiver](...args)
-    }
-    return new Receiver(...args)
   }
 
   async useReceiver (receiver: Receivers.BaseReceiver) {
@@ -96,7 +72,7 @@ export class Bridge {
     }
   }
 
-  async sendMessage (to: { id: string; name?: string }, content: string) {
+  async sendMessage ({ to, from, content }: { to: { id: string; name?: string}, from: { id: string, name: string } ; content: string }) {
     const messageId = (Math.random() * 114514 * 1919810).toFixed()
     const segs = segment.parse(content)
     const h = html`
@@ -118,9 +94,11 @@ export class Bridge {
     `
     const message = {
       to: new MailAddress({ address: to.id, name: to.name }),
+      from: new LocalMailAddress({ address: from.id, name: from.name }),
       html: h
     }
-    console.log('sending message', message)
+    // console.log('sending message', message)
+    this.client.send(message)
   }
 }
 

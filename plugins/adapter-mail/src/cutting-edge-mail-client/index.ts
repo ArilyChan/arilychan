@@ -12,10 +12,6 @@ export default class MailClient {
     }
   }
 
-  constructor (options) {
-    this.options = options
-  }
-
   async useSender<T extends BaseSender> (sender: T): Promise<any> {
     if (!Array.isArray(sender.address)) {
       if (this.senders.has(sender.address)) return

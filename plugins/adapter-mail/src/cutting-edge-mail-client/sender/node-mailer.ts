@@ -2,12 +2,11 @@ import nodemailer from 'nodemailer'
 import { OutgoingMail } from '../../types'
 import { BaseSender } from './base-sender'
 import { LocalMailAddress } from '../address'
-type ParamType<T> = T extends (...args: infer P) => any ? P : T
-export class SMTPSender extends BaseSender {
+export class NodeMailer extends BaseSender {
   address: LocalMailAddress
   conn: nodemailer.Transporter
-  #constructionArgs: ParamType<typeof nodemailer.createTransport>
-  constructor (...args: ParamType<typeof nodemailer.createTransport>) {
+  #constructionArgs: Parameters<typeof nodemailer.createTransport>
+  constructor (...args: Parameters<typeof nodemailer.createTransport>) {
     super()
     this.#constructionArgs = args
   }

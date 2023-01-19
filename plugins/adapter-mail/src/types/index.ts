@@ -1,7 +1,7 @@
 import type { ParsedMail } from 'mailparser'
 export interface MailAddressInterface<Local extends boolean = boolean> {
   local?: Local
-  name: string
+  name?: string
   address: string
 }
 
@@ -10,9 +10,13 @@ export interface LocalMailAddressInterface extends MailAddressInterface<true> {
   folders?: string[]
 }
 
-export interface Mail extends Omit<ParsedMail, 'from' | 'to'>{
+export interface Mail{
   from: MailAddressInterface
   to: MailAddressInterface | MailAddressInterface[],
+  html: string,
+  text?: string,
+  textAsHtml?: string
+  attachments?: ParsedMail['attachments']
 }
 
 export interface OutgoingMail extends Mail {

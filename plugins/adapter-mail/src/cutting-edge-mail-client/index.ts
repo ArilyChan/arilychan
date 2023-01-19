@@ -55,12 +55,12 @@ export default class MailClient {
     if (!mail.from && !sender) { return this.logger.error('Cannot send mail. missing sender.') }
     sender = sender ?? this.findSender(mail.from) as T
     mail.from = mail.from ?? sender.address
-    if (!sender || !mail.from) { return this.logger.error('Cannot send mail, finder is missing.') }
+    if (!sender || !mail.from) { return this.logger.error('Cannot send mail, cannot find correlated mail address.') }
     return await sender.send(mail as OutgoingMail)
   }
 
-  findSender (address: LocalMailAddressInterface): BaseSender {
-    return (address.local && this.senders.get(address)) ??
-    ([...this.senders.entries()].find(([c]) => c === address)?.[1])
+  findSender (IAddress: LocalMailAddressInterface): BaseSender {
+    return (IAddress.local && this.senders.get(IAddress)) ??
+    ([...this.senders.entries()].find(([c]) => c.address === IAddress.address)?.[1])
   }
 }

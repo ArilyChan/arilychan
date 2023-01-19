@@ -2,6 +2,7 @@ import nodemailer from 'nodemailer'
 import { OutgoingMail } from '../../types'
 import { BaseSender } from './base-sender'
 import { LocalMailAddress } from '../address'
+import { htmlToText } from 'nodemailer-html-to-text'
 export class NodeMailer extends BaseSender {
   address: LocalMailAddress
   conn: nodemailer.Transporter
@@ -13,6 +14,7 @@ export class NodeMailer extends BaseSender {
 
   async prepare () {
     this.conn = nodemailer.createTransport(...this.#constructionArgs)
+    this.conn.use('compile', htmlToText({}))
     await this.conn.verify()
   }
 

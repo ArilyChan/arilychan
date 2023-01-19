@@ -35,6 +35,7 @@ class MyBot extends Bot<Config> {
   subscribe () {
     this._subscriber = this.incomingMessage.bind(this)
     this.bridge.subscribe(this._subscriber)
+    this.bridge.bridge()
   }
 
   incomingMessage (message: IncomingMessage) {

@@ -10,13 +10,9 @@ export interface LocalMailAddressInterface extends MailAddressInterface<true> {
   folders?: string[]
 }
 
-export interface Mail{
+export interface Mail extends Omit<ParsedMail, 'from' | 'to'>{
   from: MailAddressInterface
   to: MailAddressInterface | MailAddressInterface[],
-  html: string,
-  text?: string,
-  textAsHtml?: string
-  attachments?: ParsedMail['attachments']
 }
 
 export interface OutgoingMail extends Mail {

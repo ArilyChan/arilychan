@@ -22,8 +22,8 @@ export class NodeMailer extends BaseSender {
     if (!this.address && !mail.from) throw new Error('you didn\'t provide a address?')
     if (!mail.html) throw new Error('no content')
     return this.conn.sendMail({
-      to: mail.to,
-      from: mail.from || this.address,
+      to: Array.isArray(mail.to) ? mail.to.map(addr => addr.address) : mail.to.address,
+      from: (mail.from || this.address).address,
       html: mail.html
     })
   }

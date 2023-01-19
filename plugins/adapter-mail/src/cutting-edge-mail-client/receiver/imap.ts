@@ -57,10 +57,9 @@ export class IMAPReceiver<T extends never> extends BaseReceiver<T> {
               if (from.length > 1) reject(new Error('more than one sender???'))
 
               mails.push({
+                ...parsed,
                 to,
-                from: from[0],
-                html: parsed.html || parsed.textAsHtml,
-                attachments: parsed.attachments
+                from: from[0]
               })
               // console.log(parsed)
             })

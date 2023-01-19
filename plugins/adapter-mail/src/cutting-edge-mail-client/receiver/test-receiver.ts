@@ -34,7 +34,7 @@ export class TestReceiver<T extends never> extends BaseReceiver<T> {
       attachments: [],
       headers: new Map(),
       headerLines: [],
-      html: false,
+      html: '',
       ...context
     }
     return await this.incomingChain(mail)

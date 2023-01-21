@@ -44,5 +44,5 @@ async function period (id) {
 
   const fortuneTeller = new Fortune(events).bind(id)
   const result = fortuneTeller.from(start).to(end)
-  console.log(result.map(r => r.result))
+  return result.map(r => r.result)
 }

@@ -30,7 +30,7 @@ exports.apply = exports.schema = exports.name = void 0;
 const koishi_1 = require("koishi");
 const run = __importStar(require("./run"));
 const path_1 = __importDefault(require("path"));
-const eventsJson_1 = __importDefault(require("./lib/eventsJson"));
+const EventsJson_1 = __importDefault(require("./lib/EventsJson"));
 const export_1 = __importDefault(require("./osu-calendar-web-next/export"));
 const thisPath = __dirname;
 exports.name = 'koishi-plugin-osu-calendar';
@@ -51,7 +51,7 @@ exports.schema = export_1.default.schema = koishi_1.Schema.object({
 function apply(ctx, options) {
     const users = options.auth.local; // TODO deprecate this
     const eventPath = options.eventFile || path_1.default.join(thisPath, './osu-calendar-events.json');
-    const eventsJson = new eventsJson_1.default();
+    const eventsJson = new EventsJson_1.default();
     const logger = ctx.logger('osu-calendar');
     ctx.using(['ci'], function osuCalendarCIRegister(ctx) { ctx.once('ci/build/register', () => ctx.ci.build.use(export_1.default.build)); });
     ctx.using(['express'], function osuCalendarWebApp(ctx) {

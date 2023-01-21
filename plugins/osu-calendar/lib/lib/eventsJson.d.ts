@@ -1,7 +1,7 @@
 /// <reference types="node" />
 import fs from 'fs';
 import { Context, Session } from 'koishi';
-declare class eventsJsonUtils {
+declare class EventsJsonUtils {
     readJson(file: fs.PathOrFileDescriptor): any;
     writeJson(file: fs.PathOrFileDescriptor, eventsJson: any): void;
     addPendingEvent(meta: Session, file: fs.PathOrFileDescriptor, pendingActivity: {
@@ -19,4 +19,4 @@ declare class eventsJsonUtils {
     showPendingEvent(meta: Session, eventPath: fs.PathOrFileDescriptor): Promise<string>;
     showEvent(meta: Session, eventPath: fs.PathOrFileDescriptor, name: string): Promise<string>;
 }
-export default eventsJsonUtils;
+export default EventsJsonUtils;

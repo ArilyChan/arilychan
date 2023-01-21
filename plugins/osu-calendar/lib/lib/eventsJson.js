@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = __importDefault(require("fs"));
-class eventsJsonUtils {
+class EventsJsonUtils {
     readJson(file) {
         const data = fs_1.default.readFileSync(file, 'utf8');
         return JSON.parse(data.toString());
@@ -183,4 +183,4 @@ class eventsJsonUtils {
         return output;
     }
 }
-exports.default = eventsJsonUtils;
+exports.default = EventsJsonUtils;

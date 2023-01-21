@@ -1,33 +1,20 @@
-'use strict'
 
-// const fs = require('fs')
-// const fsP = require('fs').promises
+import { Session } from 'koishi'
+import Fortune from './lib/Fortune'
+import { OsuCalendarEvents } from './types/store'
 
-const Fortune = require('./lib/Fortune')
-// const Activity = require('./lib/Activity')
-// const fs = require('fs')
+export { Fortune }
 
-async function koishiHandler (meta, eventPath, day) {
+export async function koishiHandler (meta: Session, eventPath: string) {
   try {
     const qqId = meta.userId
     if (!qqId) throw new Error('meta.userId is required')
 
-    // const json = await fsP.readFile(eventPath)
-    // const events = JSON.parse(json)
-    const events = require(eventPath)
-
-    // const fortuneTelling = new Fortune(events)
+    const events = require(eventPath) as OsuCalendarEvents
 
     const fortuneTeller = new Fortune(events).binding(qqId)
     const activity = fortuneTeller.today
 
-    // fs.readFile(eventPath, async (err, data) => {
-    //   if (err) {
-    //     console.log(err)
-    //     return '一些不好的事情发生了'
-    //   }
-    //   const events = JSON.parse(data.toString())
-    //   const activity = new Activity(qqId, events, day)
     const statList = activity.result
     let output = ''
 
@@ -36,10 +23,10 @@ async function koishiHandler (meta, eventPath, day) {
     output = output + '今日mod：' + statList.mod
     if (statList.specialMod) output = output + ', ' + statList.specialMod + '（？\n'
     else output = output + '\n'
-    statList.goodList.map((item) => {
+    statList.goodList.forEach((item) => {
       output = output + '宜：' + item.name + '\n\t' + item.good + '\n'
     })
-    statList.badList.map((item) => {
+    statList.badList.forEach((item) => {
       output = output + '忌：' + item.name + '\n\t' + item.bad + '\n'
     })
     return output
@@ -49,5 +36,3 @@ async function koishiHandler (meta, eventPath, day) {
     return '一些不好的事情发生了'
   }
 }
-
-module.exports = { koishiHandler, Fortune }

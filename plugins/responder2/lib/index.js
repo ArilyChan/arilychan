@@ -29,7 +29,7 @@ function commandBuilder(logger) {
                     if (cond.eq === 'equal')
                         matchRule = (session) => session.content == cond.content;
                     if (cond.eq === 'eq') {
-                        logger('responder2').warn(`got 'assignment operator' in rules #${index}, auto-corret to double equal.`);
+                        logger('responder2').warn(`got 'assignment operator' in rules #${index}, auto-correct to double equal.`);
                         // eslint-disable-next-line eqeqeq
                         matchRule = (session) => session.content == cond.content;
                     }
@@ -141,7 +141,7 @@ function apply(ctx, options) {
             .example('resp2.explain $ -> true -> "ok!"')
             .action((_, syntax) => {
             try {
-                const transformvariables = (ip, isMatcher) => {
+                const transformVariables = (ip, isMatcher) => {
                     const { variables, inline, async: isAsync, code } = ip;
                     let rtn = `${isAsync ? '[async]' : ''} ${inline ? '[inline]' : ''} \n`;
                     rtn += `${isAsync ? '|| async ' : '|| '}`;
@@ -177,14 +177,14 @@ function apply(ctx, options) {
                         rtn.push(`|| 触发条件:\n|| session.content ${equals} '${cond.content}'`);
                     }
                     else if (cond.type === 'exec') {
-                        rtn.push(`|| 自定义触发函数: ${transformvariables(cond, true)}`);
+                        rtn.push(`|| 自定义触发函数: ${transformVariables(cond, true)}`);
                     }
                     rtn.push('|| ⬇️');
                     if (action.type === 'literal') {
                         rtn.push(`|| 固定回复:\n|| '${action.value}'`);
                     }
                     else if (action.type === 'exec') {
-                        rtn.push(`|| 自定义回复函数: ${transformvariables(action, false)}`);
+                        rtn.push(`|| 自定义回复函数: ${transformVariables(action, false)}`);
                     }
                 });
                 return rtn.join('\n');

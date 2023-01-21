@@ -1,0 +1,21 @@
+
+const schema2 = schema`
+intersect([
+  {
+    @default(false)
+    @description('是否开启功能')
+    enabled: boolean
+  },
+  union([
+    {
+      @required
+      enabled: true,
+      @description('input a number')
+      foo: number,
+      @description('input a string')
+      bar: string
+    },
+    {}
+  ])
+])
+`

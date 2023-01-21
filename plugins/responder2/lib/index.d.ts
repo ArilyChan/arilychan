@@ -8,7 +8,7 @@ export declare type Variable = string | {
     from: string;
     to: string;
 };
-export interface literal {
+export interface Literal {
     type: 'literal';
     value: string;
 }
@@ -30,15 +30,14 @@ export declare type ConditionalMatcher = ({
 export interface Command {
     type: string;
     cond: Executable | ConditionalMatcher;
-    action: Executable | literal;
+    action: Executable | Literal;
 }
 export declare type returnedValue = any;
-export declare type CustomMatcher = (session: Session, context: Context, resolve: (carry: returnedValue) => void, reject: () => void) => Promise<returnedValue> | returnedValue;
-export declare type ActionFunction = (session: Session, context: Context, returnedValue: returnedValue) => Promise<string | undefined | {
+declare type Awaitable<T> = Promise<T> | T;
+export declare type CustomMatcher = (session: Session, context: Context, resolve: (carry: returnedValue) => void, reject: () => void) => Awaitable<returnedValue>;
+export declare type ActionFunction = (session: Session, context: Context, returnedValue: returnedValue) => Awaitable<string | undefined | {
     toString: () => string;
-}> | string | undefined | {
-    toString: () => string;
-};
+}>;
 export declare type MatchFunction = CustomMatcher;
 export declare type Entry = [MatchFunction, ActionFunction];
 export declare function commandBuilder(logger: any): [Entry[], CallableFunction];
@@ -55,3 +54,4 @@ export interface Options {
     }>;
 }
 export declare function apply(ctx: Context, options: Options): void;
+export {};

@@ -1,19 +1,17 @@
 import { IncomingMessage } from './../types/index'
-import { TestReceiver } from './../cutting-edge-mail-client/receiver/test-receiver'
-import { TestSender } from './../cutting-edge-mail-client/sender/test-sender'
-import { App, Adapter, Bot, Logger, Session } from 'koishi'
-import { BaseSender, NodeMailer } from '../cutting-edge-mail-client/sender'
-import { BaseReceiver } from '../cutting-edge-mail-client/receiver'
+import * as Receiver from './../cutting-edge-mail-client/receiver'
+import * as Sender from './../cutting-edge-mail-client/sender'
+import { App, Adapter, Bot, Logger, Session, SendOptions } from 'koishi'
 import { Bridge } from '../bridge-between-mail-and-message'
 import MailClient from '../cutting-edge-mail-client'
-import { IMAPReceiver } from '../cutting-edge-mail-client/receiver/imap'
+import { Fragment } from '@satorijs/element'
 
 export interface Config extends Bot.Config {
   sender:
-    | ['nodemailer', ...ConstructorParameters<typeof NodeMailer>]
+    | ['nodemailer', ...ConstructorParameters<typeof Sender.NodeMailer>]
     | ['test']
   receiver:
-    | ['imap', ...ConstructorParameters<typeof IMAPReceiver>]
+    | ['imap', ...ConstructorParameters<typeof Receiver.IMAPReceiver>]
     | ['test']
 }
 class MyBot extends Bot<Config> {
@@ -22,8 +20,8 @@ class MyBot extends Bot<Config> {
   client: MailClient = new MailClient()
   bridge: Bridge = new Bridge()
 
-  sender: BaseSender
-  receiver: BaseReceiver
+  sender: Sender.BaseSender
+  receiver: Receiver.BaseReceiver
 
   _subscriber: this['incomingMessage']
 
@@ -47,6 +45,20 @@ class MyBot extends Bot<Config> {
     this.dispatch(session)
   }
 
+  async sendPrivateMessage (userId: string, content: Fragment, options?: SendOptions) {
+    await this.bridge.sendMessage({
+      to: {
+        id: userId
+      },
+      from: {
+        id: this.receiver.address.address,
+        name: this.receiver.address.name
+      },
+      content: content.toString()
+    })
+    return []
+  }
+
   async stop () {
     this.bridge.unsubscribe(this._subscriber)
   }
@@ -68,11 +80,11 @@ export default class MailAdapter extends Adapter<MyBot> {
     switch (bot.config.sender[0]) {
       case 'nodemailer': {
         const [, ...conf] = bot.config.sender
-        bot.sender = new NodeMailer(...conf)
+        bot.sender = new Sender.NodeMailer(...conf)
         break
       }
       case 'test': {
-        bot.sender = new TestSender()
+        bot.sender = new Sender.TestSender()
         break
       }
       default: {
@@ -81,11 +93,11 @@ export default class MailAdapter extends Adapter<MyBot> {
     }
     switch (bot.config.receiver[0]) {
       case 'imap': {
-        bot.receiver = new IMAPReceiver(bot.config.receiver[1])
+        bot.receiver = new Receiver.IMAPReceiver(bot.config.receiver[1])
         break
       }
       case 'test': {
-        bot.receiver = new TestReceiver()
+        bot.receiver = new Receiver.TestReceiver()
         break
       }
       default: {

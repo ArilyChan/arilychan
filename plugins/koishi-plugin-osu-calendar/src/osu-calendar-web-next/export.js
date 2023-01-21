@@ -40,7 +40,7 @@ const prep = async (options, doNotBuild = true) => {
       dir: __dirname,
       basePath: options.basePath || '/fortune',
       serverRuntimeConfig: {
-        fortunePath: options.eventFile || path.join(__dirname, '../osuercalendar-events.json')
+        fortunePath: options.eventFile || path.join(__dirname, '../osu-calendar-events.json')
       }
     }
   })

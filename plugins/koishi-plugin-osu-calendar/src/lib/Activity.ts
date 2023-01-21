@@ -1,9 +1,17 @@
-'use strict'
-const XorShift = require('xorshift').constructor
-const random = require('seedrandom')
-const shuffleSeed = require('shuffle-seed')
+import random from 'seedrandom'
+import shuffleSeed from 'shuffle-seed'
+import { XorShift } from 'xorshift'
 
 class FortuneResult {
+  seedString: string
+  today: Date
+  seed: number
+  luck: unknown
+  mods: unknown
+  modsSpecial: unknown
+  activities: unknown
+  rng: XorShift
+
   constructor (qqId = 'unknown', events, day = new Date()) {
     this.seedString = qqId.toString()
     this.today = day
@@ -26,21 +34,20 @@ class FortuneResult {
   }
 
   get result () {
-    const statList = {
-      date: this.today
-    }
-    // 随机吉凶
-    statList.luck = this.getRandomArray(this.luck)
-    // 随机mod
-    statList.mod = this.getRandomArray(this.mods)
-    // 如果够幸运还有特殊mod
-    if (this.rng.random() <= 0.15) statList.specialMod = this.getRandomArray(this.modsSpecial)
     // 随机事件
     const randomActivities = this.getRandomArray(this.activities, 4)
-    statList.goodList = randomActivities.slice(0, 2)
-    statList.badList = randomActivities.slice(2)
 
-    return statList
+    return {
+      date: this.today,
+      // 随机吉凶
+      luck: this.getRandomArray(this.luck),
+      // 随机mod
+      mod: this.getRandomArray(this.mods),
+      // 如果够幸运还有特殊mod
+      specialMod: (this.rng.random() <= 0.15) ? this.getRandomArray(this.modsSpecial) : undefined,
+      goodList: randomActivities.slice(0, 2),
+      badList: randomActivities.slice(2)
+    }
   }
 
   getStatList () {
@@ -53,4 +60,4 @@ class FortuneResult {
     else return resp.slice(0, size)
   }
 }
-module.exports = FortuneResult
+export default FortuneResult

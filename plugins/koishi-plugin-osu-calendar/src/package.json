@@ -1,6 +1,6 @@
 {
-  "name": "koishi-plugin-osuercalendar",
-  "version": "1.0.0",
+  "name": "koishi-plugin-osu-calendar",
+  "version": "2.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -23,6 +23,9 @@
   "devDependencies": {
     "babel-preset-next": "^1.4.0",
     "eslint-config-next": "^12.1.5"
+  },
+  "peerDependencies": {
+    "koishi": "^4.10.1"
   },
   "optionalDependencies": {
     "@next/swc-darwin-arm64": "*"

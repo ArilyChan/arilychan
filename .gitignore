@@ -123,7 +123,7 @@ bot/Plugins/arily/BlackFarts/Cabbage/menu/config/db.js
 bot/config/adapters/*
 bot/Plugins/exsper/ppysbQuery/storage/database.db
 bot/Plugins/exsper/ppyshQuery/storage/database.db
-bot/Plugins/exsper/osuerCalendar/osuercalendar-events.json
+bot/Plugins/exsper/osu-calendar/osu-calendar-events.json
 *.code-workspace
 koishi.*.yml
 accounts/*

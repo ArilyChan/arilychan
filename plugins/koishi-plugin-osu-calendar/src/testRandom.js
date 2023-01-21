@@ -1,7 +1,7 @@
 "use strict";
 
 const run = require('./run');
-const eventPath = './osuercalendar-events.json';
+const eventPath = './osu-calendar-events.json';
 
 // 模拟meta
 class Meta {

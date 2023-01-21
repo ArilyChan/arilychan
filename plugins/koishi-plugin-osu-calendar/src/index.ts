@@ -5,15 +5,10 @@ const path = require('path')
 const EventsJson = require('./lib/eventsJson')
 const thisPath = __dirname
 
-const web = require('./osu-calendar-web/export')
+const nextJSWeb = require('./osu-calendar-web-next/export')
 
-// Koishi插件名
-module.exports.name = 'koishi-plugin-osuercalendar'
-// 插件处理和输出
-// module.exports.webPath = '/'
-// module.exports.webApp = web.webApp
-// module.exports.build = web.build
-module.exports.schema = web.schema = Schema.object({
+export const name = 'koishi-plugin-osu-calendar'
+export const schema = nextJSWeb.schema = Schema.object({
   web: Schema.object({
     path: Schema.string().default('http://localhost:3005/fortune').description('screenshot path')
   }),
@@ -27,24 +22,24 @@ module.exports.schema = web.schema = Schema.object({
     })
   })
 })
-module.exports.apply = (ctx, options) => {
+export const apply = (ctx, options) => {
   const users = options.auth.local // deprecate this
-  const eventPath = options.eventFile || path.join(thisPath, './osuercalendar-events.json')
+  const eventPath = options.eventFile || path.join(thisPath, './osu-calendar-events.json')
 
   const eventsJson = new EventsJson()
-  const logger = ctx.logger('osuercalendar')
-  ctx.using(['ci'], function osuercalendarCIRegister (ctx) { ctx.once('ci/build/register', () => ctx.ci.build.use(web.build)) })
-  ctx.using(['express'], function ousercalendarWebApp (ctx) {
+  const logger = ctx.logger('osu-calendar')
+  ctx.using(['ci'], function osuCalendarCIRegister (ctx) { ctx.once('ci/build/register', () => ctx.ci.build.use(nextJSWeb.build)) })
+  ctx.using(['express'], function osuCalendarWebApp (ctx) {
     ctx.once('ready', async () => {
       try {
-        ctx.express.use(options.basePath || '/fortune', await web.webApp(options))
+        ctx.express.use(options.basePath || '/fortune', await nextJSWeb.webApp(options))
       } catch (_) {
         logger.warn('You need to build. run `npm run build` in osu-calendar-web')
-        ctx.using(['ci'], async function osuercalendarAutoBuilder ({ ci: { build } }) {
+        ctx.using(['ci'], async function osuCalendarAutoBuilder ({ ci: { build } }) {
           logger.info('You have ci plugin installed. tring auto-build...')
           await build.run({ only: [exports.name] })
           logger.info('Build finished, retry web service...')
-          ctx.express.use(options.basePath || '/fortune', await web.webApp(options))
+          ctx.express.use(options.basePath || '/fortune', await nextJSWeb.webApp(options))
           logger.success('... Succeed! You are all set!')
         })
       }

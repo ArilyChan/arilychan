@@ -1,5 +1,5 @@
-import Calendar from '../components/calendar'
-import Mods from '../components/mod'
+import Calendar from './calendar'
+import Mods from './mod'
 
 export default function Result({ statList, displayName, seed, children }) {
 

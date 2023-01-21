@@ -1,5 +1,6 @@
-const FortuneBinding = require('./FortuneBinding')
+import FortuneBinding from './FortuneBinding'
 class Fortune {
+  events: Record<string, any>
   constructor (events = {}) {
     this.events = events
   }
@@ -9,4 +10,4 @@ class Fortune {
   }
 }
 
-module.exports = Fortune
+export default Fortune

@@ -2,7 +2,7 @@
 
 const run = require('./run')
 const fsP = require('fs').promises
-const eventPath = './osuercalendar-events.json'
+const eventPath = './osu-calendar-events.json'
 
 // 模拟meta
 class Meta {

@@ -43,7 +43,7 @@ const modCombSpecial = [
     [mods.ScoreV2]
 ]
 
-const j = require('../../osuercalendar-events.json')
+const j = require('../../osu-calendar-events.json')
 const modEnum = [
     ...j.mods,
     ...j.modsSpecial

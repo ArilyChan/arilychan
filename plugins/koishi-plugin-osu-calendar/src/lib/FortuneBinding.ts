@@ -1,5 +1,12 @@
-const Activity = require('./Activity')
+import Activity from './Activity'
+
+// eslint-disable-next-line no-unmodified-loop-condition
+const getDaysArray = function (s, e) { for (var a = [], d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) { a.push(new Date(d)) } return a }
+
 class FortuneBinding {
+  me: string
+  fortune: any
+
   constructor (me, fortune) {
     this.me = me
     this.fortune = fortune
@@ -16,8 +23,6 @@ class FortuneBinding {
   }
 
   from (from) {
-    // eslint-disable-next-line no-unmodified-loop-condition
-    const getDaysArray = function (s, e) { for (var a = [], d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) { a.push(new Date(d)) } return a }
     from = new Date(from) // de-bind the date from
     from.setUTCHours(0, 0, 0, 0)
     const self = this
@@ -31,4 +36,4 @@ class FortuneBinding {
   }
 }
 
-module.exports = FortuneBinding
+export default FortuneBinding

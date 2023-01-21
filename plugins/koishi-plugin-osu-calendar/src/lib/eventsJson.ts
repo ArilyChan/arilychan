@@ -1,5 +1,4 @@
-'use strict'
-const fs = require('fs')
+import fs from 'fs'
 
 class eventsJsonUtils {
   readJson (file) {
@@ -8,6 +7,7 @@ class eventsJsonUtils {
   }
 
   writeJson (file, eventsJson) {
+    // @ts-expect-error it's valid
     const str = JSON.stringify(eventsJson, '', '\t')
     fs.writeFileSync(file, str, 'utf8')
   }
@@ -172,4 +172,4 @@ class eventsJsonUtils {
   }
 }
 
-module.exports = eventsJsonUtils
+export default eventsJsonUtils

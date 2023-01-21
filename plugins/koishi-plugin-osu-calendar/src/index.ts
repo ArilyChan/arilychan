@@ -1,11 +1,12 @@
 'use strict'
-const { Schema, segment } = require('koishi')
-const run = require('./run')
-const path = require('path')
-const EventsJson = require('./lib/eventsJson')
-const thisPath = __dirname
+import { Schema, segment } from 'koishi'
+import * as run from './run'
+import path from 'path'
+import EventsJson from './lib/eventsJson'
 
-const nextJSWeb = require('./osu-calendar-web-next/export')
+import nextJSWeb from './osu-calendar-web-next/export'
+
+const thisPath = __dirname
 
 export const name = 'koishi-plugin-osu-calendar'
 export const schema = nextJSWeb.schema = Schema.object({
@@ -22,8 +23,9 @@ export const schema = nextJSWeb.schema = Schema.object({
     })
   })
 })
-export const apply = (ctx, options) => {
-  const users = options.auth.local // deprecate this
+
+export function apply (ctx, options) {
+  const users = options.auth.local // TODO deprecate this
   const eventPath = options.eventFile || path.join(thisPath, './osu-calendar-events.json')
 
   const eventsJson = new EventsJson()
@@ -46,16 +48,16 @@ export const apply = (ctx, options) => {
     })
   })
   const command = ctx.command('fortune')
-  const activity = command.subcommand('.activity')
 
   command
-    .subcommand('.daily', 'daily fortune')
+    .subcommand('.today', 'today fortune')
+    .alias('.daily')
     .alias('今日运势')
     .action(async (argv) => {
       const meta = argv.session
       if (!ctx.puppeteerCluster) {
         logger.error('got no cluster')
-        return await run.koishiHandler(meta, eventPath, new Date())
+        return await run.koishiHandler(meta, eventPath)
       }
       logger.error('got cluster')
       const cluster = ctx.puppeteerCluster.instance
@@ -68,10 +70,12 @@ export const apply = (ctx, options) => {
           meta.send(cqCode).catch(_ => meta.send('发送图片失败。'))
         } catch (error) {
           logger.error(error)
-          await run.koishiHandler(meta, eventPath, new Date())
+          await run.koishiHandler(meta, eventPath)
         }
       })
     })
+
+  const activity = command.subcommand('.activity')
 
   activity
     .subcommand('.add <name> <goodluck> <badluck>', 'add new activity to pool')

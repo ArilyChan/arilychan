@@ -3,7 +3,7 @@ import random from 'seedrandom'
 import shuffleSeed from 'shuffle-seed'
 import { XorShift } from 'xorshift'
 
-class FortuneResult {
+class FortuneDailyResult {
   seedString: string
   today: Date
   seed: number
@@ -58,4 +58,4 @@ class FortuneResult {
     else return resp.slice(0, size)
   }
 }
-export default FortuneResult
+export default FortuneDailyResult

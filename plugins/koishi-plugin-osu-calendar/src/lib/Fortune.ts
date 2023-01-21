@@ -1,7 +1,8 @@
+import { OsuCalendarEvents } from '../types/store'
 import FortuneBinding from './FortuneBinding'
 class Fortune {
   events: Record<string, any>
-  constructor (events = {}) {
+  constructor (events: OsuCalendarEvents) {
     this.events = events
   }
 

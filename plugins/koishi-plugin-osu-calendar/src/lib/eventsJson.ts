@@ -1,28 +1,19 @@
 import fs from 'fs'
+import { Context, Session } from 'koishi'
 
 class eventsJsonUtils {
-  readJson (file) {
+  readJson (file: fs.PathOrFileDescriptor) {
     const data = fs.readFileSync(file, 'utf8')
     return JSON.parse(data.toString())
   }
 
-  writeJson (file, eventsJson) {
-    // @ts-expect-error it's valid
+  writeJson (file: fs.PathOrFileDescriptor, eventsJson: any) {
+    // @ts-expect-error it's valid js
     const str = JSON.stringify(eventsJson, '', '\t')
     fs.writeFileSync(file, str, 'utf8')
   }
 
-  /**
-       * 添加待审核事件
-       * @param {Object} meta
-       * @param {String} file
-       * @param {Object} pendingActivity
-       * @param {String} [pendingActivity.name] 活动事件名
-       * @param {String} [pendingActivity.good] 宜详情
-       * @param {String} [pendingActivity.bad] 忌详情
-       * @returns {Boolean}
-       */
-  async addPendingEvent (meta, file, pendingActivity) {
+  async addPendingEvent (meta: Session, file: fs.PathOrFileDescriptor, pendingActivity: { name: string, good: string, bad: string }) {
     const events = this.readJson(file)
     if (!events) {
       await meta.send('读取活动文件失败')
@@ -42,7 +33,7 @@ class eventsJsonUtils {
     return true
   }
 
-  async delPendingEvent (meta, file, name) {
+  async delPendingEvent (meta: Session, file: fs.PathOrFileDescriptor, name: string) {
     const events = this.readJson(file)
     if (!events) return '读取活动文件失败'
     if (!events.pending) return '找不到任何待审核活动'
@@ -55,7 +46,7 @@ class eventsJsonUtils {
     return '已删除该待审核活动'
   }
 
-  async addEvent (meta, file, name, good, bad, fromPending = false) {
+  async addEvent (meta: Session, file: fs.PathOrFileDescriptor, name: string, good: string, bad: string, fromPending = false) {
     const events = this.readJson(file)
     if (!events) return '读取活动文件失败'
     if (fromPending) {
@@ -82,7 +73,7 @@ class eventsJsonUtils {
     }
   }
 
-  async delEvent (meta, file, name, fromPending = false) {
+  async delEvent (meta: Session, file: fs.PathOrFileDescriptor, name: string, fromPending = false) {
     const events = this.readJson(file)
     if (!events) return '读取活动文件失败'
     const oldActivityIndex = events.activities.findIndex((item) => {
@@ -100,7 +91,7 @@ class eventsJsonUtils {
     }
   }
 
-  async runAdd (meta, eventPath, users, name, good, bad, app) {
+  async runAdd (meta: Session, eventPath: fs.PathOrFileDescriptor, users, name: string, good: string, bad: string, app: Context) {
     let isAdmin = false
     let atBlackList = false
     let atWhiteList = false
@@ -110,18 +101,20 @@ class eventsJsonUtils {
     if (isAdmin || atWhiteList) return this.addEvent(meta, eventPath, name, good, bad)
     else if (atBlackList) return '抱歉，我讨厌你'
     else {
-      const result = this.addPendingEvent(meta, eventPath, { act: 'add', name, good, bad })
+      const result = this.addPendingEvent(meta, eventPath, { name, good, bad })
       if (result) {
         let output = '请审核活动：' + name + ' 宜：' + good + ' 忌：' + bad + '\n'
         output = output + '输入 "确认/取消 待审核活动名称" 以审核活动'
         return Promise.all(users.admin.map((user) => {
-          return app.sender.sendPrivateMsgAsync(user, output)
+          // TODO fix this broadcast problems
+          // return app.sender.sendPrivateMsgAsync(user, output)
+          return 0
         }))
       }
     }
   }
 
-  async runDel (meta, eventPath, users, name) {
+  async runDel (meta: Session, eventPath: fs.PathOrFileDescriptor, users, name: string) {
     let isAdmin = false
     let atWhiteList = false
     if (users.admin && users.admin.indexOf(meta.userId) >= 0) isAdmin = true
@@ -130,19 +123,19 @@ class eventsJsonUtils {
     else return '抱歉，您没有权限，无法删除活动'
   }
 
-  async confirmPendingEvent (meta, eventPath, users, name) {
+  async confirmPendingEvent (meta: Session, eventPath: fs.PathOrFileDescriptor, users, name: string) {
     if (users.admin && users.admin.indexOf(meta.userId) >= 0) {
       return this.addEvent(meta, eventPath, name, '', '', true)
     } else return '抱歉，您没有审核权限'
   }
 
-  async refusePendingEvent (meta, eventPath, users, name) {
+  async refusePendingEvent (meta: Session, eventPath: fs.PathOrFileDescriptor, users, name: string) {
     if (users.admin && users.admin.indexOf(meta.userId) >= 0) {
       return this.delPendingEvent(meta, eventPath, name)
     } else return '抱歉，您没有审核权限'
   }
 
-  async showPendingEvent (meta, eventPath) {
+  async showPendingEvent (meta: Session, eventPath: fs.PathOrFileDescriptor) {
     const events = this.readJson(eventPath)
     if (!events) return '读取活动文件失败'
     let output = ''
@@ -160,7 +153,7 @@ class eventsJsonUtils {
     return output
   }
 
-  async showEvent (meta, eventPath, name) {
+  async showEvent (meta: Session, eventPath: fs.PathOrFileDescriptor, name: string) {
     const events = this.readJson(eventPath)
     if (!events) return '读取活动文件失败'
     const activityIndex = events.activities.findIndex((item) => {

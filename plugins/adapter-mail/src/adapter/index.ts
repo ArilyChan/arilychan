@@ -6,13 +6,23 @@ import { Bridge } from '../bridge-between-mail-and-message'
 import MailClient from '../cutting-edge-mail-client'
 import { Fragment } from '@satorijs/element'
 
+type SenderConf = {
+  nodemailer: ConstructorParameters<typeof Sender.NodeMailer>,
+  test: ConstructorParameters<typeof Sender.TestSender>
+}
+
+type ReceiverConf = {
+  imap: ConstructorParameters<typeof Receiver.IMAPReceiver>,
+  test: ConstructorParameters<typeof Receiver.TestReceiver>
+}
+
+type RecordToTuples<TRec extends Record<string, any[]>> = {
+  [K in keyof TRec]: [K, ...TRec[K]]
+}[keyof TRec]
+
 export interface Config extends Bot.Config {
-  sender:
-    | ['nodemailer', ...ConstructorParameters<typeof Sender.NodeMailer>]
-    | ['test']
-  receiver:
-    | ['imap', ...ConstructorParameters<typeof Receiver.IMAPReceiver>]
-    | ['test']
+  sender: RecordToTuples<SenderConf>
+  receiver: RecordToTuples<ReceiverConf>
 }
 class MyBot extends Bot<Config> {
   logger: Logger = new Logger('adapter-mail')
@@ -84,7 +94,8 @@ export default class MailAdapter extends Adapter<MyBot> {
         break
       }
       case 'test': {
-        bot.sender = new Sender.TestSender()
+        const [, ...conf] = bot.config.sender
+        bot.sender = new Sender.TestSender(...conf)
         break
       }
       default: {
@@ -93,11 +104,13 @@ export default class MailAdapter extends Adapter<MyBot> {
     }
     switch (bot.config.receiver[0]) {
       case 'imap': {
-        bot.receiver = new Receiver.IMAPReceiver(bot.config.receiver[1])
+        const [, ...conf] = bot.config.receiver
+        bot.receiver = new Receiver.IMAPReceiver(...conf)
         break
       }
       case 'test': {
-        bot.receiver = new Receiver.TestReceiver()
+        const [, ...conf] = bot.config.receiver
+        bot.receiver = new Receiver.TestReceiver(...conf)
         break
       }
       default: {

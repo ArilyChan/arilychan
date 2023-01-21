@@ -4,14 +4,16 @@ import { IncomingMail } from '../../types'
 
 import { LocalMailAddress } from '../address'
 
+export type Options = ConstructorParameters<typeof LocalMailAddress>
 export class TestReceiver<T extends never> extends BaseReceiver<T> {
   logger = new Logger('adapter-mail/debug-client/receiver')
 
-  address = new LocalMailAddress({
-    name: 'self',
-    address: 'self@koishi.js',
-    folders: ['inbox']
-  })
+  address: LocalMailAddress
+
+  constructor (...opt: Options) {
+    super()
+    this.address = new LocalMailAddress(...opt)
+  }
 
   async fetch () {
     this.logger.info('receiving unread messages')

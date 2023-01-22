@@ -1,30 +1,67 @@
 import { IncomingMessage } from './../types/index'
 import * as Receiver from './../cutting-edge-mail-client/receiver'
 import * as Sender from './../cutting-edge-mail-client/sender'
-import { App, Adapter, Bot, Logger, Session, SendOptions } from 'koishi'
+import { Bot, Logger, Session, SendOptions } from 'koishi'
 import { Bridge } from '../bridge-between-mail-and-message'
 import MailClient from '../cutting-edge-mail-client'
 import { Fragment } from '@satorijs/element'
 
-type SenderConf = {
-  nodemailer: ConstructorParameters<typeof Sender.NodeMailer>,
-  test: ConstructorParameters<typeof Sender.TestSender>
-}
+// type SenderConf = {
+//   nodemailer: ConstructorParameters<typeof Sender.NodeMailer>,
+//   test: ConstructorParameters<typeof Sender.TestSender>
+// }
 
-type ReceiverConf = {
-  imap: ConstructorParameters<typeof Receiver.IMAPReceiver>,
-  test: ConstructorParameters<typeof Receiver.TestReceiver>
-}
+// type ReceiverConf = {
+//   imap: ConstructorParameters<typeof Receiver.IMAPReceiver>,
+//   test: ConstructorParameters<typeof Receiver.TestReceiver>
+// }
 
-type RecordToTuples<TRec extends Record<string, any[]>> = {
-  [K in keyof TRec]: [K, ...TRec[K]]
-}[keyof TRec]
+// type RecordToTuples<TRec extends Record<string, any[]>> = {
+//   [K in keyof TRec]: [K, ...TRec[K]]
+// }[keyof TRec]
 
-export interface Config extends Bot.Config {
-  sender: RecordToTuples<SenderConf>
-  receiver: RecordToTuples<ReceiverConf>
-}
-class MyBot extends Bot<Config> {
+// export interface Config extends Bot.Config {
+//   sender: RecordToTuples<SenderConf>
+//   receiver: RecordToTuples<ReceiverConf>
+// }
+
+export type Config = Bot.Config & (
+  | {
+    sender: 'test',
+    senderConfig: {
+      name: string,
+      address: string
+    }
+  }
+  | {
+    sender: 'nodemailer',
+    senderConfig: {
+      host: string,
+      port: number,
+      secure: boolean,
+      auth: {
+        user: string,
+        pass: string
+      }
+    }
+  }
+) & (
+    | {
+      receiver: 'test',
+      receiverConfig: {
+        name: string,
+        address: string
+      }
+    }
+    | {
+      receiver: 'imap',
+      receiverConfig: {
+        user: string,
+        password: string
+      }
+    }
+  )
+export class MailBot extends Bot {
   logger: Logger = new Logger('adapter-mail')
 
   client: MailClient = new MailClient()
@@ -34,6 +71,49 @@ class MyBot extends Bot<Config> {
   receiver: Receiver.BaseReceiver
 
   _subscriber: this['incomingMessage']
+
+  constructor (ctx, config: Config) {
+    let sender: Sender.BaseSender, receiver: Receiver.BaseReceiver
+    if (!config) throw new Error('I lost my config')
+    switch (config.sender) {
+      case 'nodemailer': {
+        sender = new Sender.NodeMailer(config.senderConfig)
+        break
+      }
+      case 'test': {
+        sender = new Sender.TestSender(config.senderConfig)
+        break
+      }
+      default: {
+        throw new Error('unknown adapter')
+      }
+    }
+    switch (config.receiver) {
+      case 'imap': {
+        receiver = new Receiver.IMAPReceiver(config.receiverConfig)
+        break
+      }
+      case 'test': {
+        receiver = new Receiver.TestReceiver(config.receiverConfig)
+        break
+      }
+      default: {
+        throw new Error('unknown receiver')
+      }
+    }
+    const selfId = sender.address.address
+
+    super(ctx, {
+      platform: 'mail',
+      selfId
+    })
+
+    this.client.useReceiver(receiver)
+    this.client.useSender(sender)
+    this.bridge.useClient(this.client)
+    this.subscribe()
+    console.log(this)
+  }
 
   async sendMessage (channelId: string, content: string) {
     // 这里应该执行发送操作
@@ -74,56 +154,56 @@ class MyBot extends Bot<Config> {
   }
 }
 
-export default class MailAdapter extends Adapter<MyBot> {
-  app: App
+// export default class MailAdapter extends Adapter<MailBot> {
+//   app: App
 
-  bots: Bot[]
+//   bots: Bot[]
 
-  constructor (app: App, bot: MyBot) {
-    // 请注意这里的第二个参数是应该是一个构造函数而非实例
-    super()
-    bot.adapter = this
-  }
+//   constructor (app: App, bot: MailBot) {
+//     // 请注意这里的第二个参数是应该是一个构造函数而非实例
+//     super()
+//     bot.adapter = this
+//   }
 
-  async connect (bot: MyBot) {
-    if (!bot.config) throw new Error('I lost my config')
-    switch (bot.config.sender[0]) {
-      case 'nodemailer': {
-        const [, ...conf] = bot.config.sender
-        bot.sender = new Sender.NodeMailer(...conf)
-        break
-      }
-      case 'test': {
-        const [, ...conf] = bot.config.sender
-        bot.sender = new Sender.TestSender(...conf)
-        break
-      }
-      default: {
-        throw new Error('unknown adapter')
-      }
-    }
-    switch (bot.config.receiver[0]) {
-      case 'imap': {
-        const [, ...conf] = bot.config.receiver
-        bot.receiver = new Receiver.IMAPReceiver(...conf)
-        break
-      }
-      case 'test': {
-        const [, ...conf] = bot.config.receiver
-        bot.receiver = new Receiver.TestReceiver(...conf)
-        break
-      }
-      default: {
-        throw new Error('unknown receiver')
-      }
-    }
-    bot.client.useReceiver(bot.receiver)
-    bot.client.useSender(bot.sender)
-    bot.bridge.useClient(bot.client)
-    bot.subscribe()
-  }
+//   async connect (bot: MailBot) {
+//     if (!config) throw new Error('I lost my config')
+//     switch (config.sender[0]) {
+//       case 'nodemailer': {
+//         const [, ...conf] = config.sender
+//         sender = new Sender.NodeMailer(...conf)
+//         break
+//       }
+//       case 'test': {
+//         const [, ...conf] = config.sender
+//         sender = new Sender.TestSender(...conf)
+//         break
+//       }
+//       default: {
+//         throw new Error('unknown adapter')
+//       }
+//     }
+//     switch (config.receiver[0]) {
+//       case 'imap': {
+//         const [, ...conf] = config.receiver
+//         receiver = new Receiver.IMAPReceiver(...conf)
+//         break
+//       }
+//       case 'test': {
+//         const [, ...conf] = config.receiver
+//         receiver = new Receiver.TestReceiver(...conf)
+//         break
+//       }
+//       default: {
+//         throw new Error('unknown receiver')
+//       }
+//     }
+//    this.client.useReceiver(receiver)
+//    this.client.useSender(sender)
+//     bot.bridge.useClient(bot.client)
+//     bot.subscribe()
+//   }
 
-  async stop () {
-    this.bots.map(bot => bot.stop())
-  }
-}
+//   async stop () {
+//     this.bots.map(bot => bot.stop())
+//   }
+// }

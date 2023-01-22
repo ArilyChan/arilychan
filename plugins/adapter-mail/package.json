@@ -17,7 +17,7 @@
     "plugin"
   ],
   "peerDependencies": {
-    "koishi": "^4.6.3"
+    "koishi": "^4.9.3"
   },
   "dependencies": {
     "@types/mailparser": "^3.4.0",

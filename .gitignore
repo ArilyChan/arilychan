@@ -133,3 +133,6 @@ yarn.lock
 
 .vite
 .DS_Store
+.koishi.yml
+
+.koishi.db

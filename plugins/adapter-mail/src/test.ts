@@ -1,16 +1,18 @@
+import { MailAddress } from './cutting-edge-mail-client/address/index'
 
 import * as Senders from './cutting-edge-mail-client/sender'
 import * as Receivers from './cutting-edge-mail-client/receiver'
 import { Bridge } from './bridge-between-mail-and-message'
 import MailClient from './cutting-edge-mail-client'
 const test = new Bridge()
-const testReceiver = new Receivers.TestReceiver()
+const testReceiver = new Receivers.TestReceiver({ name: 'receiver', address: 'receiver@test.js' })
 test.useClient(new MailClient())
-test.useSender(new Senders.TestSender())
+test.useSender(new Senders.TestSender({ name: 'sender', address: 'sender@test.js' }))
 test.useReceiver(testReceiver)
 
 test.bridge()
 testReceiver._fakeMail({
+  from: new MailAddress({ name: 'sender', address: 'sender@test.js' }),
   text: null,
   html: /* html */`
   <html>
@@ -57,5 +59,5 @@ testReceiver._fakeMail({
 
 test.subscribe((message) => {
   console.log('received message:', message)
-  test.sendMessage({ to: { id: message.from.id, name: message.from.name }, from: { id: 'self@koishi.js', name: 'tester' }, content: message.content })
+  test.sendMessage({ to: { id: message.from.id, name: message.from.name }, from: { id: 'receiver@test.js', name: 'tester' }, content: message.content })
 })

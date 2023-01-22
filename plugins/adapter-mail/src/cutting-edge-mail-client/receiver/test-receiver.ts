@@ -2,7 +2,7 @@ import { Logger } from 'koishi'
 import { BaseReceiver } from './base-receiver'
 import { IncomingMail } from '../../types'
 
-import { LocalMailAddress } from '../address'
+import { LocalMailAddress, MailAddress } from '../address'
 
 export type Options = ConstructorParameters<typeof LocalMailAddress>
 export class TestReceiver<T extends never> extends BaseReceiver<T> {
@@ -28,7 +28,7 @@ export class TestReceiver<T extends never> extends BaseReceiver<T> {
     if (!context) throw new Error('No context provided')
     const mail: IncomingMail = {
       to: this.address,
-      from: new LocalMailAddress({
+      from: new MailAddress({
         name: 'unknown',
         address: 'unknown-sender@koishi.js'
       }),

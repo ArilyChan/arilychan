@@ -102,7 +102,7 @@ export class MailBot extends Bot {
         throw new Error('unknown receiver')
       }
     }
-    const selfId = sender.address.address
+    const selfId = sender.mail.address
 
     super(ctx, {
       platform: 'mail',
@@ -148,8 +148,8 @@ export class MailBot extends Bot {
         id: userId
       },
       from: {
-        id: this.receiver.address.address,
-        name: this.receiver.address.name
+        id: this.receiver.mail.address,
+        name: this.receiver.mail.name
       },
       content: content.toString()
     })
@@ -162,6 +162,13 @@ export class MailBot extends Bot {
 
   async getGuildList (): Promise<Universal.Guild[]> {
     return []
+  }
+
+  getSelf () {
+    return Promise.resolve({
+      userId: this.sender.mail.address,
+      username: this.sender.mail.name
+    })
   }
 }
 

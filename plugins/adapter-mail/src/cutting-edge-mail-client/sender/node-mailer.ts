@@ -4,7 +4,7 @@ import { BaseSender } from './base-sender'
 import { LocalMailAddress } from '../address'
 import { htmlToText } from 'nodemailer-html-to-text'
 export class NodeMailer extends BaseSender {
-  address: LocalMailAddress
+  mail: LocalMailAddress
   conn: nodemailer.Transporter
   #constructionArgs: Parameters<typeof nodemailer.createTransport>
   constructor (...args: Parameters<typeof nodemailer.createTransport>) {
@@ -19,11 +19,11 @@ export class NodeMailer extends BaseSender {
   }
 
   async send (mail: OutgoingMail) {
-    if (!this.address && !mail.from) throw new Error('you didn\'t provide a address?')
+    if (!this.mail && !mail.from) throw new Error('you didn\'t provide a address?')
     if (!mail.html) throw new Error('no content')
     return this.conn.sendMail({
       to: Array.isArray(mail.to) ? mail.to.map(addr => addr.address) : mail.to.address,
-      from: (mail.from || this.address).address,
+      from: (mail.from || this.mail).address,
       html: mail.html
     })
   }

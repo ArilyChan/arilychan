@@ -13,11 +13,11 @@ export default class MailClient {
   }
 
   async useSender<T extends BaseSender> (sender: T): Promise<any> {
-    if (!Array.isArray(sender.address)) {
-      if (this.senders.has(sender.address)) return
-      this.senders.set(sender.address, sender)
+    if (!Array.isArray(sender.mail)) {
+      if (this.senders.has(sender.mail)) return
+      this.senders.set(sender.mail, sender)
     } else {
-      sender.address.forEach(c => {
+      sender.mail.forEach(c => {
         if (this.senders.has(c)) return
         this.senders.set(c, sender)
       })
@@ -28,11 +28,11 @@ export default class MailClient {
   // TODO: unuseSender
 
   async useReceiver<T extends BaseReceiver> (receiver: T): Promise<any> {
-    if (!Array.isArray(receiver.address)) {
-      if (this.receivers.has(receiver.address)) return
-      this.receivers.set(receiver.address, receiver)
+    if (!Array.isArray(receiver.mail)) {
+      if (this.receivers.has(receiver.mail)) return
+      this.receivers.set(receiver.mail, receiver)
     } else {
-      receiver.address.forEach(c => {
+      receiver.mail.forEach(c => {
         if (this.receivers.has(c)) return
         this.receivers.set(c, receiver)
       })
@@ -54,7 +54,7 @@ export default class MailClient {
     if (!mail.to) { return this.logger.error('Cannot send mail. missing `to`.') }
     if (!mail.from && !sender) { return this.logger.error('Cannot send mail. missing sender.') }
     sender = sender ?? this.findSender(mail.from) as T
-    mail.from = mail.from ?? sender.address
+    mail.from = mail.from ?? sender.mail
     if (!sender || !mail.from) { return this.logger.error('Cannot send mail, cannot find correlated mail address.') }
     return await sender.send(mail as OutgoingMail)
   }

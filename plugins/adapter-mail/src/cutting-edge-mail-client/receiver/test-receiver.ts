@@ -8,11 +8,11 @@ export type Options = ConstructorParameters<typeof LocalMailAddress>
 export class TestReceiver<T extends never> extends BaseReceiver<T> {
   logger = new Logger('adapter-mail/debug-client/receiver')
 
-  address: LocalMailAddress
+  mail: LocalMailAddress
 
   constructor (...opt: Options) {
     super()
-    this.address = new LocalMailAddress(...opt)
+    this.mail = new LocalMailAddress(...opt)
   }
 
   async fetch () {
@@ -36,7 +36,7 @@ export class TestReceiver<T extends never> extends BaseReceiver<T> {
   createFakeMail (context: Partial<IncomingMail>) {
     if (!context) throw new Error('No context provided')
     const mail: IncomingMail = {
-      to: this.address,
+      to: this.mail,
       from: new MailAddress({
         name: 'unknown',
         address: 'unknown-sender@koishi.js'

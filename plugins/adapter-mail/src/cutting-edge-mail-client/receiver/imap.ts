@@ -12,13 +12,13 @@ import { LocalMailAddress } from '../address'
 export class IMAPReceiver<T extends never> extends BaseReceiver<T> {
   logger = new Logger('adapter-mail/debug-client/receiver/imap')
   imap: IMAP
-  address: LocalMailAddress
+  mail: LocalMailAddress
   interval: ReturnType<typeof setInterval>
 
   constructor (option: ConstructorParameters<typeof IMAP>[0]) {
     super()
     this.imap = new IMAP(option)
-    this.address = new LocalMailAddress({
+    this.mail = new LocalMailAddress({
       address: option.user
     })
   }

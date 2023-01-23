@@ -6,11 +6,11 @@ import { BaseSender } from './base-sender'
 export type Options = ConstructorParameters<typeof LocalMailAddress>
 export class TestSender<T extends never> extends BaseSender<T> {
   logger = new Logger('adapter-mail/debug-client/sender')
-  address: LocalMailAddress
+  mail: LocalMailAddress
 
   constructor (...opt: Options) {
     super()
-    this.address = new LocalMailAddress(...opt)
+    this.mail = new LocalMailAddress(...opt)
   }
 
   async send (mail: OutgoingMail) {

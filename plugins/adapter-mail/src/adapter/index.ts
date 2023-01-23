@@ -160,15 +160,51 @@ export class MailBot extends Bot {
     this.bridge.unsubscribe(this._subscriber)
   }
 
-  async getGuildList (): Promise<Universal.Guild[]> {
-    return []
-  }
-
   getSelf () {
     return Promise.resolve({
       userId: this.sender.mail.address,
       username: this.sender.mail.name
     })
+  }
+
+  getFriendList (): Promise<Universal.User[]> {
+    return Promise.resolve([])
+  }
+
+  getGuild (guildId: string): Promise<Universal.Guild> {
+    return Promise.resolve(null)
+  }
+
+  getGuildList (): Promise<Universal.Guild[]> {
+    return Promise.resolve([])
+  }
+
+  getGuildMember () {
+    return Promise.resolve(null)
+  }
+
+  getGuildMemberList () {
+    return Promise.resolve([])
+  }
+
+  getChannel () {
+    return Promise.resolve(null)
+  }
+
+  getChannelList () {
+    return Promise.resolve([])
+  }
+
+  handleFriendRequest () {
+    return Promise.resolve()
+  }
+
+  handleGuildRequest () {
+    return Promise.resolve()
+  }
+
+  handleGuildMemberRequest () {
+    return Promise.resolve()
   }
 }
 

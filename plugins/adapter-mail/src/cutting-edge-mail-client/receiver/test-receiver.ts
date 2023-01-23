@@ -17,7 +17,11 @@ export class TestReceiver<T extends never> extends BaseReceiver<T> {
 
   async fetch () {
     this.logger.info('receiving unread messages')
-    return []
+    return new Promise<IncomingMail[]>((resolve, reject) => {
+      setTimeout(() => resolve([this.createFakeMail({
+        html: 'test message'
+      })]), 2000)
+    })
   }
 
   async prepare () {
@@ -25,6 +29,11 @@ export class TestReceiver<T extends never> extends BaseReceiver<T> {
   }
 
   async _fakeMail (context: Partial<IncomingMail>) {
+    const mail = this.createFakeMail(context)
+    return await this.incomingChain(mail)
+  }
+
+  createFakeMail (context: Partial<IncomingMail>) {
     if (!context) throw new Error('No context provided')
     const mail: IncomingMail = {
       to: this.address,
@@ -39,6 +48,6 @@ export class TestReceiver<T extends never> extends BaseReceiver<T> {
       html: '',
       ...context
     }
-    return await this.incomingChain(mail)
+    return mail
   }
 }

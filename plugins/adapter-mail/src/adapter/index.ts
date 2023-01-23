@@ -1,7 +1,7 @@
 import { IncomingMessage } from '../types/index'
 import * as Receiver from '../cutting-edge-mail-client/receiver'
 import * as Sender from '../cutting-edge-mail-client/sender'
-import { Bot, Logger, Session, SendOptions } from 'koishi'
+import { Bot, Logger, Session, SendOptions, Universal } from 'koishi'
 import { Bridge } from '../bridge-between-mail-and-message'
 import MailClient from '../cutting-edge-mail-client'
 import { Fragment } from '@satorijs/element'
@@ -108,12 +108,14 @@ export class MailBot extends Bot {
       platform: 'mail',
       selfId
     })
+    this.receiver = receiver
+    this.sender = sender
 
+    this.status = 'connect'
     this.client.useReceiver(receiver)
     this.client.useSender(sender)
     this.bridge.useClient(this.client)
     this.subscribe()
-    console.log(this)
   }
 
   async sendMessage (channelId: string, content: string) {
@@ -123,10 +125,14 @@ export class MailBot extends Bot {
     return []
   }
 
-  subscribe () {
+  async subscribe () {
     this._subscriber = this.incomingMessage.bind(this)
     this.bridge.subscribe(this._subscriber)
     this.bridge.bridge()
+
+    this.status = 'online'
+    const unread = await this.receiver.fetch()
+    unread.map(mail => this.receiver.incomingChain(mail))
   }
 
   incomingMessage (message: IncomingMessage) {
@@ -152,6 +158,10 @@ export class MailBot extends Bot {
 
   async stop () {
     this.bridge.unsubscribe(this._subscriber)
+  }
+
+  async getGuildList (): Promise<Universal.Guild[]> {
+    return []
   }
 }
 

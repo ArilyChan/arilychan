@@ -46,3 +46,5 @@ plugins:
     receiverConfig:
       name: test-receiver
       address: receiver@example.com
+  ~chat:5e30ss: {}
+  chat:t1et7x: {}

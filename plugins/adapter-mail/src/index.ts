@@ -4,7 +4,7 @@ import { MailBot, Config } from './adapter'
 const { union, object, string, const: literal, number, boolean, intersect } = Schema
 
 const testEntry = literal('test').description('test purpose only')
-const nodemailerEntry = literal('node-mailer').description('nodemailer createTransport')
+const nodemailerEntry = literal('node-mailer-smtp').description('nodemailer createTransport smtp')
 const IMAPEntry = literal('imap').description('IMAP transport w/ node-imap')
 
 const testConfig = object({

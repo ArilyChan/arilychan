@@ -1,5 +1,5 @@
-import { MailAddress } from './../address/index'
-import { IncomingMail } from './../../types/index'
+import { MailAddress } from '../address/index'
+import { IncomingMail } from '../../types/index'
 import { Logger } from 'koishi'
 import { BaseReceiver } from './base-receiver'
 import { simpleParser } from 'mailparser'

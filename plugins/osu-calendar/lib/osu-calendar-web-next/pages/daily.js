@@ -6,8 +6,7 @@ import Fortune from '../../lib/Fortune'
 import Page from '../components/page'
 const { serverRuntimeConfig } = getConfig()
 
-
-export async function getServerSideProps(context) {
+export async function getServerSideProps (context) {
   // const events = require(serverRuntimeConfig.fortunePath)
   // console.log(fs)
   const json = await fs.readFile(serverRuntimeConfig.fortunePath)
@@ -25,11 +24,13 @@ export async function getServerSideProps(context) {
       statList: {
         ...statList,
         date: statList.date.getTime()
-      }, displayName, seed
+      },
+      displayName,
+      seed
     }
   }
 }
 
-export default function Daily(props) {
+export default function Daily (props) {
   return <Page {...props} />
 }

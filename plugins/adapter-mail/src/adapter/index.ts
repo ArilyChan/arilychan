@@ -1,10 +1,11 @@
-import { IncomingMessage } from './../types/index'
-import * as Receiver from './../cutting-edge-mail-client/receiver'
-import * as Sender from './../cutting-edge-mail-client/sender'
+import { IncomingMessage } from '../types/index'
+import * as Receiver from '../cutting-edge-mail-client/receiver'
+import * as Sender from '../cutting-edge-mail-client/sender'
 import { Bot, Logger, Session, SendOptions } from 'koishi'
 import { Bridge } from '../bridge-between-mail-and-message'
 import MailClient from '../cutting-edge-mail-client'
 import { Fragment } from '@satorijs/element'
+import SMTPTransport from 'nodemailer/lib/smtp-transport'
 
 // type SenderConf = {
 //   nodemailer: ConstructorParameters<typeof Sender.NodeMailer>,
@@ -34,7 +35,7 @@ export type Config = Bot.Config & (
     }
   }
   | {
-    sender: 'nodemailer',
+    sender: 'node-mailer-smtp',
     senderConfig: {
       host: string,
       port: number,
@@ -76,8 +77,8 @@ export class MailBot extends Bot {
     let sender: Sender.BaseSender, receiver: Receiver.BaseReceiver
     if (!config) throw new Error('I lost my config')
     switch (config.sender) {
-      case 'nodemailer': {
-        sender = new Sender.NodeMailer(config.senderConfig)
+      case 'node-mailer-smtp': {
+        sender = new Sender.NodeMailer(config.senderConfig as SMTPTransport.Options)
         break
       }
       case 'test': {

@@ -13,7 +13,6 @@ test.useReceiver(testReceiver)
 test.bridge()
 testReceiver._fakeMail({
   from: new MailAddress({ name: 'sender', address: 'sender@test.js' }),
-  text: null,
   html: /* html */`
   <html>
     <head>

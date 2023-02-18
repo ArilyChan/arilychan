@@ -57,7 +57,7 @@ const separate = (_separator: string, idTemplate: RegExp) => async (text: string
   const separator = new RegExp(`(?<before>.*)(${_separator})(?<after>.*)`, 's')
   const matchResult = text.match(separator)
 
-  content = matchResult ? matchResult.groups.before + matchResult.groups.after : text
+  content = matchResult ? matchResult.groups?.before || '' + matchResult.groups?.after : text
   const ids = idTemplate.exec(content)
   if (ids) content = content.replace(idTemplate, '')
   return { content, id: ids?.[1] }

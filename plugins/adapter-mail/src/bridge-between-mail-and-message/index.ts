@@ -9,7 +9,7 @@ import { html } from '../bootleg-html-template'
 
 type Separator = string;
 export class Bridge {
-  client?: MailClient
+  client: MailClient
   subscribers = new Set<MessageSubscriber>()
   logger = new Logger('adapter-mail/bridge')
 
@@ -72,7 +72,7 @@ export class Bridge {
     }
   }
 
-  async sendMessage ({ to, from, content }: { to: { id: string; name?: string}, from: { id: string, name: string } ; content: string }) {
+  async sendMessage ({ to, from, content }: { to: { id: string; name?: string}, from: { id: string, name?: string } ; content: string }) {
     const messageId = (Math.random() * 114514 * 1919810).toFixed()
     const segs = segment.parse(content)
     const h = html`

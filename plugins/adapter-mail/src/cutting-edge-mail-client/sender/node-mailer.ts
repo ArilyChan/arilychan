@@ -3,17 +3,30 @@ import { OutgoingMail } from '../../types'
 import { BaseSender } from './base-sender'
 import { LocalMailAddress } from '../address'
 import { htmlToText } from 'nodemailer-html-to-text'
+
+type SMTPConfig = {
+  host: string,
+  port: number
+  secure: boolean
+  auth: {
+    user: string
+    pass: string
+  }
+}
 export class NodeMailer extends BaseSender {
   mail: LocalMailAddress
   conn: nodemailer.Transporter
-  #constructionArgs: Parameters<typeof nodemailer.createTransport>
-  constructor (...args: Parameters<typeof nodemailer.createTransport>) {
+  #constructionArg: SMTPConfig
+  constructor (arg: SMTPConfig) {
     super()
-    this.#constructionArgs = args
+    this.#constructionArg = arg
+    this.mail = new LocalMailAddress({ address: arg.address || arg.auth.user })
   }
 
   async prepare () {
-    this.conn = nodemailer.createTransport(...this.#constructionArgs)
+    this.conn = nodemailer.createTransport({
+      ...this.#constructionArg
+    })
     this.conn.use('compile', htmlToText({}))
     await this.conn.verify()
   }

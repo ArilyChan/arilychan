@@ -25,7 +25,7 @@ export interface IncomingMail extends Mail {
 
 export interface IncomingMessage {
   from: {
-    name: string
+    name?: string
     id: string
   }
   content: string

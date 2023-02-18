@@ -136,3 +136,4 @@ yarn.lock
 .koishi.yml
 
 .koishi.db
+koishi.yml

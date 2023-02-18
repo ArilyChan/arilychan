@@ -1,5 +1,5 @@
 import { Context, Schema } from 'koishi'
-import { MailBot, Config } from './adapter'
+import { Config, MailBot } from './adapter'
 
 const { union, object, string, const: literal, number, boolean, intersect } = Schema
 
@@ -32,6 +32,7 @@ export const schema = intersect([
     object({
       sender: nodemailerEntry.required(),
       senderConfig: object({
+        address: string(),
         host: string(),
         port: number(),
         secure: boolean(),
@@ -56,31 +57,6 @@ export const schema = intersect([
     })
   ]).description('receiver opt')
 ])
-
-// object({
-//   sender: union([
-//     tuple([
-//       literal('test'),
-//       object({
-//         name: string(),
-//         address: string()
-//       })
-//     ]).description('test purpose only'),
-
-//     tuple([
-//       literal('nodemailer'),
-//       object({
-//         host: string(),
-//         port: number(),
-//         secure: boolean(),
-//         auth: object({
-//           user: string(),
-//           pass: string()
-//         })
-//       })
-//     ]).description('node mailer')
-//   ]).description('sender opt')
-// })
 
 export const name = 'adapter-mail'
 export function apply (ctx: Context, config: Config) {

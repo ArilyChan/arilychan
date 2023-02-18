@@ -1,6 +1,6 @@
-import { MailSubscriber, OutgoingMail, LocalMailAddressInterface } from '../types'
-import { BaseSender } from './sender/base-sender'
-import { BaseReceiver } from './receiver/base-receiver'
+import type { MailSubscriber, OutgoingMail, LocalMailAddressInterface } from '../types'
+import type { BaseSender } from './sender/base-sender'
+import type { BaseReceiver } from './receiver/base-receiver'
 import { Logger } from 'koishi'
 export default class MailClient {
   senders = new Map<LocalMailAddressInterface, BaseSender>()
@@ -50,16 +50,25 @@ export default class MailClient {
     this.receivers.forEach(receivers => receivers.unsubscribe(subscriber))
   }
 
-  async send<T extends BaseSender> (mail: Partial<OutgoingMail> & Pick<OutgoingMail, 'to'>, sender?: T) {
+  async send (mail: Partial<OutgoingMail> & Pick<OutgoingMail, 'to'>, sender?: BaseSender) {
     if (!mail.to) { return this.logger.error('Cannot send mail. missing `to`.') }
     if (!mail.from && !sender) { return this.logger.error('Cannot send mail. missing sender.') }
-    sender = sender ?? this.findSender(mail.from) as T
+    sender = sender ?? (mail.from && this.findSender(mail.from))
+    if (!sender) {
+      this.logger.error('Cannot send mail, cannot find sender.')
+      console.trace()
+      return
+    }
     mail.from = mail.from ?? sender.mail
-    if (!sender || !mail.from) { return this.logger.error('Cannot send mail, cannot find correlated mail address.') }
+    if (!mail.from) {
+      this.logger.error('Cannot send mail, cannot find correlated mail address.')
+      console.trace()
+      return
+    }
     return await sender.send(mail as OutgoingMail)
   }
 
-  findSender (IAddress: LocalMailAddressInterface): BaseSender {
+  findSender (IAddress: LocalMailAddressInterface): BaseSender | undefined {
     return (IAddress.local && this.senders.get(IAddress)) ??
     ([...this.senders.entries()].find(([c]) => c.address === IAddress.address)?.[1])
   }

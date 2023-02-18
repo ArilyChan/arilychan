@@ -37,6 +37,7 @@ export type Config = Bot.Config & (
   | {
     sender: 'node-mailer-smtp',
     senderConfig: {
+      address?: string,
       host: string,
       port: number,
       secure: boolean,
@@ -78,7 +79,7 @@ export class MailBot extends Bot {
     if (!config) throw new Error('I lost my config')
     switch (config.sender) {
       case 'node-mailer-smtp': {
-        sender = new Sender.NodeMailer(config.senderConfig as SMTPTransport.Options)
+        sender = new Sender.NodeMailer(config.senderConfig)
         break
       }
       case 'test': {
@@ -102,8 +103,8 @@ export class MailBot extends Bot {
         throw new Error('unknown receiver')
       }
     }
+    console.log(sender)
     const selfId = sender.mail.address
-
     super(ctx, {
       platform: 'mail',
       selfId
@@ -148,8 +149,8 @@ export class MailBot extends Bot {
         id: userId
       },
       from: {
-        id: this.receiver.mail.address,
-        name: this.receiver.mail.name
+        id: this.sender.mail.address,
+        name: this.sender.mail.name
       },
       content: content.toString()
     })

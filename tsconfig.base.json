@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "@satorijs/element",
     "target": "es2020",
     "module": "commonjs",
     "declaration": true,

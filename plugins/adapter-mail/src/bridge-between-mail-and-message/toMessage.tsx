@@ -17,7 +17,7 @@ const resolveAttachment = (url: string, attachments: Attachment[]): Buffer | und
 }
 
 const extractMessageFromHtml = async ({ html, attachments }: IncomingMail) => {
-  const segments = []
+  const segments: s[] = []
   let skip = false
   const parser = new htmlparser2.Parser({
     onopentag (name, attribs, isImplied) {
@@ -30,16 +30,16 @@ const extractMessageFromHtml = async ({ html, attachments }: IncomingMail) => {
         const src = attribs.src
         const b64 = resolveAttachment(src, attachments)?.toString('base64')
         skip = false
-        return segments.push(s('image', { url: (b64 && `data:image/png;base64, ${b64}`) || src }))
-        // return <image url={(b64 && `data:image/png;base64, ${b64}`) || src}></image>
+        // return segments.push(s('image', { url: (b64 && `data:image/png;base64, ${b64}`) || src }))
+        return segments.push(<image url={(b64 && `data:image/png;base64, ${b64}`) || src}></image>)
       }
       skip = false
     },
-    ontext (data) {
+    ontext (data: string) {
       const trimmed = data.trim()
       if (trimmed !== '') {
         if (skip) { return }
-        segments.push(s('text', { content: trimmed }))
+        segments.push(<>{trimmed}</>)
       }
     }
   })

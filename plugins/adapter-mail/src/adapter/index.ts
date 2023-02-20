@@ -23,10 +23,10 @@ export class MailBot extends Bot {
   constructor (ctx, config: Config) {
     const address = new LocalMailAddress({ address: config.address, name: config.name })
     let sender: Sender.BaseSender, receiver: Receiver.BaseReceiver
-    if (!config) throw new Error('I lost my config')
-    switch (config.sender) {
+    if (!config) throw new Error('missing config')
+    switch (config.protocol.sender) {
       case 'node-mailer-smtp': {
-        sender = new Sender.NodeMailer(config.senderConfig, address)
+        sender = new Sender.NodeMailer(config.sender, address)
         break
       }
       case 'test': {
@@ -37,13 +37,13 @@ export class MailBot extends Bot {
         throw new Error('unknown adapter')
       }
     }
-    switch (config.receiver) {
+    switch (config.protocol.receiver) {
       case 'imap': {
-        receiver = new Receiver.IMAPReceiver(config.receiverConfig, address)
+        receiver = new Receiver.IMAPReceiver(config.receiver, address)
         break
       }
       case 'test': {
-        receiver = new Receiver.TestReceiver(config.receiverConfig)
+        receiver = new Receiver.TestReceiver(config)
         break
       }
       default: {

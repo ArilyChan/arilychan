@@ -3,7 +3,8 @@ import { Config, MailBot } from './adapter'
 
 const { union, object, string, const: literal, natural, boolean, intersect } = Schema
 
-const TestEntry = literal('test').description('test purpose only')
+const TestEntry = literal('test').description('test')
+const Disabled = literal('disabled').description('disable')
 const NodemailerEntry = literal('node-mailer-smtp').description('nodemailer createTransport smtp')
 const IMAPEntry = literal('imap').description('IMAP transport w/ node-imap')
 const Port = natural().max(65535)
@@ -14,67 +15,95 @@ const Port = natural().max(65535)
 // })
 
 export const schema = intersect([
+  // base config
   object({
     name: string(),
     address: string().required().role('email')
-  }),
-  object({
-    // address: dict(string(), string()).description('name - address pair'),
-    sender: union([
-      TestEntry,
-      NodemailerEntry
-    ]).description('send protocol').role('radio'),
-    receiver: union([
-      TestEntry,
-      IMAPEntry
-    ]).description('send protocol').role('radio')
-  }),
+  }).description('dispName & account'),
 
-  union([
+  // sender
+  intersect([
     object({
-      sender: TestEntry.required()
-    }),
-    object({
-      sender: NodemailerEntry.required(),
-      senderConfig: object({
-        host: string(),
-        port: Port.default(465),
-        secure: boolean().default(true),
-        auth: object({
-          user: string(),
-          pass: string().role('secret')
+      protocol: object({
+        sender: union([
+          NodemailerEntry,
+          TestEntry,
+          Disabled
+        ]).description('protocol').role('radio')
+      })
+    }).description('sender'),
+    union([
+      object({
+        protocol: object({
+          sender: TestEntry
+        }).required()
+      }),
+      object({
+        protocol: object({
+          sender: NodemailerEntry
+        }).required(),
+        sender: object({
+          host: string(),
+          port: Port.default(465),
+          secure: boolean().default(true),
+          auth: object({
+            user: string(),
+            pass: string().role('secret')
+          })
         })
       })
-    })
-  ]).description('sender opt'),
+    ])
+  ]),
 
-  union([
+  // receiver
+  intersect([
     object({
-      receiver: TestEntry
-    }),
-    object({
-      receiver: IMAPEntry,
-      receiverConfig: object({
-        user: string(),
-        password: string().role('secret'),
-        host: string(),
-        port: Port.default(993),
-        tls: boolean().default(true)
+      protocol: object({
+        receiver: union([
+          IMAPEntry,
+          TestEntry,
+          Disabled
+        ]).description('protocol').role('radio')
       })
-    })
-  ]).description('receiver opt')
+    }).description('receiver'),
+    union([
+      object({
+        protocol: object({
+          receiver: TestEntry
+        }).required()
+      }),
+      object({
+        protocol: object({
+          receiver: IMAPEntry
+        }).required(),
+        receiver: object({
+          user: string(),
+          password: string().role('secret'),
+          host: string(),
+          port: Port.default(993),
+          tls: boolean().default(true)
+        })
+      })
+    ])
+  ])
 ])
+
+//
 
 export type Options = {
   address: string,
   name: string
 } & (
   | {
-    sender: 'test',
+    protocol: {
+      sender: 'test'
+    }
   }
   | {
-    sender: 'node-mailer-smtp',
-    senderConfig: {
+    protocol: {
+      sender: 'node-mailer-smtp'
+    },
+    sender: {
       host: string,
       port: number,
       secure: boolean,
@@ -86,15 +115,15 @@ export type Options = {
   }
 ) & (
     | {
-      receiver: 'test',
-      receiverConfig: {
-        name: string,
-        address: string
+      protocol: {
+        receiver: 'test',
       }
     }
     | {
-      receiver: 'imap',
-      receiverConfig: {
+      protocol: {
+        receiver: 'imap',
+      }
+      receiver: {
         user: string,
         password: string
       }

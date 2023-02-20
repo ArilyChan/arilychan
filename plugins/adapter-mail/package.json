@@ -29,5 +29,6 @@
     "nodemailer": "^6.8.0",
     "nodemailer-html-to-text": "^3.2.0",
     "p-event": "^5.0.1"
-  }
+  },
+  "devDependencies": {}
 }

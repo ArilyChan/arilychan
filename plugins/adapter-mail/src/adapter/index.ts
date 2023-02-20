@@ -1,11 +1,11 @@
-import { IncomingMessage } from '../types/index'
+import { IncomingMessage } from '../types'
 import * as Receiver from '../cutting-edge-mail-client/receiver'
 import * as Sender from '../cutting-edge-mail-client/sender'
 import { Bot, Logger, Session, SendOptions, Universal } from 'koishi'
 import { Bridge } from '../bridge-between-mail-and-message'
 import MailClient from '../cutting-edge-mail-client'
 import { Fragment } from '@satorijs/element'
-import SMTPTransport from 'nodemailer/lib/smtp-transport'
+// import SMTPTransport from 'nodemailer/lib/smtp-transport'
 
 // type SenderConf = {
 //   nodemailer: ConstructorParameters<typeof Sender.NodeMailer>,
@@ -121,7 +121,7 @@ export class MailBot extends Bot {
 
   async sendMessage (channelId: string, content: string) {
     // 这里应该执行发送操作
-    this.logger.debug('send:', content)
+    this.logger.info('send:', content)
     // Bridge.send(, content)
     return []
   }

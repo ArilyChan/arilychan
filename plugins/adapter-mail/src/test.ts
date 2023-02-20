@@ -1,4 +1,4 @@
-import { MailAddress } from './cutting-edge-mail-client/address/index'
+import { MailAddress } from './cutting-edge-mail-client/address'
 
 import * as Senders from './cutting-edge-mail-client/sender'
 import * as Receivers from './cutting-edge-mail-client/receiver'

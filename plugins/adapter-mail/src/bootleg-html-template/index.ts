@@ -6,6 +6,7 @@ export function withDefault (_def) {
 export function html (template, ...args) {
   const defaultToEmptyString = withDefault('')
   if (!Array.isArray(template)) template = [template]
+  console.log(template)
   return template.map((str, i) => {
     const variable = args[i]
     if (Array.isArray(variable)) {
@@ -18,7 +19,7 @@ export function html (template, ...args) {
       case 'image':
         return defaultToEmptyString/* html */`${str}<img src="${variable.data.url}">`
       default:
-        return defaultToEmptyString/* html */`${str}<!-- unknown type: ${variable.type} -->`
+        return defaultToEmptyString/* html */`${str}${variable?.data?.content}<!-- unknown type: ${variable.type} -->`
     }
   }).join('')
 }

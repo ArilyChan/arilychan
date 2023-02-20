@@ -2,9 +2,10 @@ import nodemailer from 'nodemailer'
 import { OutgoingMail } from '../../types'
 import { BaseSender } from './base-sender'
 import { LocalMailAddress } from '../address'
-import { htmlToText } from 'nodemailer-html-to-text'
+// import { htmlToText } from 'nodemailer-html-to-text'
 
 type SMTPConfig = {
+  address?: string,
   host: string,
   port: number
   secure: boolean
@@ -27,7 +28,7 @@ export class NodeMailer extends BaseSender {
     this.conn = nodemailer.createTransport({
       ...this.#constructionArg
     })
-    this.conn.use('compile', htmlToText({}))
+    // this.conn.use('compile', htmlToText({}))
     await this.conn.verify()
   }
 

@@ -1,4 +1,4 @@
-import { Options } from '../index'
+import { Options } from '../'
 export default function TryMode (options: Options) {
   const defaultServer = Object.entries(options.server).find(([server, conf]) => conf.default)?.[0]
   // eslint-disable-next-line no-unused-vars

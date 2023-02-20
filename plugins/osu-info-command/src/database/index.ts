@@ -2,7 +2,7 @@ import { Context } from 'koishi'
 // import injectOsuOptions from '../command-inject-options'
 import TryMode from '../utils/tryMode'
 import TryUser from '../utils/tryUser'
-import { Options } from '../index'
+import { Options } from '../'
 export const name = 'osu-info-command-extend-database'
 type UserServerBind = Record<string, {
   mode?: string,

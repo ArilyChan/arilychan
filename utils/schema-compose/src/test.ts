@@ -1,4 +1,4 @@
-import { schema } from "./index";
+import { schema } from '.'
 const a = schema`
 @description('基础配置')
 {

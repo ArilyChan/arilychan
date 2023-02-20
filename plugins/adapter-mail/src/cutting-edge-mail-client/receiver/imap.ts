@@ -1,12 +1,11 @@
-import { MailAddress } from '../address/index'
-import { IncomingMail } from '../../types/index'
+import { MailAddress, LocalMailAddress } from '../address'
+import { IncomingMail } from '../../types'
 import { Logger } from 'koishi'
 import { BaseReceiver } from './base-receiver'
 import { simpleParser } from 'mailparser'
 
 import IMAP from 'node-imap'
 
-import { LocalMailAddress } from '../address'
 // import { pEvent } from 'p-event'
 
 export class IMAPReceiver<T extends never> extends BaseReceiver<T> {

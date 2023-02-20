@@ -1,5 +1,5 @@
 import { Session } from 'koishi'
-import { Options } from '../index'
+import { Options } from '../'
 import { unescapeOnebotSpecialChars } from './unescape'
 export default function tryUser (options: Options) {
   const defaultServer = Object.entries(options.server).find(([server, conf]) => conf.default)?.[0]

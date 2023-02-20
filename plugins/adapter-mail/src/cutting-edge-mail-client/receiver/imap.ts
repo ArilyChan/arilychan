@@ -6,8 +6,6 @@ import { simpleParser } from 'mailparser'
 
 import IMAP from 'node-imap'
 
-// import { pEvent } from 'p-event'
-
 export class IMAPReceiver<T extends never> extends BaseReceiver<T> {
   logger = new Logger('adapter-mail/debug-client/receiver/imap')
   imap: IMAP
@@ -35,8 +33,8 @@ export class IMAPReceiver<T extends never> extends BaseReceiver<T> {
             simpleParser(stream, async (err, parsed) => {
               if (err) reject(err)
 
-              let to: LocalMailAddress[]
-              let from: MailAddress<false>[]
+              const to: LocalMailAddress[] = []
+              const from: MailAddress<false>[] = []
 
               if (!parsed.to) reject(new Error('ParseError: <to> missing'))
               if (!parsed.from) reject(new Error('ParseError: <from> missing'))
@@ -51,7 +49,7 @@ export class IMAPReceiver<T extends never> extends BaseReceiver<T> {
                 iterateTo(parsed.to)
               }
 
-              parsed.from.value.forEach(mail => from.push(new MailAddress({ name: mail.name, address: mail.address || 'unknown@unknown' })))
+              parsed.from?.value.forEach(mail => from.push(new MailAddress({ name: mail.name, address: mail.address || 'unknown@unknown' })))
 
               if (from.length > 1) reject(new Error('more than one sender???'))
 
@@ -60,7 +58,6 @@ export class IMAPReceiver<T extends never> extends BaseReceiver<T> {
                 to,
                 from: from[0]
               })
-              // console.log(parsed)
             })
           })
         })
@@ -79,15 +76,18 @@ export class IMAPReceiver<T extends never> extends BaseReceiver<T> {
 
   async prepare () {
     const pPrepare = new Promise<void>((resolve, reject) => {
-      this.imap.on('ready', () => {
+      const onReady = () => {
         this.readyState = true
         resolve()
-      })
-    })
-    pPrepare.then(() => {
-      this.imap.on('end', () => {
+      }
+      const onEnd = () => {
+        this.imap.off('ready', onReady)
+        this.imap.off('end', onEnd)
         this.readyState = false
-      })
+      }
+      this.imap.on('ready', onReady)
+      this.imap.on('end', onEnd)
     })
+    return pPrepare
   }
 }

@@ -5,64 +5,10 @@ import { Bot, Logger, Session, SendOptions, Universal } from 'koishi'
 import { Bridge } from '../bridge-between-mail-and-message'
 import MailClient from '../cutting-edge-mail-client'
 import { Fragment } from '@satorijs/element'
-// import SMTPTransport from 'nodemailer/lib/smtp-transport'
+import { Options } from '../'
+import { LocalMailAddress } from '../cutting-edge-mail-client/address'
 
-// type SenderConf = {
-//   nodemailer: ConstructorParameters<typeof Sender.NodeMailer>,
-//   test: ConstructorParameters<typeof Sender.TestSender>
-// }
-
-// type ReceiverConf = {
-//   imap: ConstructorParameters<typeof Receiver.IMAPReceiver>,
-//   test: ConstructorParameters<typeof Receiver.TestReceiver>
-// }
-
-// type RecordToTuples<TRec extends Record<string, any[]>> = {
-//   [K in keyof TRec]: [K, ...TRec[K]]
-// }[keyof TRec]
-
-// export interface Config extends Bot.Config {
-//   sender: RecordToTuples<SenderConf>
-//   receiver: RecordToTuples<ReceiverConf>
-// }
-
-export type Config = Bot.Config & (
-  | {
-    sender: 'test',
-    senderConfig: {
-      name: string,
-      address: string
-    }
-  }
-  | {
-    sender: 'node-mailer-smtp',
-    senderConfig: {
-      address?: string,
-      host: string,
-      port: number,
-      secure: boolean,
-      auth: {
-        user: string,
-        pass: string
-      }
-    }
-  }
-) & (
-    | {
-      receiver: 'test',
-      receiverConfig: {
-        name: string,
-        address: string
-      }
-    }
-    | {
-      receiver: 'imap',
-      receiverConfig: {
-        user: string,
-        password: string
-      }
-    }
-  )
+export type Config = Bot.Config & Options
 export class MailBot extends Bot {
   logger: Logger = new Logger('adapter-mail')
 
@@ -79,11 +25,11 @@ export class MailBot extends Bot {
     if (!config) throw new Error('I lost my config')
     switch (config.sender) {
       case 'node-mailer-smtp': {
-        sender = new Sender.NodeMailer(config.senderConfig)
+        sender = new Sender.NodeMailer(config.senderConfig, new LocalMailAddress({ address: config.address || config.senderConfig.auth.user }))
         break
       }
       case 'test': {
-        sender = new Sender.TestSender(config.senderConfig)
+        sender = new Sender.TestSender(config)
         break
       }
       default: {

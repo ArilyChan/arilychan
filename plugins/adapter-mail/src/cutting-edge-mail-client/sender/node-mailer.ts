@@ -5,7 +5,6 @@ import { LocalMailAddress } from '../address'
 // import { htmlToText } from 'nodemailer-html-to-text'
 
 type SMTPConfig = {
-  address?: string,
   host: string,
   port: number
   secure: boolean
@@ -18,10 +17,10 @@ export class NodeMailer extends BaseSender {
   mail: LocalMailAddress
   conn: nodemailer.Transporter
   #constructionArg: SMTPConfig
-  constructor (arg: SMTPConfig) {
+  constructor (arg: SMTPConfig, address: LocalMailAddress) {
     super()
     this.#constructionArg = arg
-    this.mail = new LocalMailAddress({ address: arg.address || arg.auth.user })
+    this.mail = address
   }
 
   async prepare () {

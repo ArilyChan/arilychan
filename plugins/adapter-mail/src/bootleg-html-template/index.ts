@@ -6,7 +6,6 @@ export function withDefault (_def) {
 export function html (template, ...args) {
   const defaultToEmptyString = withDefault('')
   if (!Array.isArray(template)) template = [template]
-  console.log(template)
   return template.map((str, i) => {
     const variable = args[i]
     if (Array.isArray(variable)) {

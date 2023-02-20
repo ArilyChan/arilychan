@@ -21,11 +21,12 @@ export class MailBot extends Bot {
   _subscriber: this['incomingMessage']
 
   constructor (ctx, config: Config) {
+    const address = new LocalMailAddress({ address: config.address, name: config.name })
     let sender: Sender.BaseSender, receiver: Receiver.BaseReceiver
     if (!config) throw new Error('I lost my config')
     switch (config.sender) {
       case 'node-mailer-smtp': {
-        sender = new Sender.NodeMailer(config.senderConfig, new LocalMailAddress({ address: config.address || config.senderConfig.auth.user }))
+        sender = new Sender.NodeMailer(config.senderConfig, address)
         break
       }
       case 'test': {
@@ -38,7 +39,7 @@ export class MailBot extends Bot {
     }
     switch (config.receiver) {
       case 'imap': {
-        receiver = new Receiver.IMAPReceiver(config.receiverConfig)
+        receiver = new Receiver.IMAPReceiver(config.receiverConfig, address)
         break
       }
       case 'test': {
@@ -49,7 +50,6 @@ export class MailBot extends Bot {
         throw new Error('unknown receiver')
       }
     }
-    console.log(sender)
     const selfId = sender.mail.address
     super(ctx, {
       platform: 'mail',
@@ -57,39 +57,42 @@ export class MailBot extends Bot {
     })
     this.receiver = receiver
     this.sender = sender
-
-    this.status = 'connect'
-    this.client.useReceiver(receiver)
-    this.client.useSender(sender)
-    this.bridge.useClient(this.client)
     this.subscribe()
   }
 
-  async sendMessage (channelId: string, content: string) {
-    // 这里应该执行发送操作
-    this.logger.info('send:', content)
-    // Bridge.send(, content)
-    return []
-  }
-
   async subscribe () {
+    this.logger.debug('connecting')
+    this.status = 'connect'
+    await Promise.all([
+      this.client.useReceiver(this.receiver),
+      this.client.useSender(this.sender)
+    ])
+    this.bridge.useClient(this.client)
     this._subscriber = this.incomingMessage.bind(this)
     this.bridge.subscribe(this._subscriber)
+
     this.bridge.bridge()
 
+    this.logger.debug('connected')
     this.status = 'online'
-    const unread = await this.receiver.fetch()
-    unread.map(mail => this.receiver.incomingChain(mail))
   }
 
   incomingMessage (message: IncomingMessage) {
+    this.logger.debug('received message: ' + message.content)
     const { from: { id: userId, name: nickname }, content, id } = message
     const session = new Session(this, { author: { userId, nickname }, content })
     session.id = id
     this.dispatch(session)
   }
 
+  async sendMessage (channelId: string, content: string) {
+    return this.sendPrivateMessage(channelId, content)
+  }
+
   async sendPrivateMessage (userId: string, content: Fragment, options?: SendOptions) {
+    if (options) {
+      throw new Error('send options not supported yet')
+    }
     await this.bridge.sendMessage({
       to: {
         id: userId
@@ -119,7 +122,9 @@ export class MailBot extends Bot {
   }
 
   getGuild (guildId: string): Promise<Universal.Guild> {
-    return Promise.resolve(null)
+    return Promise.resolve({
+      guildId: 'never'
+    })
   }
 
   getGuildList (): Promise<Universal.Guild[]> {
@@ -127,7 +132,9 @@ export class MailBot extends Bot {
   }
 
   getGuildMember () {
-    return Promise.resolve(null)
+    return Promise.resolve({
+      userId: 'never'
+    })
   }
 
   getGuildMemberList () {
@@ -135,7 +142,9 @@ export class MailBot extends Bot {
   }
 
   getChannel () {
-    return Promise.resolve(null)
+    return Promise.resolve({
+      channelId: 'never'
+    })
   }
 
   getChannelList () {

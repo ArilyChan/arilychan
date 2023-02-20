@@ -89,16 +89,16 @@ export class Bridge {
           <p>${this.#separator}</p>
           <section class="bot-reply-container">${segs}</section>
         </body>
-        #k-id=${messageId}#
       </html>
     `
-    const message = {
+
+    this.client.send({
       to: new MailAddress({ address: to.id, name: to.name }),
       from: new LocalMailAddress({ address: from.id, name: from.name }),
-      html: h
-    }
-    // console.log('sending message', message)
-    this.client.send(message)
+      html: h,
+      subject: `#k-id=${messageId}#`,
+      messageId
+    })
   }
 }
 

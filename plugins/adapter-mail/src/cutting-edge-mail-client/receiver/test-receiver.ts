@@ -6,7 +6,7 @@ import { LocalMailAddress, MailAddress } from '../address'
 
 export type Options = ConstructorParameters<typeof LocalMailAddress>
 export class TestReceiver<T extends never> extends BaseReceiver<T> {
-  logger = new Logger('adapter-mail/debug-client/receiver')
+  logger = new Logger('adapter-mail/receiver')
 
   mail: LocalMailAddress
 
@@ -16,7 +16,7 @@ export class TestReceiver<T extends never> extends BaseReceiver<T> {
   }
 
   async fetch () {
-    this.logger.info('receiving unread messages')
+    this.logger.debug('receiving unread messages')
     return new Promise<IncomingMail[]>((resolve, reject) => {
       setTimeout(() => resolve([this.createFakeMail({
         html: 'test message'
@@ -25,7 +25,7 @@ export class TestReceiver<T extends never> extends BaseReceiver<T> {
   }
 
   async prepare () {
-    this.logger.info('preparing receiver')
+    this.logger.debug('preparing receiver')
   }
 
   async _fakeMail (context: Partial<IncomingMail>) {

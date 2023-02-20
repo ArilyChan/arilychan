@@ -31,6 +31,7 @@ const extractMessageFromHtml = async ({ html, attachments }: IncomingMail) => {
         const b64 = resolveAttachment(src, attachments)?.toString('base64')
         skip = false
         return segments.push(s('image', { url: (b64 && `data:image/png;base64, ${b64}`) || src }))
+        // return <image url={(b64 && `data:image/png;base64, ${b64}`) || src}></image>
       }
       skip = false
     },
@@ -52,20 +53,24 @@ const extractMessage = (mail: IncomingMail) => {
   else return Promise.reject(Error('unable to process message'))
 }
 
-const separate = (_separator: string, idTemplate: RegExp) => async (text: string) => {
-  let content
-  const separator = new RegExp(`(?<before>.*)(${_separator})(?<after>.*)`, 's')
-  const matchResult = text.match(separator)
+// const separate = (_separator: string, idTemplate: RegExp) => async (text: string) => {
+//   let content
+//   const separator = new RegExp(`(?<before>.*)(${_separator})(?<after>.*)`, 's')
+//   const matchResult = text.match(separator)
 
-  content = matchResult ? matchResult.groups?.before || '' + matchResult.groups?.after : text
-  const ids = idTemplate.exec(content)
-  if (ids) content = content.replace(idTemplate, '')
-  return { content, id: ids?.[1] }
-}
+//   content = matchResult ? matchResult.groups?.before || '' + matchResult.groups?.after : text
+//   const ids = idTemplate.exec(content)
+//   if (ids) content = content.replace(idTemplate, '')
+//   return { content, id: ids?.[1] }
+// }
 
 export function pipeline ({ separator = '% reply beyond this line %', messageIdExtractor = /#k-id=([^$]+)#/ }: {separator?: string, messageIdExtractor?: RegExp} = { }) {
   return async (mail: IncomingMail) => {
-    const { content, id } = await Promise.resolve(mail).then(extractMessage).then(separate(separator, messageIdExtractor))
+    //  idTemplate: RegExp
+    const content = await extractMessage(mail)
+    const ids = await messageIdExtractor.exec(content)
+    const id = ids?.[1]
+    // .then(separate(separator, messageIdExtractor))
     return { content, id }
   }
 }

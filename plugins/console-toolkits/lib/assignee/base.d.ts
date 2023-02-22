@@ -18,4 +18,4 @@ export interface PlatformRow {
     platform: string;
     selects: Array<Partial<ChannelRow> & Pick<ChannelRow, 'id'>>;
 }
-export declare type SearchChannelResult = ChannelRow | AssigneeRow | PlatformRow;
+export type SearchChannelResult = ChannelRow | AssigneeRow | PlatformRow;

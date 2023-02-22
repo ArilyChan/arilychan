@@ -1,7 +1,7 @@
 import { PuppeteerLifeCycleEvent } from 'puppeteer';
 import { Schema } from 'koishi';
 export declare const name = "koishi-plugin-puppeteer-cluster";
-declare type config = {
+type config = {
     cluster: {
         launch: {
             concurrency: number;

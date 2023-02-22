@@ -37,7 +37,6 @@ export class NodeMailer extends BaseSender {
   async send (mail: OutgoingMail) {
     if (!this.mail && !mail.from) throw new Error('you didn\'t provide an address?')
     if (!mail.html) throw new Error('no content')
-    console.trace()
     return this.conn.sendMail({
       ...mail,
 

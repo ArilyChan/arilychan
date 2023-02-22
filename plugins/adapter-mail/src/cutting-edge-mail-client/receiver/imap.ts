@@ -2,10 +2,18 @@ import { MailAddress, LocalMailAddress } from '../address'
 import { IncomingMail } from '../../types'
 import { Logger } from 'koishi'
 import { BaseReceiver } from './base-receiver'
-import { simpleParser } from 'mailparser'
+import { AddressObject, EmailAddress, simpleParser } from 'mailparser'
 
 import IMAP from 'node-imap'
 
+function toAddress (addr: AddressObject | AddressObject[]): EmailAddress[] | undefined {
+  if (Array.isArray(addr)) {
+    const addrs = addr.map(toAddress)
+    const flat = addrs.flat().filter(a => a) as EmailAddress[]
+    return flat.length > 0 ? flat : undefined
+  }
+  return addr.value.length > 0 ? addr.value : undefined
+}
 export class IMAPReceiver<T extends never> extends BaseReceiver<T> {
   logger = new Logger('adapter-mail/receiver/imap')
   imap: IMAP
@@ -14,7 +22,14 @@ export class IMAPReceiver<T extends never> extends BaseReceiver<T> {
 
   constructor (option: ConstructorParameters<typeof IMAP>[0], address: LocalMailAddress) {
     super()
-    this.imap = new IMAP(option)
+    this.imap = new IMAP({
+      keepalive: {
+        interval: 3600,
+        idleInterval: 3600,
+        forceNoop: true
+      },
+      ...option
+    })
     this.mail = address
   }
 
@@ -84,9 +99,12 @@ export class IMAPReceiver<T extends never> extends BaseReceiver<T> {
                 if (from.length > 1) reject(new Error('more than one sender???'))
 
                 mails.push({
-                  ...parsed,
+                  // ...parsed,
+                  // cc: toAddress(parsed.cc),
+                  subject: parsed.subject,
                   to,
-                  from: from[0]
+                  from: from[0],
+                  html: parsed.html || undefined
                 })
                 resolve()
               })
@@ -122,17 +140,23 @@ export class IMAPReceiver<T extends never> extends BaseReceiver<T> {
   async prepare () {
     this.logger.debug('connecting to imap server')
     const p = new Promise<void>((resolve, reject) => {
-      const onEnd = () => {
+      const onEnd = (...args) => {
+        console.log(args)
+        this.logger.info('disconnected')
         this.readyState = false
       }
       const onReady = () => {
-        this.logger.debug('connected')
+        this.logger.info('connected')
         this.readyState = true
         this.imap.off('error', reject)
         resolve()
       }
       this.imap.once('ready', onReady)
-      this.imap.once('error', reject)
+      this.imap.once('error', (err) => {
+        this.logger.error(err)
+        onEnd()
+        reject(err)
+      })
       this.imap.once('end', onEnd)
       this.imap.connect()
     })

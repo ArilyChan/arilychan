@@ -44,18 +44,12 @@ testReceiver._fakeMail({
       ),
 
       cid: 'attach1.jpg', // should be as unique as possible
-      related: true,
-      type: 'attachment',
       contentType: 'image/png',
-      contentDisposition: 'attachment',
-      headers: new Map(),
-      headerLines: [],
-      checksum: '',
-      size: 9
+      contentDisposition: 'attachment'
     }]
 })
 
 test.subscribe((message) => {
   console.log('received message:', message)
-  test.sendMessage({ to: { id: message.from.id, name: message.from.name }, from: { id: 'receiver@test.js', name: 'tester' }, content: message.content })
+  test.sendMessage({ to: { id: message.from.id, name: message.from.name }, from: { id: 'receiver@test.js', name: 'tester' }, content: message.elements })
 })

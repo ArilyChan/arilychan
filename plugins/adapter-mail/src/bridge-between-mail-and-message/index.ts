@@ -2,8 +2,8 @@ import { LocalMailAddress, MailAddress } from '../cutting-edge-mail-client/addre
 import MailClient from '../cutting-edge-mail-client'
 import * as Senders from '../cutting-edge-mail-client/sender'
 import * as Receivers from '../cutting-edge-mail-client/receiver'
-import { MessageSubscriber, IncomingMail } from '../types'
-import { segment, Logger } from 'koishi'
+import { MessageSubscriber, IncomingMail, ReceivedMessage } from '../types'
+import { Logger, Fragment } from 'koishi'
 import { pipeline as toMessagePipeline } from './toMessage'
 import { html } from '../bootleg-html-template'
 
@@ -61,27 +61,27 @@ export class Bridge {
     }
   }
 
-  async toMessage (mail: IncomingMail) {
+  async toMessage (mail: IncomingMail): Promise<ReceivedMessage | undefined> {
     const result = await this.#toMessagePipeline(mail)
 
     if (!result) {
       return
     }
 
-    const { content, id } = result
+    const { content: elements, id } = result
     return {
       from: {
         id: mail.from.address,
         name: mail.from.name
       },
-      content,
+      elements,
       id
     }
   }
 
-  async sendMessage ({ to, from, content }: { to: { id: string; name?: string}, from: { id: string, name?: string } ; content: string }) {
+  async sendMessage ({ to, from, content }: { to: { id: string; name?: string}, from: { id: string, name?: string }; content: Fragment }) {
     const messageId = (Math.random() * 114514 * 1919810).toFixed()
-    const segs = segment.parse(content)
+    // const segs = segment.parse(content)
     const h = html`
       <!DOCTYPE html>
       <html>
@@ -94,17 +94,15 @@ export class Bridge {
         </head>
         <body>
           <p>${this.#separator}</p>
-          <section class="bot-reply-container">${segs}</section>
-          #k-id=${messageId}#
+          <section class="bot-reply-container">${content}</section>
         </body>
       </html>
     `
-
     this.client.send({
       to: new MailAddress({ address: to.id, name: to.name }),
       from: new LocalMailAddress({ address: from.id, name: from.name }),
       html: h,
-      // subject: `#k-id=${messageId}#`,
+      subject: `#k-id=${messageId}#`,
       messageId
     })
   }

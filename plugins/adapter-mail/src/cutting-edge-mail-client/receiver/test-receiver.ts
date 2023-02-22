@@ -43,8 +43,6 @@ export class TestReceiver<T extends never> extends BaseReceiver<T> {
       }),
       subject: 'hello',
       attachments: [],
-      headers: new Map(),
-      headerLines: [],
       html: '',
       ...context
     }

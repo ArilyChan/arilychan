@@ -1,4 +1,4 @@
-import { IncomingMessage } from '../types'
+import { ReceivedMessage } from '../types'
 import * as Receiver from '../cutting-edge-mail-client/receiver'
 import * as Sender from '../cutting-edge-mail-client/sender'
 import { Bot, Logger, Session, SendOptions, Universal, Fragment } from 'koishi'
@@ -17,7 +17,7 @@ export class MailBot extends Bot {
   sender: Sender.BaseSender
   receiver: Receiver.BaseReceiver
 
-  _subscriber: this['incomingMessage']
+  _subscriber: this['receivedMessage']
 
   constructor (ctx, config: Config) {
     const address = new LocalMailAddress({ address: config.address, name: config.name })
@@ -74,7 +74,7 @@ export class MailBot extends Bot {
       this.client.useSender(this.sender)
     ])
     this.bridge.useClient(this.client)
-    this._subscriber = this.incomingMessage.bind(this)
+    this._subscriber = this.receivedMessage.bind(this)
     this.bridge.subscribe(this._subscriber)
 
     this.bridge.bridge()
@@ -83,15 +83,15 @@ export class MailBot extends Bot {
     this.status = 'online'
   }
 
-  incomingMessage (message: IncomingMessage) {
-    this.logger.debug('received message: ' + message.content)
-    const { from: { id: userId, name: nickname }, content, id } = message
-    const session = new Session(this, { author: { userId, nickname }, content })
+  receivedMessage (message: ReceivedMessage) {
+    this.logger.debug('received message: ' + message.elements)
+    const { from: { id: userId, name: nickname }, elements, id } = message
+    const session = new Session(this, { author: { userId, nickname }, elements })
     session.id = id
     this.dispatch(session)
   }
 
-  async sendMessage (channelId: string, content: string) {
+  async sendMessage (channelId: string, content: Fragment) {
     return this.sendPrivateMessage(channelId, content)
   }
 
@@ -107,7 +107,7 @@ export class MailBot extends Bot {
         id: this.sender.mail.address,
         name: this.sender.mail.name
       },
-      content: content.toString()
+      content
     })
     return <string[]>[]
   }

@@ -1,9 +1,11 @@
-import type { Attachment } from 'mailparser'
+import type { Attachment } from 'nodemailer/lib/mailer'
 import { IncomingMail } from '../types'
-import { Logger, segment as s } from 'koishi'
+import { Logger, segment } from 'koishi'
 import * as htmlparser2 from 'htmlparser2'
 
-const resolveAttachment = (url: string, attachments: Attachment[]): Buffer | undefined => {
+const logger = new Logger('adapter-mail/transform/toMessage')
+
+const resolveAttachment = (url: string, attachments: Attachment[] | undefined) => {
   if (!attachments?.length) return
   if (!url.startsWith('cid:')) {
     return
@@ -16,7 +18,7 @@ const resolveAttachment = (url: string, attachments: Attachment[]): Buffer | und
 }
 
 const extractMessageFromHtml = async ({ html, text, attachments }: IncomingMail) => {
-  const segments: s[] = []
+  const segments: segment[] = []
   let skipInner = false
   const parser = new htmlparser2.Parser({
     onopentag (name: string, attribs: Record<string, string>) {
@@ -43,34 +45,71 @@ const extractMessageFromHtml = async ({ html, text, attachments }: IncomingMail)
     }
   })
   html && parser.write(html)
-  return segments.join('\n') || text
+  return segments || (text && <text>{text}</text>) || undefined
 }
 const extractMessage = (mail: IncomingMail) => {
   if (mail.html) {
     return extractMessageFromHtml(mail as IncomingMail)
-  } else if (mail.text) return mail.text
+  } else if (mail.text) return [<text>mail.text</text>] as segment[]
   else return Promise.reject(Error('unable to process message'))
 }
 
-const separate = (_separator: string, idTemplate: RegExp) => async (text: string) => {
-  const separator = new RegExp(`(?<before>.*)(${_separator})(?<after>.*)`, 's')
-  const matchResult = text.match(separator)
+// TODO maybe fix this?
+const separate = (_separator: string, idTemplate: RegExp) => async (text: segment[]) => {
+  // return text.reduce<Fragment[]>((acc, fragment) => {
+  //
+  //
 
-  text = matchResult ? matchResult.groups?.before || '' + matchResult.groups?.after : text
-  const ids = idTemplate.exec(text)
-  if (ids) text = text.replace(idTemplate, '')
-  return { content: text, id: ids?.[1] }
+  //   fragment = matchResult ? matchResult.groups?.before || '' + matchResult.groups?.after : fragment
+  //   const ids = idTemplate.exec(fragment)
+  //   if (ids) fragment = fragment.replace(idTemplate, '')
+  //   return acc
+  // }, [])
+  const separator = new RegExp(`(?<before>.*)(${_separator})(?<after>.*)`, 's')
+  const before: segment[] = []
+  // const after: segment[] = []
+  for (const fragment of text) {
+    switch (fragment.type) {
+      case 'text': {
+        const matchResult = fragment.attrs.content.match(separator)
+        const _before = matchResult ? <text>matchResult.groups?.before</text> : fragment
+        before.push(_before)
+        continue
+      }
+      default: {
+        new Logger('adapter-mail/toMessage').debug(`unhandled fragment type: ${fragment.type}`)
+      }
+    }
+  }
+
+  return {
+    content: before,
+    id: 1
+  }
 }
 
 export function pipeline ({ separator = '% reply beyond this line %', messageIdExtractor = /#k-id=([^$]+)#/ }: {separator?: string, messageIdExtractor?: RegExp} = { }) {
   return async (mail: IncomingMail) => {
-    new Logger('adapter-mail/transform/toMessage').debug(mail.html)
-    new Logger('adapter-mail/transform/toMessage').debug(mail.text)
+    logger.debug(mail.html)
+    logger.debug(mail.text)
+
+    let id: string | undefined
     const content1 = await extractMessage(mail)
 
-    if (!content1) return
+    if (!content1) {
+      return
+    }
 
-    const { content, id } = await separate(separator, messageIdExtractor)(content1)
-    return { content, id }
+    const ids = mail.subject ? messageIdExtractor.exec(mail.subject) : undefined
+    if (ids) {
+      id = ids[1]
+    }
+
+    return {
+      content: content1,
+      id
+    }
+    // const { content, id } = await separate(separator, messageIdExtractor)(content1)
+    // return { content, id }
   }
 }

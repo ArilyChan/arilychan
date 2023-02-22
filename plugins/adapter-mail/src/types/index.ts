@@ -1,4 +1,7 @@
-import type { ParsedMail } from 'mailparser'
+import { segment } from 'koishi'
+// import type { ParsedMail } from 'mailparser'
+
+import _Mail from 'nodemailer/lib/mailer'
 export interface MailAddressInterface<Local extends boolean = boolean> {
   local?: Local
   name?: string
@@ -10,7 +13,7 @@ export interface LocalMailAddressInterface extends MailAddressInterface<true> {
   folders?: string[]
 }
 
-export interface Mail extends Omit<ParsedMail, 'from' | 'to' | 'html'>{
+export interface Mail extends Omit<_Mail.Options, 'from' | 'to' | 'html'>{
   from: MailAddressInterface
   to: MailAddressInterface | MailAddressInterface[],
   html?: string
@@ -24,15 +27,15 @@ export interface IncomingMail extends Mail {
   to: LocalMailAddressInterface | LocalMailAddressInterface[]
 }
 
-export interface IncomingMessage {
+export interface ReceivedMessage {
   from: {
     name?: string
     id: string
   }
-  content: string
+  elements: segment[]
   id?: any
 }
 
 export type MailSubscriber = (mail: IncomingMail) => void
 
-export type MessageSubscriber = (message: IncomingMessage) => void
+export type MessageSubscriber = (message: ReceivedMessage) => void

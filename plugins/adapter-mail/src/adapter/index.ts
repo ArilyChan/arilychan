@@ -1,10 +1,9 @@
 import { IncomingMessage } from '../types'
 import * as Receiver from '../cutting-edge-mail-client/receiver'
 import * as Sender from '../cutting-edge-mail-client/sender'
-import { Bot, Logger, Session, SendOptions, Universal } from 'koishi'
+import { Bot, Logger, Session, SendOptions, Universal, Fragment } from 'koishi'
 import { Bridge } from '../bridge-between-mail-and-message'
 import MailClient from '../cutting-edge-mail-client'
-import { Fragment } from '@satorijs/element'
 import { Options } from '../'
 import { LocalMailAddress } from '../cutting-edge-mail-client/address'
 
@@ -24,28 +23,35 @@ export class MailBot extends Bot {
     const address = new LocalMailAddress({ address: config.address, name: config.name })
     let sender: Sender.BaseSender, receiver: Receiver.BaseReceiver
     if (!config) throw new Error('missing config')
-    switch (config.protocol.sender) {
+
+    switch (config.senderProtocol) {
       case 'node-mailer-smtp': {
         sender = new Sender.NodeMailer(config.sender, address)
         break
       }
-      case 'test': {
+      case 'dummy': {
         sender = new Sender.TestSender(config)
         break
       }
+      // case 'disabled': {
+      //   break
+      // }
       default: {
         throw new Error('unknown adapter')
       }
     }
-    switch (config.protocol.receiver) {
+    switch (config.receiverProtocol) {
       case 'imap': {
         receiver = new Receiver.IMAPReceiver(config.receiver, address)
         break
       }
-      case 'test': {
+      case 'dummy': {
         receiver = new Receiver.TestReceiver(config)
         break
       }
+      // case 'disabled': {
+      //   break
+      // }
       default: {
         throw new Error('unknown receiver')
       }
@@ -103,7 +109,7 @@ export class MailBot extends Bot {
       },
       content: content.toString()
     })
-    return []
+    return <string[]>[]
   }
 
   async stop () {

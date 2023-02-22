@@ -2,7 +2,7 @@ import { LocalMailAddress, MailAddress } from '../cutting-edge-mail-client/addre
 import MailClient from '../cutting-edge-mail-client'
 import * as Senders from '../cutting-edge-mail-client/sender'
 import * as Receivers from '../cutting-edge-mail-client/receiver'
-import { MessageSubscriber, IncomingMail, IncomingMessage } from '../types'
+import { MessageSubscriber, IncomingMail } from '../types'
 import { segment, Logger } from 'koishi'
 import { pipeline as toMessagePipeline } from './toMessage'
 import { html } from '../bootleg-html-template'
@@ -54,14 +54,21 @@ export class Bridge {
   async handleReceivedMail (mail: IncomingMail) {
     try {
       const message = await this.toMessage(mail)
+      if (!message) return
       this.subscribers.forEach((subscriber) => subscriber(message))
     } catch (e) {
       this.logger.error(e)
     }
   }
 
-  async toMessage (mail: IncomingMail): Promise<IncomingMessage> {
-    const { content, id } = await this.#toMessagePipeline(mail)
+  async toMessage (mail: IncomingMail) {
+    const result = await this.#toMessagePipeline(mail)
+
+    if (!result) {
+      return
+    }
+
+    const { content, id } = result
     return {
       from: {
         id: mail.from.address,
@@ -88,6 +95,7 @@ export class Bridge {
         <body>
           <p>${this.#separator}</p>
           <section class="bot-reply-container">${segs}</section>
+          #k-id=${messageId}#
         </body>
       </html>
     `
@@ -96,7 +104,7 @@ export class Bridge {
       to: new MailAddress({ address: to.id, name: to.name }),
       from: new LocalMailAddress({ address: from.id, name: from.name }),
       html: h,
-      subject: `#k-id=${messageId}#`,
+      // subject: `#k-id=${messageId}#`,
       messageId
     })
   }

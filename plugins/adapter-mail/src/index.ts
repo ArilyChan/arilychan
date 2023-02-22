@@ -3,8 +3,8 @@ import { Config, MailBot } from './adapter'
 
 const { union, object, string, const: literal, natural, boolean, intersect } = Schema
 
-const TestEntry = literal('test').description('test')
-const Disabled = literal('disabled').description('disable')
+const TestEntry = literal('dummy').description('dummy')
+// const Disabled = literal('disabled').description('disabled')
 const NodemailerEntry = literal('node-mailer-smtp').description('nodemailer createTransport smtp')
 const IMAPEntry = literal('imap').description('IMAP transport w/ node-imap')
 const Port = natural().max(65535)
@@ -24,24 +24,19 @@ export const schema = intersect([
   // sender
   intersect([
     object({
-      protocol: object({
-        sender: union([
-          NodemailerEntry,
-          TestEntry,
-          Disabled
-        ]).description('protocol').role('radio')
-      })
+      senderProtocol: union([
+        NodemailerEntry,
+        TestEntry
+        // Disabled
+      ]).description('protocol to send emails').role('radio')
     }).description('sender'),
     union([
       object({
-        protocol: object({
-          sender: TestEntry
-        }).required()
+        senderProtocol: TestEntry.required()
+
       }),
       object({
-        protocol: object({
-          sender: NodemailerEntry
-        }).required(),
+        senderProtocol: NodemailerEntry.required(),
         sender: object({
           host: string(),
           port: Port.default(465),
@@ -58,24 +53,18 @@ export const schema = intersect([
   // receiver
   intersect([
     object({
-      protocol: object({
-        receiver: union([
-          IMAPEntry,
-          TestEntry,
-          Disabled
-        ]).description('protocol').role('radio')
-      })
+      receiverProtocol: union([
+        IMAPEntry,
+        TestEntry
+        // Disabled
+      ]).description('protocol to receive mails').role('radio')
     }).description('receiver'),
     union([
       object({
-        protocol: object({
-          receiver: TestEntry
-        }).required()
+        receiverProtocol: TestEntry.required()
       }),
       object({
-        protocol: object({
-          receiver: IMAPEntry
-        }).required(),
+        receiverProtocol: IMAPEntry.required(),
         receiver: object({
           user: string(),
           password: string().role('secret'),
@@ -92,37 +81,35 @@ export const schema = intersect([
 
 export type Options = {
   address: string,
-  name: string
+  name: string,
 } & (
-  | {
-    protocol: {
-      sender: 'test'
-    }
-  }
-  | {
-    protocol: {
-      sender: 'node-mailer-smtp'
-    },
-    sender: {
-      host: string,
-      port: number,
-      secure: boolean,
-      auth: {
-        user: string,
-        pass: string
-      }
-    }
-  }
-) & (
     | {
-      protocol: {
-        receiver: 'test',
-      }
+      senderProtocol: 'dummy'
     }
     | {
-      protocol: {
-        receiver: 'imap',
+      senderProtocol: 'disabled'
+    }
+    | {
+      senderProtocol: 'node-mailer-smtp'
+      sender: {
+        host: string,
+        port: number,
+        secure: boolean,
+        auth: {
+          user: string,
+          pass: string
+        }
       }
+    }
+  ) & (
+    | {
+      receiverProtocol: 'dummy',
+    }
+    | {
+      receiverProtocol: 'disabled',
+    }
+    | {
+      receiverProtocol: 'imap',
       receiver: {
         user: string,
         password: string

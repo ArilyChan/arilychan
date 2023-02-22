@@ -30,7 +30,6 @@ testReceiver._fakeMail({
       test2
       <p>% reply before this line %</p>
     </body>
-    #k-id=14583#
   </html>
   `,
   attachments: [

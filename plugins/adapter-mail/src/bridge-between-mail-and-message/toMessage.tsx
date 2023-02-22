@@ -1,8 +1,7 @@
 import type { Attachment } from 'mailparser'
 import { IncomingMail } from '../types'
-import { segment as s } from 'koishi'
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const htmlparser2 = require('htmlparser2')
+import { Logger, segment as s } from 'koishi'
+import * as htmlparser2 from 'htmlparser2'
 
 const resolveAttachment = (url: string, attachments: Attachment[]): Buffer | undefined => {
   if (!attachments?.length) return
@@ -16,12 +15,12 @@ const resolveAttachment = (url: string, attachments: Attachment[]): Buffer | und
   return attachment.content
 }
 
-const extractMessageFromHtml = async ({ html, attachments }: IncomingMail) => {
+const extractMessageFromHtml = async ({ html, text, attachments }: IncomingMail) => {
   const segments: s[] = []
-  let skip = false
+  let skipInner = false
   const parser = new htmlparser2.Parser({
-    onopentag (name, attribs, isImplied) {
-      skip = true
+    onopentag (name: string, attribs: Record<string, string>) {
+      skipInner = true
       if (['script', 'style'].includes(name)) {
         return
       }
@@ -29,48 +28,49 @@ const extractMessageFromHtml = async ({ html, attachments }: IncomingMail) => {
         // TODO: img .src='data:image/{contentType},{encodeType},{encodedContent}'
         const src = attribs.src
         const b64 = resolveAttachment(src, attachments)?.toString('base64')
-        skip = false
+        skipInner = false
         // return segments.push(s('image', { url: (b64 && `data:image/png;base64, ${b64}`) || src }))
         return segments.push(<image url={(b64 && `data:image/png;base64, ${b64}`) || src}></image>)
       }
-      skip = false
+      skipInner = false
     },
     ontext (data: string) {
       const trimmed = data.trim()
       if (trimmed !== '') {
-        if (skip) { return }
+        if (skipInner) { return }
         segments.push(<>{trimmed}</>)
       }
     }
   })
-  parser.write(html)
-  return segments.join('\n')
+  html && parser.write(html)
+  return segments.join('\n') || text
 }
 const extractMessage = (mail: IncomingMail) => {
   if (mail.html) {
-    return extractMessageFromHtml(mail as IncomingMail & {html: string})
+    return extractMessageFromHtml(mail as IncomingMail)
   } else if (mail.text) return mail.text
   else return Promise.reject(Error('unable to process message'))
 }
 
-// const separate = (_separator: string, idTemplate: RegExp) => async (text: string) => {
-//   let content
-//   const separator = new RegExp(`(?<before>.*)(${_separator})(?<after>.*)`, 's')
-//   const matchResult = text.match(separator)
+const separate = (_separator: string, idTemplate: RegExp) => async (text: string) => {
+  const separator = new RegExp(`(?<before>.*)(${_separator})(?<after>.*)`, 's')
+  const matchResult = text.match(separator)
 
-//   content = matchResult ? matchResult.groups?.before || '' + matchResult.groups?.after : text
-//   const ids = idTemplate.exec(content)
-//   if (ids) content = content.replace(idTemplate, '')
-//   return { content, id: ids?.[1] }
-// }
+  text = matchResult ? matchResult.groups?.before || '' + matchResult.groups?.after : text
+  const ids = idTemplate.exec(text)
+  if (ids) text = text.replace(idTemplate, '')
+  return { content: text, id: ids?.[1] }
+}
 
 export function pipeline ({ separator = '% reply beyond this line %', messageIdExtractor = /#k-id=([^$]+)#/ }: {separator?: string, messageIdExtractor?: RegExp} = { }) {
   return async (mail: IncomingMail) => {
-    //  idTemplate: RegExp
-    const content = await extractMessage(mail)
-    const ids = await messageIdExtractor.exec(content)
-    const id = ids?.[1]
-    // .then(separate(separator, messageIdExtractor))
+    new Logger('adapter-mail/transform/toMessage').debug(mail.html)
+    new Logger('adapter-mail/transform/toMessage').debug(mail.text)
+    const content1 = await extractMessage(mail)
+
+    if (!content1) return
+
+    const { content, id } = await separate(separator, messageIdExtractor)(content1)
     return { content, id }
   }
 }

@@ -1,7 +1,7 @@
 import { Context } from 'koishi';
-import { Options } from '../index';
+import { Options } from '../';
 export declare const name = "osu-info-command-extend-database";
-declare type UserServerBind = Record<string, {
+type UserServerBind = Record<string, {
     mode?: string;
     user?: string;
 }>;

@@ -1,6 +1,6 @@
 import { Schema, Context } from 'koishi';
 export declare const name = "nyan";
-declare type Opt = {
+type Opt = {
     noises: string[];
     transformLastLineOnly: boolean;
     legacyMode: boolean;

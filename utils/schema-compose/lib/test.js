@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("./index");
-const a = (0, index_1.schema) `
+const _1 = require(".");
+const a = (0, _1.schema) `
 @description('基础配置')
 {
   shared: string,

@@ -4,21 +4,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.schema = exports.buildSchema = void 0;
+/* eslint-disable no-use-before-define */
 const fs_1 = __importDefault(require("fs"));
 const path_1 = require("path");
 const koishi_1 = require("koishi");
 const peggy_1 = __importDefault(require("peggy"));
-const grammar = fs_1.default.readFileSync((0, path_1.join)(__dirname, "./grammar.pegjs"), "utf8");
+const grammar = fs_1.default.readFileSync((0, path_1.join)(__dirname, './grammar.pegjs'), 'utf8');
 const parser = peggy_1.default.generate(grammar.toString());
-const key = "MCfUBTJVigUebzoCIevR";
+const key = 'MCfUBTJVigUebzoCIevR';
 const builder = (args) => {
     function _decorate(kSchema, { decorator, values }) {
-        if (!values && ["required", "hidden"].includes(decorator)) {
+        if (!values && ['required', 'hidden'].includes(decorator)) {
             return kSchema[decorator]();
         }
-        else if (["role", "description"].includes(decorator)) {
+        else if (['role', 'description'].includes(decorator)) {
             const callSign = decorator;
-            if (values[0].schema.type === "const") {
+            if (values[0].schema.type === 'const') {
                 const constType = values[0].schema;
                 return kSchema[callSign](constType.value.toString());
             }
@@ -45,20 +46,28 @@ const builder = (args) => {
         const returnValue = {};
         (_a = schema.entries) === null || _a === void 0 ? void 0 : _a.forEach((entry) => {
             let assigned = _buildSchema(entry.assign.value);
-            if (assigned)
+            if (assigned) {
                 entry.decorators.forEach((decorator) => {
                     if (assigned)
                         assigned = _decorate(assigned, decorator);
                 });
+            }
             returnValue[entry.assign.key] = assigned;
         });
         return koishi_1.Schema.object(returnValue);
     }
     function _buildTypeWithValue(single) {
         const { schema } = single;
-        // console.log(schema.type, schema);
-        // @ts-expect-error
-        return koishi_1.Schema[schema.type](_buildSchema(schema.value));
+        if (!schema.value) {
+            throw new Error('expect schema.value to be set');
+        }
+        // return Schema[schema.type](_buildSchema(schema.value))
+        if (schema.type === 'dict')
+            return koishi_1.Schema.dict(_buildSchema(schema.value));
+        if (schema.type === 'array')
+            return koishi_1.Schema.array(_buildSchema(schema.value));
+        else
+            throw Error('unknown type');
     }
     function _buildTypeWithList(single) {
         const { schema } = single;
@@ -67,22 +76,20 @@ const builder = (args) => {
     }
     function _buildTypeWithoutValue(single) {
         const { schema } = single;
-        if (schema.type === "bool")
-            schema.type = "boolean";
-        let returnValue = koishi_1.Schema[schema.type](undefined);
+        if (schema.type === 'bool')
+            schema.type = 'boolean';
+        const returnValue = koishi_1.Schema[schema.type](undefined);
         return returnValue;
     }
     function _buildConstant(single) {
         var _a, _b;
-        let returnValue;
         const { schema } = single;
         // console.log("const", schema);
-        if (typeof schema.value === "string" && ((_b = (_a = schema.value) === null || _a === void 0 ? void 0 : _a.startsWith) === null || _b === void 0 ? void 0 : _b.call(_a, key))) {
+        if (typeof schema.value === 'string' && ((_b = (_a = schema.value) === null || _a === void 0 ? void 0 : _a.startsWith) === null || _b === void 0 ? void 0 : _b.call(_a, key))) {
             const index = parseInt(schema.value.slice(key.length + 1));
             return args[index];
         }
-        returnValue = koishi_1.Schema.const(schema.value);
-        return returnValue;
+        return koishi_1.Schema.const(schema.value);
     }
     function _buildTransform(single) {
         const { schema } = single;
@@ -95,44 +102,43 @@ const builder = (args) => {
         return koishi_1.Schema.transform(built, cb === null || cb === void 0 ? void 0 : cb.value);
     }
     function _buildSchema(single) {
-        let copy = single;
+        const copy = single;
         const { schema, decorators } = copy;
-        let returnValue = undefined;
+        let returnValue;
         // console.log(single)
         switch (schema.type) {
-            case "dict":
-            case "array": {
+            case 'dict':
+            case 'array': {
                 returnValue = _buildTypeWithValue(single);
                 break;
             }
-            case "object": {
+            case 'object': {
                 returnValue = _buildObject(single);
                 break;
             }
-            case "tuple": {
+            case 'tuple': {
                 returnValue = _buildTuple(single);
                 break;
             }
-            case "union":
-            case "intersect": {
+            case 'union':
+            case 'intersect': {
                 returnValue = _buildTypeWithList(single);
                 break;
             }
-            case "any":
-            case "never":
-            case "string":
-            case "number":
-            case "boolean":
-            case "bool": {
-                // @ts-expect-error
+            case 'any':
+            case 'never':
+            case 'string':
+            case 'number':
+            case 'boolean':
+            case 'bool': {
                 returnValue = _buildTypeWithoutValue(single);
                 break;
             }
-            case "const": {
+            case 'const': {
                 returnValue = _buildConstant(single);
                 break;
             }
-            case "transform": {
+            case 'transform': {
                 returnValue = _buildTransform(single);
             }
         }
@@ -147,7 +153,7 @@ const builder = (args) => {
     return _buildSchema;
 };
 function buildSchema(parsed, args) {
-    const schemas = parsed.filter((entry) => typeof entry === "object");
+    const schemas = parsed.filter((entry) => typeof entry === 'object');
     const build = builder(args);
     if (schemas.length === 0) {
         return undefined;
@@ -159,7 +165,7 @@ function buildSchema(parsed, args) {
 }
 exports.buildSchema = buildSchema;
 function schema(template, ...args) {
-    const def = template.reduce((acc, cur, index) => `${acc}${cur}${index < template.length - 1 ? `${key}_${index}` : ""}`, "");
+    const def = template.reduce((acc, cur, index) => `${acc}${cur}${index < template.length - 1 ? `${key}_${index}` : ''}`, '');
     const parsed = parser.parse(def);
     const built = buildSchema(parsed, args);
     // console.log(built?.toString());

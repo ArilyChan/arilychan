@@ -1,5 +1,5 @@
 import { Context, Schema, Session } from 'koishi';
-export declare type Variable = string | {
+export type Variable = string | {
     type: 'object-destructuring' | 'array-destructuring';
     destructed: string;
     variables: Variable[];
@@ -19,7 +19,7 @@ export interface Executable {
     code: string;
     variables?: Variable[];
 }
-export declare type ConditionalMatcher = ({
+export type ConditionalMatcher = ({
     type: 'startsWith' | 'includes';
 } | {
     type: 'equals';
@@ -32,14 +32,14 @@ export interface Command {
     cond: Executable | ConditionalMatcher;
     action: Executable | Literal;
 }
-export declare type returnedValue = any;
-declare type Awaitable<T> = Promise<T> | T;
-export declare type CustomMatcher = (session: Session, context: Context, resolve: (carry: returnedValue) => void, reject: () => void) => Awaitable<returnedValue>;
-export declare type ActionFunction = (session: Session, context: Context, returnedValue: returnedValue) => Awaitable<string | undefined | {
+export type returnedValue = any;
+type Awaitable<T> = Promise<T> | T;
+export type CustomMatcher = (session: Session, context: Context, resolve: (carry: returnedValue) => void, reject: () => void) => Awaitable<returnedValue>;
+export type ActionFunction = (session: Session, context: Context, returnedValue: returnedValue) => Awaitable<string | undefined | {
     toString: () => string;
 }>;
-export declare type MatchFunction = CustomMatcher;
-export declare type Entry = [MatchFunction, ActionFunction];
+export type MatchFunction = CustomMatcher;
+export type Entry = [MatchFunction, ActionFunction];
 export declare function commandBuilder(logger: any): [Entry[], CallableFunction];
 export declare const name = "yet-another-responder";
 export declare const schema: Schema<{

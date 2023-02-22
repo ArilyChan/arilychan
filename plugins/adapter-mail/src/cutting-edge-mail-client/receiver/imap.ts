@@ -23,12 +23,9 @@ export class IMAPReceiver<T extends never> extends BaseReceiver<T> {
   constructor (option: ConstructorParameters<typeof IMAP>[0], address: LocalMailAddress) {
     super()
     this.imap = new IMAP({
-      keepalive: {
-        interval: 3600,
-        idleInterval: 3600,
-        forceNoop: true
-      },
-      ...option
+      keepalive: true,
+      ...option,
+      debug: (v) => this.logger.debug(v)
     })
     this.mail = address
   }
@@ -141,22 +138,22 @@ export class IMAPReceiver<T extends never> extends BaseReceiver<T> {
     this.logger.debug('connecting to imap server')
     const p = new Promise<void>((resolve, reject) => {
       const onEnd = (...args) => {
-        console.log(args)
         this.logger.info('disconnected')
         this.readyState = false
       }
       const onReady = () => {
         this.logger.info('connected')
         this.readyState = true
-        this.imap.off('error', reject)
+        this.imap.off('error', onError)
         resolve()
       }
-      this.imap.once('ready', onReady)
-      this.imap.once('error', (err) => {
+      const onError = (err) => {
         this.logger.error(err)
         onEnd()
         reject(err)
-      })
+      }
+      this.imap.once('ready', onReady)
+      this.imap.once('error', onError)
       this.imap.once('end', onEnd)
       this.imap.connect()
     })

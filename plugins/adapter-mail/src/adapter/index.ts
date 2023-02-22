@@ -1,7 +1,7 @@
 import { ReceivedMessage } from '../types'
 import * as Receiver from '../cutting-edge-mail-client/receiver'
 import * as Sender from '../cutting-edge-mail-client/sender'
-import { Bot, Logger, Session, SendOptions, Universal, Fragment } from 'koishi'
+import { Bot, Logger, SendOptions, Universal, Fragment } from 'koishi'
 import { Bridge } from '../bridge-between-mail-and-message'
 import MailClient from '../cutting-edge-mail-client'
 import { Options } from '../'
@@ -74,7 +74,7 @@ export class MailBot extends Bot {
       this.client.useSender(this.sender)
     ])
     this.bridge.useClient(this.client)
-    this._subscriber = this.receivedMessage.bind(this)
+    this._subscriber = (msg) => this.receivedMessage(msg)
     this.bridge.subscribe(this._subscriber)
 
     this.bridge.bridge()
@@ -85,13 +85,13 @@ export class MailBot extends Bot {
 
   receivedMessage (message: ReceivedMessage) {
     this.logger.debug('received message: ' + message.elements)
-    const { from: { id: userId, name: nickname }, elements, id } = message
-    const session = new Session(this, { author: { userId, nickname }, elements })
-    session.id = id || session.id
+    const { from: { id: userId, name: username }, elements, id } = message
+    const session = this.session({ messageId: id, author: { userId, username }, channelId: userId, channelName: username, elements, type: 'message', subtype: 'private' })
     this.dispatch(session)
   }
 
   async sendMessage (channelId: string, content: Fragment) {
+    this.logger.debug('sendMessage ' + channelId)
     return this.sendPrivateMessage(channelId, content)
   }
 

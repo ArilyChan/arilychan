@@ -2,19 +2,19 @@ import { MailAddress, LocalMailAddress } from '../address'
 import { IncomingMail } from '../../types'
 import { Logger } from 'koishi'
 import { BaseReceiver } from './base-receiver'
-import { AddressObject, EmailAddress, simpleParser } from 'mailparser'
-import { promisify } from 'util'
+import type { AddressObject, EmailAddress } from 'mailparser'
+import { simpleParser } from 'mailparser'
 
 import IMAP from 'node-imap'
 
-function toAddress (addr: AddressObject | AddressObject[]): EmailAddress[] | undefined {
-  if (Array.isArray(addr)) {
-    const addrs = addr.map(toAddress)
-    const flat = addrs.flat().filter(a => a) as EmailAddress[]
-    return flat.length > 0 ? flat : undefined
-  }
-  return addr.value.length > 0 ? addr.value : undefined
-}
+// function toAddress (addr: AddressObject | AddressObject[]): EmailAddress[] | undefined {
+//   if (Array.isArray(addr)) {
+//     const addrs = addr.map(toAddress)
+//     const flat = addrs.flat().filter(a => a) as EmailAddress[]
+//     return flat.length > 0 ? flat : undefined
+//   }
+//   return addr.value.length > 0 ? addr.value : undefined
+// }
 export class IMAPReceiver<T extends never> extends BaseReceiver<T> {
   logger = new Logger('adapter-mail/receiver/imap')
   imap: IMAP

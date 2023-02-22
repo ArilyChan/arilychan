@@ -40,7 +40,7 @@ export class Bridge {
   }
 
   bridge () {
-    this.client?.subscribe(this.handleReceivedMail.bind(this))
+    this.client?.subscribe((arg) => this.handleReceivedMail(arg))
   }
 
   subscribe (subscriber: MessageSubscriber) {

@@ -5,7 +5,7 @@ import { BaseSender } from './base-sender'
 
 export type Options = ConstructorParameters<typeof LocalMailAddress>
 export class TestSender<T extends never> extends BaseSender<T> {
-  logger = new Logger('adapter-mail/sender')
+  logger = new Logger('adapter-mail/sender/test')
   mail: LocalMailAddress
 
   constructor (...opt: Options) {

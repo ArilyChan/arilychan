@@ -42,11 +42,11 @@ export type MatchFunction = CustomMatcher;
 export type Entry = [MatchFunction, ActionFunction];
 export declare function commandBuilder(logger: any): [Entry[], CallableFunction];
 export declare const name = "yet-another-responder";
-export declare const schema: Schema<{
-    rules?: ({} & import("cosmokit").Dict<any, string>)[];
-} & import("cosmokit").Dict<any, string>, {
-    rules: ({} & import("cosmokit").Dict<any, string>)[];
-} & import("cosmokit").Dict<any, string>>;
+export declare const schema: Schema<Schemastery.ObjectS<{
+    rules: Schema<Schemastery.ObjectS<{}>[], ({} & import("cosmokit").Dict<any, string>)[]>;
+}>, Schemastery.ObjectT<{
+    rules: Schema<Schemastery.ObjectS<{}>[], ({} & import("cosmokit").Dict<any, string>)[]>;
+}>>;
 export interface Options {
     rules: Array<{
         enabled: boolean;

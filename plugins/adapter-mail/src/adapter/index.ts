@@ -79,7 +79,7 @@ export class MailBot extends Bot {
 
     this.bridge.bridge()
 
-    this.logger.debug('connected')
+    this.logger.debug('ready')
     this.status = 'online'
   }
 

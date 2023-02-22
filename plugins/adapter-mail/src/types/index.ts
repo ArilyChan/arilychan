@@ -33,7 +33,7 @@ export interface ReceivedMessage {
     id: string
   }
   elements: segment[]
-  id?: any
+  id?: string
 }
 
 export type MailSubscriber = (mail: IncomingMail) => void

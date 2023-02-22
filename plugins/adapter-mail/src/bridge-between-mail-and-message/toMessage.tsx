@@ -3,7 +3,7 @@ import { IncomingMail } from '../types'
 import { Logger, segment } from 'koishi'
 import * as htmlparser2 from 'htmlparser2'
 
-const logger = new Logger('adapter-mail/transform/toMessage')
+// const logger = new Logger('adapter-mail/transform/toMessage')
 
 const resolveAttachment = (url: string, attachments: Attachment[] | undefined) => {
   if (!attachments?.length) return
@@ -17,7 +17,7 @@ const resolveAttachment = (url: string, attachments: Attachment[] | undefined) =
   return attachment.content
 }
 
-const extractMessageFromHtml = async ({ html, text, attachments }: IncomingMail) => {
+const extractMessageFromHtml = async ({ html, text, attachments }: IncomingMail): Promise<segment[] | undefined> => {
   const segments: segment[] = []
   let skipInner = false
   const parser = new htmlparser2.Parser({
@@ -40,17 +40,17 @@ const extractMessageFromHtml = async ({ html, text, attachments }: IncomingMail)
       const trimmed = data.trim()
       if (trimmed !== '') {
         if (skipInner) { return }
-        segments.push(<>{trimmed}</>)
+        segments.push(segment.text(trimmed))
       }
     }
   })
   html && parser.write(html)
-  return segments || (text && <text>{text}</text>) || undefined
+  return (segments.length && segments) || (text && [segment.text(text?.toString('utf-8'))]) || undefined
 }
 const extractMessage = (mail: IncomingMail) => {
   if (mail.html) {
     return extractMessageFromHtml(mail as IncomingMail)
-  } else if (mail.text) return [<text>mail.text</text>] as segment[]
+  } else if (mail.text) return [segment.text(mail.text.toString('utf-8'))] as segment[]
   else return Promise.reject(Error('unable to process message'))
 }
 
@@ -72,9 +72,9 @@ const separate = (_separator: string, idTemplate: RegExp) => async (text: segmen
     switch (fragment.type) {
       case 'text': {
         const matchResult = fragment.attrs.content.match(separator)
-        const _before = matchResult ? <text>matchResult.groups?.before</text> : fragment
+        const _before = matchResult ? segment.text(matchResult.groups?.before) : fragment
         before.push(_before)
-        continue
+        break
       }
       default: {
         new Logger('adapter-mail/toMessage').debug(`unhandled fragment type: ${fragment.type}`)
@@ -90,8 +90,8 @@ const separate = (_separator: string, idTemplate: RegExp) => async (text: segmen
 
 export function pipeline ({ separator = '% reply beyond this line %', messageIdExtractor = /#k-id=([^$]+)#/ }: {separator?: string, messageIdExtractor?: RegExp} = { }) {
   return async (mail: IncomingMail) => {
-    logger.debug(mail.html)
-    logger.debug(mail.text)
+    // logger.debug(mail.html)
+    // logger.debug(mail.text)
 
     let id: string | undefined
     const content1 = await extractMessage(mail)

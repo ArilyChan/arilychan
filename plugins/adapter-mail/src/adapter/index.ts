@@ -87,7 +87,7 @@ export class MailBot extends Bot {
     this.logger.debug('received message: ' + message.elements)
     const { from: { id: userId, name: nickname }, elements, id } = message
     const session = new Session(this, { author: { userId, nickname }, elements })
-    session.id = id
+    session.id = id || session.id
     this.dispatch(session)
   }
 

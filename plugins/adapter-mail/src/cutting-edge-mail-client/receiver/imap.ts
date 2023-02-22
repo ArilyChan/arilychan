@@ -3,6 +3,7 @@ import { IncomingMail } from '../../types'
 import { Logger } from 'koishi'
 import { BaseReceiver } from './base-receiver'
 import { AddressObject, EmailAddress, simpleParser } from 'mailparser'
+import { promisify } from 'util'
 
 import IMAP from 'node-imap'
 
@@ -24,31 +25,35 @@ export class IMAPReceiver<T extends never> extends BaseReceiver<T> {
     super()
     this.imap = new IMAP({
       keepalive: true,
-      ...option,
-      debug: (v) => this.logger.debug(v)
+      ...option
+      // debug: this.logger.extend('verbose').debug
     })
     this.mail = address
   }
 
   async process () {
     const mails = await this.fetch()
+    if (!mails) return
     for (const mail of mails) {
-      await this.incomingChain(mail)
+      this.incomingChain(mail)
     }
   }
 
   async listen () {
-    this.logger.debug('listening to new mails')
+    // const getBoxes = promisify<IMAP.MailBoxes>((...args) => this.imap.getBoxes(...args))
+    // const boxes = await getBoxes()
+    // this.logger.debug('boxes: ' + Object.keys(boxes).join(', '))
     await this.openBox('INBOX')
     await this.process()
+    this.logger.debug('listening to new mails')
     this.imap.on('mail', async (numNewMsgs: number) => {
-      this.logger.debug(`receiving ${numNewMsgs} new message(s)`)
+      this.logger.debug(`got ${numNewMsgs} new mail(s)`)
       await this.process()
     })
   }
 
-  async fetch (opt?: IMAP.FetchOptions, search: any[] = ['NEW']) {
-    this.logger.debug('receiving unread messages')
+  async fetch (opt?: IMAP.FetchOptions, search: any[] = ['UNSEEN']) {
+    this.logger.debug('fetching messages')
     const fetchOptions = opt || {
       bodies: '',
       markSeen: true
@@ -59,27 +64,35 @@ export class IMAPReceiver<T extends never> extends BaseReceiver<T> {
     return new Promise<IncomingMail[]>((resolve, reject) => {
       this.imap.search(search, (err, uIds) => {
         if (err) reject(err)
-        if (!uIds.length) return this.logger.debug('nothing to fetch')
+
+        if (!uIds.length) {
+          this.logger.debug('nothing to fetch')
+          return resolve([])
+        }
+
         this.logger.debug(`receiving ${uIds.length} mail(s)`)
         const fetch = this.imap.fetch(uIds, fetchOptions)
         fetch.once('end', async () => {
-          this.logger.debug(`received ${mails.length} mails`)
           await Promise.all(pMsgReceive)
+          this.logger.debug(`received ${mails.length} mails`)
           resolve(mails)
         })
         fetch.on('error', this.logger.error)
+
         fetch.on('message', (msg, seq) => {
           this.logger.debug(`receiving mail #${seq}`)
+
           msg.on('body', (stream, info) => {
-            pMsgReceive.push(new Promise<void>((resolve, reject) => {
+            // eslint-disable-next-line promise/param-names
+            pMsgReceive.push(new Promise<void>((resolve2, reject2) => {
               simpleParser(stream, async (err, parsed) => {
-                if (err) reject(err)
+                if (err) reject2(err)
 
                 const to: LocalMailAddress[] = []
                 const from: MailAddress[] = []
 
-                if (!parsed.to) reject(new Error('ParseError: <to> missing'))
-                if (!parsed.from) reject(new Error('ParseError: <from> missing'))
+                if (!parsed.to) reject2(new Error('ParseError: missing <to>'))
+                if (!parsed.from) reject2(new Error('ParseError: missing <from>'))
 
                 const iterateTo = addObj => {
                   addObj.value.forEach(addr => to.push(new LocalMailAddress({ name: addr.name, address: addr.address || 'unknown@unknown' })))
@@ -93,7 +106,7 @@ export class IMAPReceiver<T extends never> extends BaseReceiver<T> {
 
                 parsed.from?.value.forEach(mail => from.push(new MailAddress({ name: mail.name, address: mail.address || 'unknown@unknown' })))
 
-                if (from.length > 1) reject(new Error('more than one sender???'))
+                if (from.length > 1) reject2(new Error('more than one sender???'))
 
                 mails.push({
                   // ...parsed,
@@ -103,7 +116,7 @@ export class IMAPReceiver<T extends never> extends BaseReceiver<T> {
                   from: from[0],
                   html: parsed.html || undefined
                 })
-                resolve()
+                resolve2()
               })
             }))
           })
@@ -136,16 +149,26 @@ export class IMAPReceiver<T extends never> extends BaseReceiver<T> {
 
   async prepare () {
     this.logger.debug('connecting to imap server')
+    return this.retry(0)
+  }
+
+  async retry (retries: number = 0) {
     const p = new Promise<void>((resolve, reject) => {
-      const onEnd = (...args) => {
+      const onEnd = () => {
         this.logger.info('disconnected')
         this.readyState = false
+        if (retries >= 3) reject(new Error('max retries exceed'))
+        this.imap.off('ready', onReady)
+        this.imap.off('ready', onError)
+        this.imap.off('ready', onEnd)
+        this.retry(retries + 1).then(resolve)
       }
       const onReady = () => {
         this.logger.info('connected')
         this.readyState = true
-        this.imap.off('error', onError)
+        // this.imap.off('error', onError)
         resolve()
+        this.listen()
       }
       const onError = (err) => {
         this.logger.error(err)
@@ -157,7 +180,6 @@ export class IMAPReceiver<T extends never> extends BaseReceiver<T> {
       this.imap.once('end', onEnd)
       this.imap.connect()
     })
-    p.then(this.listen.bind(this))
     return p
   }
 }

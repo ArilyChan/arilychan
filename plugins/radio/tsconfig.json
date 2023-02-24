@@ -14,5 +14,5 @@
     "jsxImportSource": "@satorijs/element",
     "allowJs": true
   },
-  "include": ["src", "public"]
+  "include": ["src"]
 }

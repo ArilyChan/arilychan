@@ -15,11 +15,12 @@
     "koishi",
     "plugin"
   ],
-  "homepage": "https://github.com/arilychan/arilychan", 
+  "homepage": "https://github.com/arilychan/arilychan",
   "peerDependencies": {
     "koishi": "^4.6.1"
   },
   "dependencies": {
+    "js-beautify": "^1.14.7",
     "peggy": "^1.2.0"
   }
 }

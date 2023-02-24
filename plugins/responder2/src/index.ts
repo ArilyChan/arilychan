@@ -1,6 +1,9 @@
-import { Context, Schema, Session, segment } from 'koishi'
+import { Context, Schema, Session, segment, Logger } from 'koishi'
 import { parser } from './grammar'
 import { build as exec, rebuildVariableString } from './runtime/builder'
+
+// const beautify = require('js-beautify').js
+import { js } from 'js-beautify'
 
 export type Variable = string | {
   type: 'object-destructuring' | 'array-destructuring'
@@ -55,9 +58,9 @@ export type ActionFunction = (
 ) => Awaitable<string | undefined | { toString: () => string }>
 
 export type MatchFunction = CustomMatcher
-export type Entry = [MatchFunction, ActionFunction]
+export type Entry = [MatchFunction, ActionFunction, Command]
 
-export function commandBuilder (logger): [Entry[], CallableFunction] {
+export function commandBuilder () {
   const matches: Entry[] = []
   return [
     matches,
@@ -65,31 +68,31 @@ export function commandBuilder (logger): [Entry[], CallableFunction] {
       if (Array.isArray(command)) return
       if (command.type !== 'incomingMessage') return
       let matchRule: MatchFunction
-      const cond = command.cond
-      switch (cond.type) {
+      const matcher = command.cond
+      switch (matcher.type) {
         case 'startsWith':
-          matchRule = (session) => session.content.startsWith(cond.content)
+          matchRule = (session) => session.content.startsWith(matcher.content)
           break
         case 'includes':
-          matchRule = (session) => session.content.includes(cond.content)
+          matchRule = (session) => session.content.includes(matcher.content)
           break
         case 'equals':
-          if (cond.eq === 'strictEqual') matchRule = (session) => session.content === cond.content
+          if (matcher.eq === 'strictEqual') matchRule = (session) => session.content === matcher.content
           // eslint-disable-next-line eqeqeq
-          if (cond.eq === 'equal') matchRule = (session) => session.content == cond.content
-          if (cond.eq === 'eq') {
-            logger('responder2').warn(`got 'assignment operator' in rules #${index}, auto-correct to double equal.`)
+          if (matcher.eq === 'equal') matchRule = (session) => session.content == matcher.content
+          if (matcher.eq === 'eq') {
+            new Logger('responder2/builder').warn(`got 'assignment operator' in rules #${index}, auto-correct to double equal.`)
             // eslint-disable-next-line eqeqeq
-            matchRule = (session) => session.content == cond.content
+            matchRule = (session) => session.content == matcher.content
           }
           break
         case 'exec':
-          if (!cond.variables) cond.variables = []
-          matchRule = exec(cond.code, cond.variables, { async: cond.async, inline: cond.inline, isMatcher: true }) as MatchFunction
+          if (!matcher.variables) matcher.variables = []
+          matchRule = exec(matcher.code, matcher.variables, { async: matcher.async, inline: matcher.inline, isMatcher: true }) as MatchFunction
           break
         default:
-          console.log(cond)
-          throw new Error('unexpected condition type: ' + (cond as {type: string}).type)
+          console.log(matcher)
+          throw new Error('unexpected condition type: ' + (matcher as { type: string }).type)
       }
       const action = command.action
       let run: ActionFunction
@@ -101,9 +104,9 @@ export function commandBuilder (logger): [Entry[], CallableFunction] {
           if (!action.variables) action.variables = []
           run = exec(action.code, action.variables, { async: action.async, inline: action.inline, isAction: true }) as ActionFunction
       }
-      matches.push([matchRule, run])
+      matches.push([matchRule, run, command])
     }
-  ]
+  ] as const
 }
 
 export const name = 'yet-another-responder'
@@ -128,14 +131,14 @@ export const schema = Schema.object({
   }])
 })
 export interface Options {
-  rules: Array<{enabled: boolean, content: string }>
+  rules: Array<{ enabled: boolean, content: string }>
 }
 export function apply (ctx: Context, options: Options) {
   try {
     const trigger = options.rules.filter(rule => rule.enabled).map(rule => rule.content).join('\n')
-    console.log(trigger)
-    const [matches, builder] = commandBuilder(ctx.logger('responder2/builder'))
-    const reader = parser.parse(trigger)
+    const [matches, builder] = commandBuilder()
+    ctx.logger('responder2').debug(trigger)
+    const reader: Command[] = parser.parse(trigger)
 
     reader.forEach(builder)
     ctx.middleware(async (session, next) => {
@@ -182,7 +185,7 @@ export function apply (ctx: Context, options: Options) {
       .example('resp2.test $ -> true -> "ok!"')
       .action((_, syntax) => {
         try {
-          parser.parse(syntax)
+          parser.parse(syntax) as Command[]
           return 'parsing succeed! should work!'
         } catch (err) {
           return err.message
@@ -211,20 +214,20 @@ export function apply (ctx: Context, options: Options) {
 
           if (syntax === 'current') syntax = trigger
 
-          const parsed = parser.parse(syntax)
+          const parsed: Command[] = parser.parse(syntax)
           const rtn = []
           parsed.forEach((line, index) => {
             rtn.push(`[${index}]:`)
             if (Array.isArray(line)) { return rtn.push(`注释: ${line[1]}`) }
-            const cond = line.cond
+            const matcher = line.cond
             const action = line.action
-            if (['startsWith', 'includes'].includes(cond.type)) {
-              rtn.push(`|| 触发条件:\n|| session.content.${cond.type}('${cond.content}')`)
-            } else if (cond.type === 'equals') {
-              const equals = cond.eq.split('eq').join('=')
-              rtn.push(`|| 触发条件:\n|| session.content ${equals} '${cond.content}'`)
-            } else if (cond.type === 'exec') {
-              rtn.push(`|| 自定义触发函数: ${transformVariables(cond, true)}`)
+            if (matcher.type === 'startsWith' || matcher.type === 'includes') {
+              rtn.push(`|| 触发条件:\n|| session.content.${matcher.type}('${matcher.content}')`)
+            } else if (matcher.type === 'equals') {
+              const equals = matcher.eq.split('eq').join('=')
+              rtn.push(`|| 触发条件:\n|| session.content ${equals} '${matcher.content}'`)
+            } else if (matcher.type === 'exec') {
+              rtn.push(`|| 自定义触发函数: ${transformVariables(matcher, true)}`)
             }
             rtn.push('|| ⬇️')
             if (action.type === 'literal') {
@@ -236,6 +239,63 @@ export function apply (ctx: Context, options: Options) {
           return rtn.join('\n')
         } catch (err) {
           return `error when parsing: ${err.stack}`
+        }
+      })
+    resp2.subcommand('.compile <reallyLongString:text>')
+      .usage('编译到javascript')
+      .example('resp2.compile $ -> true -> "ok!"')
+      .action((_, syntax) => {
+        if (syntax === 'current') syntax = trigger
+        try {
+          const q = segment.unescape(syntax)
+          const parsed: Command[] = parser.parse(q)
+          const [matches, builder] = commandBuilder()
+          parsed.forEach(builder)
+
+          const inner = matches.map(([matcher, action, command]) => {
+            let matchContent = ''
+            let actionContent = ''
+            if (command.cond.type !== 'exec') {
+              matchContent = `const matcher = ${JSON.stringify(command.cond)}`
+            }
+            if (command.action.type !== 'exec') {
+              actionContent = `const action = ${JSON.stringify(command.action)}`
+            }
+            return `
+  context.middleware(async (session, next) => {
+    let matcherResolvedValue, receivedMatcherResolvedValue
+    const resolve = (result) => {
+      matcherResolvedValue = result
+      receivedMatcherResolvedValue = true
+    }
+    const reject = () => {
+      matcherResolvedValue = false
+      receivedMatcherResolvedValue = true
+    }
+    ${matchContent}
+    ${actionContent}
+    const match$ = ${matcher}
+    const action$ = ${action}
+
+    const returnValue = ${command.cond.type === 'exec' && command.cond.async === true ? 'await' : ''} match$(session, context, resolve, reject)
+
+    if (receivedMatcherResolvedValue && matcherResolvedValue) {
+      return ${command.action.type === 'exec' && command.action.async === true ? 'await' : ''} action$(session, context, matcherResolvedValue)
+    } else if (returnValue) {
+      return ${command.action.type === 'exec' && command.action.async === true ? 'await' : ''} action$(session, context, returnValue)
+    } else {
+      return next()
+    }
+  })
+`
+          }).join('')
+
+          return js(`
+function apply(context) {
+${inner}
+}`, { indent_size: 2, space_in_empty_paren: true })
+        } catch (err) {
+          return err.message
         }
       })
   } catch (err) {

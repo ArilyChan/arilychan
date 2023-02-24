@@ -12,7 +12,8 @@
     "moduleResolution": "node",
     "jsx": "react-jsx",
     "jsxImportSource": "@satorijs/element",
-    "allowJs": true
+    "allowJs": true,
+    "strictNullChecks": true
   },
   "include": ["src"]
 }

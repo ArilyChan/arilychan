@@ -3,7 +3,6 @@
 import Arg from '../lib/command/arg'
 import { createInterface } from 'readline'
 
-const myQQ = 1
 const rl = createInterface({
   input: process.stdin,
   output: process.stdout

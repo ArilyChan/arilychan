@@ -1,10 +1,10 @@
 // const manual = require('sb-bot-manual')
 import api from './server/api'
 import server from './server/server'
-import * as aggregations from './server/database/aggregations'
-import utils from './utils'
+import { newerThan } from './server/database/aggregations'
+import { unescapeSpecialChars } from './utils'
 import { v4 as uuidv4 } from 'uuid'
-import { Schema } from 'koishi'
+import { Fragment, Schema } from 'koishi'
 
 export const name = 'arilychan-radio'
 export const schema = Schema.object({
@@ -29,11 +29,14 @@ export const apply = async (ctx, options) => {
     .usage('试听曲目')
     .action(async (session, text) => {
       try {
-        const argString = utils.unescapeSpecialChars(text)
+        const argString = unescapeSpecialChars(text)
         const beatmapInfo = await storage.search(argString)
-        return `[CQ:record,file=${beatmapInfo.previewMp3}]`
+        return <record file={beatmapInfo.previewMp3}></record>
       } catch (ex) {
-        return `[CQ:at,qq=${session.userId}]\n` + ex
+        return <>
+          <at id={session.userId}></at>
+          {ex}
+        </>
       }
     })
   command
@@ -43,7 +46,7 @@ export const apply = async (ctx, options) => {
     .alias('queue.add')
     .usage('点歌')
     .action(async (argv, text) => {
-      const argString = utils.unescapeSpecialChars(text)
+      const argString = unescapeSpecialChars(text)
       try {
         const beatmapInfo = await storage.search(argString)
         beatmapInfo.uploader = {
@@ -51,15 +54,17 @@ export const apply = async (ctx, options) => {
           nickname: argv.session.sender.nickname
         }
         beatmapInfo.uuid = uuidv4()
-        let reply = `[CQ:at,id=${argv.session.userId}]\n`
-        reply += '搜索到曲目：' + beatmapInfo.artistU + ' - ' + beatmapInfo.titleU + '\n'
+        const reply: Fragment = []
+
+        reply.push(<at id={argv.session.userId}></at>)
+        reply.push('搜索到曲目：' + beatmapInfo.artistU + ' - ' + beatmapInfo.titleU + '\n')
         // 如果超出时长，则拒绝添加
         if (!storage.withinDurationLimit(beatmapInfo)) return reply + '这首歌太长了，请选择短一些的曲目'
-        if (!beatmapInfo.audioFileName) reply += '小夜没给音频，只有试听\n'
+        if (!beatmapInfo.audioFileName) reply.push('小夜没给音频，只有试听\n')
         // 查重
         const oneHourBefore = new Date(Date.now() - 60 * 60 * 1000)
         const p = await storage.database.collection.aggregate([
-          ...aggregations.newerThan(oneHourBefore),
+          ...newerThan(oneHourBefore),
           { $match: { sid: beatmapInfo.sid, uploader: { id: argv.session.userId } } }
         ]).toArray()
         if (p.length) {
@@ -72,12 +77,15 @@ export const apply = async (ctx, options) => {
         // reply += '这首歌之前已经被其他人点过了，'
         // }
         await storage.add(beatmapInfo)
-        reply += '点歌成功！sid：' + beatmapInfo.sid + '，歌曲将会保存 ' + options.expire + ' 天'
-        reply += '\n电台地址：' + options.web.host + options.web.path
+        reply.push('点歌成功！sid：' + beatmapInfo.sid + '，歌曲将会保存 ' + options.expire + ' 天')
+        reply.push('\n电台地址：' + options.web.host + options.web.path)
         return reply
       } catch (ex) {
         if (ex.stack) console.warn(ex.stack)
-        return `[CQ:at,id=${argv.session.userId}]\n` + (ex.message || ex)
+        return <>
+          <at id={argv.session.userId}></at>
+          {(ex.message || ex)}
+        </>
       }
     })
   command
@@ -92,16 +100,26 @@ export const apply = async (ctx, options) => {
     .alias('删歌')
     .usage('取消已点的歌曲')
     .action(async (argv, text) => {
-      const argString = utils.unescapeSpecialChars(text)
+      const argString = unescapeSpecialChars(text)
       try {
-        if (!argString) return `[CQ:at,id=${argv.session.userId}]\n请指定sid`
+        if (!argString) {
+          return <>
+          <at id={argv.session.userId}></at>
+          请指定sid
+        </>
+        }
         const sid = parseInt(argString)
-        if (!sid) return `[CQ:at,id=${argv.session.userId}]\nsid应该是个正整数`
+        if (!sid) {
+          return <>
+          <at id={argv.session.userId}></at>
+          sid应该是个正整数
+        </>
+        }
 
         const expiredDate = new Date(Date.now() - options.removeAfterDays * 24 * 60 * 60 * 1000 || 7 * 24 * 60 * 60 * 1000)
 
         let p = await storage.database.collection.aggregate([
-          ...aggregations.newerThan(expiredDate),
+          ...newerThan(expiredDate),
           { $match: { sid } }
         ]).toArray()
 
@@ -119,22 +137,40 @@ export const apply = async (ctx, options) => {
             return storage.delete(song, { id: argv.session.userId, nickname: argv.session.sender.nickname })
           }))
         }
-        return `[CQ:at,id=${argv.session.userId}]\n删除成功！`
+
+        return <>
+          <at id={argv.session.userId}></at>
+          删除成功！
+        </>
       } catch (ex) {
-        return `[CQ:at,id=${argv.session.userId}]\n` + ex.message
+        return <>
+          <at id={argv.session.userId}></at>
+          {ex.message}
+        </>
       }
     })
   command
     .subcommand('.broadcast <message:text>')
     .alias('广播')
     .action(async (argv, text) => {
-      const argString = utils.unescapeSpecialChars(text)
+      const argString = unescapeSpecialChars(text)
       try {
-        if (!options.isAdmin(argv)) return `[CQ:at,id=${argv.session.userId}]\n只有管理员才能发送广播消息`
+        if (!options.isAdmin(argv)) {
+          return <>
+          <at id={argv.session.userId}></at>
+          只有管理员才能发送广播消息
+        </>
+        }
         await storage.broadcast(argv.session.userId, argString)
-        return `[CQ:at,id=${argv.session.userId}]\n已发送广播`
+        return <>
+          <at id={argv.session.userId}></at>
+          已发送广播
+        </>
       } catch (ex) {
-        return `[CQ:at,id=${argv.session.userId}]\n` + ex
+        return <>
+          <at id={argv.session.userId}></at>
+          {ex.message}
+        </>
       }
     })
 }

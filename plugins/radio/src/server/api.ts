@@ -1,27 +1,15 @@
 import Arg from '../command/arg'
+import type { BeatmapInfo } from '../package/sayobot'
 
-export default async (option = {}) => {
+export default async (option: Record<string, unknown> = {}) => {
   const database = await require('./database').default(option)
   const broadcast = require('./broadcast').default(option)
   return {
     database,
-    /** @type {Map} BeatmapInfo collection */
-    // songlist: database.songlist,
-
-    /** @type {Map} BeatmapInfo collection
-     * for compatibility
-     */
-    // playlist: database.songlist,
-
     /** pushed events */
     emitter: broadcast.emitter,
 
-    /**
-     * 搜索歌曲
-     * @param {String} msg “点歌”后面的参数
-     * @returns {import("./api/sayobot").BeatmapInfo} BeatmapInfo
-     */
-    async search (msg) {
+    async search (msg: string) {
       const arg = new Arg(msg)
       const beatmapInfo = await arg.getBeatmapInfo()
       return beatmapInfo
@@ -33,7 +21,7 @@ export default async (option = {}) => {
      * @param {Number} limit 秒数
      * @returns {Boolean} true为在limit内，option.durationLimit未定义则始终为true
      */
-    withinDurationLimit (beatmapInfo, limit = option.durationLimit || 10 * 60) {
+    withinDurationLimit (beatmapInfo: BeatmapInfo, limit = option.durationLimit || 10 * 60) {
       if (!beatmapInfo.duration) return false
       return beatmapInfo.duration <= limit
     },

@@ -13,7 +13,7 @@ export function newerThan (date) {
         }
       }
     }
-  ]
+  ] as const
 }
 export function sortByInsertionOrderDesc () {
   return [
@@ -34,5 +34,5 @@ export function playlistUniqueBySid () {
     }, {
       $replaceRoot: { newRoot: '$doc' }
     }
-  ]
+  ] as const
 }

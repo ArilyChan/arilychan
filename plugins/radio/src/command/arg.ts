@@ -1,9 +1,11 @@
+import { BeatmapInfo } from './../package/sayobot'
 /* eslint-disable no-throw-literal */
 
-const sayobot = require('../api/sayobot').default
-const osusearch = require('../api/osusearch').default
+import { sayobotApi as SayobotApi } from '../package/sayobot'
+import { OsusearchApi as osusearch } from '../package/osusearch'
 
 class Arg {
+  message: string
   constructor (message) {
     this.message = message
   }
@@ -33,8 +35,15 @@ class Arg {
      * 获取搜索谱面参数
      * @param {String} s 1234567 或 "404" 或 artist - title(mapper)[diff_name]
      */
-  getSearchData (s) {
-    const data = {}
+  getSearchData (s: string) {
+    const data: Partial<{
+      sayoTitle: string,
+      beatmapSet: number,
+      title: string,
+      mapper: string
+      artist: string
+      diff_name: string
+    }> = {}
     // 检测unicode字符，如果有则使用sayabot搜索
     if (this.checkUnicode(s)) {
       // 取diff_name
@@ -49,7 +58,7 @@ class Arg {
     }
     // 1234567
     if (this.checkInt(s)) {
-      data.beatmapSet = parseInt(s)
+      data.beatmapSet = <number>parseInt(s)
       return data
     }
     // "404"
@@ -89,7 +98,7 @@ class Arg {
     const searchData = this.getSearchData(this.message)
     if (JSON.stringify(searchData) === '{}') throw '请输入正确格式：artist - title(mapper)[diff_name] 或直接给出beatmapSetId，参数只有纯数字title请在前后加上双引号'
 
-    let beatmapSetId
+    let beatmapSetId: number
     const diffName = searchData.diff_name || ''
 
     // 直接给出setId
@@ -97,27 +106,29 @@ class Arg {
 
     // 用sayobot搜索谱面setId
     else if (searchData.sayoTitle) {
-      beatmapSetId = await sayobot.searchList(searchData.sayoTitle)
-      if (beatmapSetId.code) {
-        throw beatmapSetId.message
+      const result = await SayobotApi.searchList(searchData.sayoTitle)
+      if (result.code) {
+        throw result.message
       }
+      beatmapSetId = result
     // eslint-disable-next-line brace-style
     }
 
     // 用osusearch搜索谱面setId
     else {
-      beatmapSetId = await osusearch.search(searchData)
-      if (beatmapSetId.code) {
-        throw beatmapSetId.message
+      const result = await osusearch.search(searchData)
+      if (result.code) {
+        throw result.message
       }
+      beatmapSetId = result
     }
 
     // 用sayobot获取谱面信息
-    const beatmapInfo = await sayobot.search(beatmapSetId, diffName)
-    if (beatmapInfo.code) {
+    const beatmapInfo = await SayobotApi.search(beatmapSetId, diffName)
+    if ('code' in beatmapInfo) {
       throw beatmapInfo.message
     }
-    return beatmapInfo
+    return beatmapInfo as BeatmapInfo
   }
 }
 

@@ -1,6 +1,6 @@
 import { join } from 'path'
 import express, { Router, static as _static } from 'express'
-import socketIO from 'socket.io'
+import { Server } from 'socket.io'
 import nocache from 'nocache'
 const app = express()
 
@@ -28,7 +28,7 @@ export default (option, storage, http) => {
 
   const { emitter } = storage
 
-  const io = socketIO(http, {
+  const io = new Server(http, {
     path: '/Radio'
   })
 

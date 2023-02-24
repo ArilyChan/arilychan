@@ -4,7 +4,7 @@ import { lastAddedSong } from '../database'
 const emitter = new EventEmitter()
 let lastBroadcasted
 
-const broadcast = (...args) => emitter.emit(...args)
+const broadcast = (ns: string | symbol, ...args: unknown[]) => emitter.emit(ns, ...args)
 
 const pushSong = (song) => {
   const lastSong = lastBroadcasted || lastAddedSong || undefined

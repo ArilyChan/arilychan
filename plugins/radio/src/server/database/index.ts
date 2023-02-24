@@ -1,8 +1,7 @@
-// const songlist = new Map()
 import { MongoClient } from 'mongodb'
 import { newerThan, sortByInsertionOrderDesc, playlistUniqueBySid } from './aggregations'
 
-let lastAddedSong
+export let lastAddedSong
 
 export default async (option) => {
   const uri = option.db.uri || process.env.DB_URI || 'mongodb://localhost:27017/ArilyChan'
@@ -17,17 +16,15 @@ export default async (option) => {
 
   return {
     collection,
-    // songlist,
     lastAddedSong,
-    async songlistAdd (song) {
-      // const uuid = song.uuid
-      // const result = songlist.set(uuid, song)
+    async listAdd (song) {
       const result = await collection.insertOne(song)
       lastAddedSong = song
       return result
     },
-    async songlistRemove ({ uuid }) {
+    async listRemove ({ uuid }) {
       const result = await collection.findOne({ uuid })
+      if (!result) return null
       if (lastAddedSong?.uuid === result.uuid) lastAddedSong = undefined
       return collection.deleteOne({ uuid: result.uuid })
     },

@@ -1,14 +1,37 @@
-import { stringify } from 'querystring'
+import { ParsedUrlQueryInput, stringify } from 'querystring'
 import { Agent } from 'https'
-import { create } from 'axios'
+import axios from 'axios'
+const { create } = axios
 const axiosRu = create({
   httpsAgent: new Agent({
     rejectUnauthorized: false
   })
 })
 
-class BeatmapInfo {
-  constructor (data, SpecDiff = '') {
+export class BeatmapInfo {
+  uuid: string
+
+  artist: string
+  artistU: string
+  title: string
+  titleU: string
+  sid: any
+  creator: any
+  creator_id: any
+  source: any
+  duration: number
+  audioFileName: string
+  bgFileName: string
+  thumbImg: string
+  previewMp3: string
+  fullMp3: string | null
+  background: string | null
+  setLink: string
+
+  beatmap: { length: any; audio: string; bg: string, version: string }
+  uploader: unknown
+
+  constructor (data: { artist: string; artistU: string; title: string; titleU: string; sid: any; creator: any; creator_id: any; source: any; bid_data: any[] }, SpecDiff = '') {
     this.artist = data.artist
     this.artistU = (data.artistU) ? data.artistU : data.artist
     this.title = data.title
@@ -19,7 +42,7 @@ class BeatmapInfo {
     this.source = data.source
     if (!SpecDiff) this.beatmap = data.bid_data.pop()
     else {
-      data.bid_data.forEach((bData) => {
+      data.bid_data.forEach((bData: this['beatmap']) => {
         const version = bData.version.toLowerCase()
         const diff = SpecDiff.toLowerCase()
         if (version.indexOf(diff) >= 0) this.beatmap = bData
@@ -43,8 +66,10 @@ class BeatmapInfo {
   }
 }
 
-class SearchResult {
-  constructor (result, SpecDiff) {
+export class SearchResult {
+  status: number
+  beatmapInfo: BeatmapInfo
+  constructor (result: { status: any; data: any }, SpecDiff?: string) {
     this.status = result.status
     if (this.status === 0) {
       this.beatmapInfo = new BeatmapInfo(result.data, SpecDiff)
@@ -56,15 +81,15 @@ class SearchResult {
   }
 }
 
-class sayobotApi {
-  static async apiRequestV2 (options) {
+export class sayobotApi {
+  static async apiRequestV2 (options?: ParsedUrlQueryInput) {
     const contents = (options) ? stringify(options) : ''
     const url = 'https://api.sayobot.cn/v2/beatmapinfo?' + contents
     const result = await axiosRu.get(url)
     return result.data
   }
 
-  static async apiRequestList (keyword) {
+  static async apiRequestList (keyword: string) {
     const url = 'https://api.sayobot.cn/beatmaplist?0=1&1=0&2=4&' + stringify({ 3: keyword })
     const result = await axiosRu.get(url)
     return result.data
@@ -76,17 +101,17 @@ class sayobotApi {
      * @param {String} diffName 难度名，为了获取指定难度的音频
      * @returns {BeatmapInfo|{code, message}} 返回BeatmapInfo，出错时返回 {code: "error"} 或 {code: 404}
      */
-  static async search (sid, diffName) {
+  static async search (sid: number, diffName: string) {
     const params = { K: sid, T: 0 } // T=1 匹配bid
     try {
       const result = await this.apiRequestV2(params)
-      if (!result) return { code: 'error', message: '获取谱面详情失败' }
+      if (!result) return { code: 'error', message: '获取谱面详情失败' } as const
       const searchResult = new SearchResult(result, diffName)
-      if (!searchResult.success()) return { code: 404, message: '查不到该谱面信息（谱面setId：' + sid + '）' }
+      if (!searchResult.success()) return { code: 404, message: '查不到该谱面信息（谱面setId：' + sid + '）' } as const
       return searchResult.beatmapInfo
     } catch (ex) {
       console.log('[sayobot] ' + ex)
-      return { code: 'error', message: '获取谱面详情出错' }
+      return { code: 'error', message: '获取谱面详情出错' } as const
     }
   }
 
@@ -95,7 +120,7 @@ class sayobotApi {
      * @param {String} keyword
      * @returns {Number|{code, message}} 返回set id，出错时返回 {code: "error"} 或 {code: 404}
      */
-  static async searchList (keyword) {
+  static async searchList (keyword: string) {
     try {
       const result = await this.apiRequestList(keyword)
       if (!result) return { code: 'error', message: '搜索谱面失败' }
@@ -107,5 +132,3 @@ class sayobotApi {
     }
   }
 }
-
-export default sayobotApi

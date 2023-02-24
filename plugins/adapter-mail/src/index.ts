@@ -5,8 +5,8 @@ const { union, object, string, const: literal, natural, boolean, intersect } = S
 
 const TestEntry = literal('dummy').description('dummy')
 // const Disabled = literal('disabled').description('disabled')
-const NodemailerEntry = literal('node-mailer-smtp').description('nodemailer createTransport smtp')
-const IMAPEntry = literal('imap').description('IMAP transport w/ node-imap')
+const NodemailerEntry = literal('nodemailer-smtp').description('SMTP w/ NodeMailer')
+const IMAPEntry = literal('imap').description('IMAP w/ node-imap')
 const Port = natural().max(65535)
 
 // const testConfig = object({
@@ -24,20 +24,20 @@ export const schema = intersect([
   // sender
   intersect([
     object({
-      senderProtocol: union([
+      sender: union([
         NodemailerEntry,
         TestEntry
         // Disabled
       ]).description('protocol to send emails').role('radio')
-    }).description('sender'),
+    }).description('send'),
     union([
       object({
-        senderProtocol: TestEntry.required()
+        sender: TestEntry.required()
 
       }),
       object({
-        senderProtocol: NodemailerEntry.required(),
-        sender: object({
+        sender: NodemailerEntry.required(),
+        nodemailer: object({
           host: string(),
           port: Port.default(465),
           secure: boolean().default(true),
@@ -53,19 +53,19 @@ export const schema = intersect([
   // receiver
   intersect([
     object({
-      receiverProtocol: union([
+      receiver: union([
         IMAPEntry,
         TestEntry
         // Disabled
       ]).description('protocol to receive mails').role('radio')
-    }).description('receiver'),
+    }).description('receive'),
     union([
       object({
-        receiverProtocol: TestEntry.required()
+        receiver: TestEntry.required()
       }),
       object({
-        receiverProtocol: IMAPEntry.required(),
-        receiver: object({
+        receiver: IMAPEntry.required(),
+        imap: object({
           user: string(),
           password: string().role('secret'),
           host: string(),
@@ -84,14 +84,14 @@ export type Options = {
   name: string,
 } & (
     | {
-      senderProtocol: 'dummy'
+      sender: 'dummy'
     }
     | {
-      senderProtocol: 'disabled'
+      sender: 'disabled'
     }
     | {
-      senderProtocol: 'node-mailer-smtp'
-      sender: {
+      sender: 'nodemailer-smtp'
+      nodemailer: {
         host: string,
         port: number,
         secure: boolean,
@@ -103,14 +103,14 @@ export type Options = {
     }
   ) & (
     | {
-      receiverProtocol: 'dummy',
+      receiver: 'dummy',
     }
     | {
-      receiverProtocol: 'disabled',
+      receiver: 'disabled',
     }
     | {
-      receiverProtocol: 'imap',
-      receiver: {
+      receiver: 'imap',
+      imap: {
         user: string,
         password: string
       }

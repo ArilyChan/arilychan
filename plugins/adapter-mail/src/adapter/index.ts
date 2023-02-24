@@ -24,13 +24,13 @@ export class MailBot extends Bot {
     let sender: Sender.BaseSender, receiver: Receiver.BaseReceiver
     if (!config) throw new Error('missing config')
 
-    switch (config.senderProtocol) {
-      case 'node-mailer-smtp': {
-        sender = new Sender.NodeMailer(config.sender, address)
+    switch (config.sender) {
+      case 'nodemailer-smtp': {
+        sender = new Sender.NodeMailer(config.nodemailer, address)
         break
       }
       case 'dummy': {
-        sender = new Sender.TestSender(config)
+        sender = new Sender.TestSender({ name: config.name, address: config.address })
         break
       }
       // case 'disabled': {
@@ -40,13 +40,13 @@ export class MailBot extends Bot {
         throw new Error('unknown adapter')
       }
     }
-    switch (config.receiverProtocol) {
+    switch (config.receiver) {
       case 'imap': {
-        receiver = new Receiver.IMAPReceiver(config.receiver, address)
+        receiver = new Receiver.IMAPReceiver(config.imap, address)
         break
       }
       case 'dummy': {
-        receiver = new Receiver.TestReceiver(config)
+        receiver = new Receiver.TestReceiver({ name: config.name, address: config.address })
         break
       }
       // case 'disabled': {

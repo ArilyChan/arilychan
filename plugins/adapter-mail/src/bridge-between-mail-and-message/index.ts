@@ -83,20 +83,13 @@ export class Bridge {
     const messageId = (Math.random() * 114514 * 1919810).toFixed()
     // const segs = segment.parse(content)
     const h = html`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <style>
-            p {
-              white-space: pre;
-            }
-          </style>
-        </head>
-        <body>
-          <p>${this.#separator}</p>
-          <section class="bot-reply-container">${content}</section>
-        </body>
-      </html>
+<style>
+p, .bot-reply-container {
+  white-space: pre;
+}
+</style>
+<p>${this.#separator}</p>
+<div class="bot-reply-container">${content}</div>
     `
     this.client.send({
       to: new MailAddress({ address: to.id, name: to.name }),

@@ -114,7 +114,8 @@ export class IMAPReceiver<T extends never> extends BaseReceiver<T> {
                   subject: parsed.subject,
                   to,
                   from: from[0],
-                  html: parsed.html || undefined
+                  html: parsed.html || undefined,
+                  text: parsed.text
                 })
                 resolve2()
               })

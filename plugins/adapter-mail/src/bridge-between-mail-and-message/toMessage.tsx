@@ -51,7 +51,10 @@ const extractMessage = (mail: IncomingMail) => {
   if (mail.html) {
     return extractMessageFromHtml(mail as IncomingMail)
   } else if (mail.text) return [segment.text(mail.text.toString('utf-8'))] as segment[]
-  else return Promise.reject(Error('unable to process message'))
+  else {
+    logger.debug(mail)
+    return Promise.reject(Error('unable to process message'))
+  }
 }
 
 const separate = (_separator: string) => async (segs: segment[]) => {

@@ -4,7 +4,9 @@ exports.apply = exports.schema = exports.name = exports.commandBuilder = void 0;
 const koishi_1 = require("koishi");
 const grammar_1 = require("./grammar");
 const builder_1 = require("./runtime/builder");
-function commandBuilder(logger) {
+// const beautify = require('js-beautify').js
+const js_beautify_1 = require("js-beautify");
+function commandBuilder() {
     const matches = [];
     return [
         matches,
@@ -14,34 +16,34 @@ function commandBuilder(logger) {
             if (command.type !== 'incomingMessage')
                 return;
             let matchRule;
-            const cond = command.cond;
-            switch (cond.type) {
+            const matcher = command.cond;
+            switch (matcher.type) {
                 case 'startsWith':
-                    matchRule = (session) => session.content.startsWith(cond.content);
+                    matchRule = (session) => session.content.startsWith(matcher.content);
                     break;
                 case 'includes':
-                    matchRule = (session) => session.content.includes(cond.content);
+                    matchRule = (session) => session.content.includes(matcher.content);
                     break;
                 case 'equals':
-                    if (cond.eq === 'strictEqual')
-                        matchRule = (session) => session.content === cond.content;
+                    if (matcher.eq === 'strictEqual')
+                        matchRule = (session) => session.content === matcher.content;
                     // eslint-disable-next-line eqeqeq
-                    if (cond.eq === 'equal')
-                        matchRule = (session) => session.content == cond.content;
-                    if (cond.eq === 'eq') {
-                        logger('responder2').warn(`got 'assignment operator' in rules #${index}, auto-correct to double equal.`);
+                    if (matcher.eq === 'equal')
+                        matchRule = (session) => session.content == matcher.content;
+                    if (matcher.eq === 'eq') {
+                        new koishi_1.Logger('responder2/builder').warn(`got 'assignment operator' in rules #${index}, auto-correct to double equal.`);
                         // eslint-disable-next-line eqeqeq
-                        matchRule = (session) => session.content == cond.content;
+                        matchRule = (session) => session.content == matcher.content;
                     }
                     break;
                 case 'exec':
-                    if (!cond.variables)
-                        cond.variables = [];
-                    matchRule = (0, builder_1.build)(cond.code, cond.variables, { async: cond.async, inline: cond.inline, isMatcher: true });
+                    if (!matcher.variables)
+                        matcher.variables = [];
+                    matchRule = (0, builder_1.build)(matcher.code, matcher.variables, { async: matcher.async, inline: matcher.inline, isMatcher: true });
                     break;
                 default:
-                    console.log(cond);
-                    throw new Error('unexpected condition type: ' + cond.type);
+                    console.log(matcher);
+                    throw new Error('unexpected condition type: ' + matcher.type);
             }
             const action = command.action;
             let run;
@@ -54,7 +56,7 @@ function commandBuilder(logger) {
                         action.variables = [];
                     run = (0, builder_1.build)(action.code, action.variables, { async: action.async, inline: action.inline, isAction: true });
             }
-            matches.push([matchRule, run]);
+            matches.push([matchRule, run, command]);
         }
     ];
 }
@@ -83,8 +85,8 @@ exports.schema = koishi_1.Schema.object({
 function apply(ctx, options) {
     try {
         const trigger = options.rules.filter(rule => rule.enabled).map(rule => rule.content).join('\n');
-        console.log(trigger);
-        const [matches, builder] = commandBuilder(ctx.logger('responder2/builder'));
+        const [matches, builder] = commandBuilder();
+        ctx.logger('responder2').debug(trigger);
         const reader = grammar_1.parser.parse(trigger);
         reader.forEach(builder);
         ctx.middleware(async (session, next) => {
@@ -167,17 +169,17 @@ function apply(ctx, options) {
                     if (Array.isArray(line)) {
                         return rtn.push(`注释: ${line[1]}`);
                     }
-                    const cond = line.cond;
+                    const matcher = line.cond;
                     const action = line.action;
-                    if (['startsWith', 'includes'].includes(cond.type)) {
-                        rtn.push(`|| 触发条件:\n|| session.content.${cond.type}('${cond.content}')`);
+                    if (matcher.type === 'startsWith' || matcher.type === 'includes') {
+                        rtn.push(`|| 触发条件:\n|| session.content.${matcher.type}('${matcher.content}')`);
                     }
-                    else if (cond.type === 'equals') {
-                        const equals = cond.eq.split('eq').join('=');
-                        rtn.push(`|| 触发条件:\n|| session.content ${equals} '${cond.content}'`);
+                    else if (matcher.type === 'equals') {
+                        const equals = matcher.eq.split('eq').join('=');
+                        rtn.push(`|| 触发条件:\n|| session.content ${equals} '${matcher.content}'`);
                     }
-                    else if (cond.type === 'exec') {
-                        rtn.push(`|| 自定义触发函数: ${transformVariables(cond, true)}`);
+                    else if (matcher.type === 'exec') {
+                        rtn.push(`|| 自定义触发函数: ${transformVariables(matcher, true)}`);
                     }
                     rtn.push('|| ⬇️');
                     if (action.type === 'literal') {
@@ -191,6 +193,63 @@ function apply(ctx, options) {
             }
             catch (err) {
                 return `error when parsing: ${err.stack}`;
+            }
+        });
+        resp2.subcommand('.compile <reallyLongString:text>')
+            .usage('编译到javascript')
+            .example('resp2.compile $ -> true -> "ok!"')
+            .action((_, syntax) => {
+            if (syntax === 'current')
+                syntax = trigger;
+            try {
+                const q = koishi_1.segment.unescape(syntax);
+                const parsed = grammar_1.parser.parse(q);
+                const [matches, builder] = commandBuilder();
+                parsed.forEach(builder);
+                const inner = matches.map(([matcher, action, command]) => {
+                    let matchContent = '';
+                    let actionContent = '';
+                    if (command.cond.type !== 'exec') {
+                        matchContent = `const matcher = ${JSON.stringify(command.cond)}`;
+                    }
+                    if (command.action.type !== 'exec') {
+                        actionContent = `const action = ${JSON.stringify(command.action)}`;
+                    }
+                    return `
+  context.middleware(async (session, next) => {
+    let matcherResolvedValue, receivedMatcherResolvedValue
+    const resolve = (result) => {
+      matcherResolvedValue = result
+      receivedMatcherResolvedValue = true
+    }
+    const reject = () => {
+      matcherResolvedValue = false
+      receivedMatcherResolvedValue = true
+    }
+    ${matchContent}
+    ${actionContent}
+    const match$ = ${matcher}
+    const action$ = ${action}
+
+    const returnValue = ${command.cond.type === 'exec' && command.cond.async === true ? 'await' : ''} match$(session, context, resolve, reject)
+
+    if (receivedMatcherResolvedValue && matcherResolvedValue) {
+      return ${command.action.type === 'exec' && command.action.async === true ? 'await' : ''} action$(session, context, matcherResolvedValue)
+    } else if (returnValue) {
+      return ${command.action.type === 'exec' && command.action.async === true ? 'await' : ''} action$(session, context, returnValue)
+    } else {
+      return next()
+    }
+  })
+`;
+                }).join('');
+                return (0, js_beautify_1.js)(`
+function apply(context) {
+${inner}
+}`, { indent_size: 2, space_in_empty_paren: true });
+            }
+            catch (err) {
+                return err.message;
             }
         });
     }

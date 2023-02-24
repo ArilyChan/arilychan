@@ -39,8 +39,8 @@ export type ActionFunction = (session: Session, context: Context, returnedValue:
     toString: () => string;
 }>;
 export type MatchFunction = CustomMatcher;
-export type Entry = [MatchFunction, ActionFunction];
-export declare function commandBuilder(logger: any): [Entry[], CallableFunction];
+export type Entry = [MatchFunction, ActionFunction, Command];
+export declare function commandBuilder(): readonly [Entry[], (command: Command, index: any) => void];
 export declare const name = "yet-another-responder";
 export declare const schema: Schema<Schemastery.ObjectS<{
     rules: Schema<Schemastery.ObjectS<{}>[], ({} & import("cosmokit").Dict<any, string>)[]>;

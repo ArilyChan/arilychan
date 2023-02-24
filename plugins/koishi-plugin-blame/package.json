@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-blame",
   "version": "4.0.1",
-  "description": "notice you when unhandled error",
+  "description": "send error to admin, prevent crash",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

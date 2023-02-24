@@ -1,10 +1,14 @@
 {
   "name": "koishi-plugin-puppeteer-cluster",
   "version": "1.0.0",
-  "description": "",
+  "description": "puppeteer cluster w/ fast response capability",
   "main": "lib/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "koishi": {
+    "service": {
+      "implement": [
+        "puppeteerCluster"
+      ]
+    }
   },
   "author": "",
   "license": "MIT",

@@ -1,16 +1,18 @@
 {
   "name": "koishi-plugin-nyan",
-  "version": "1.2.3",
-  "description": "append nyan",
+  "version": "1.2.4",
+  "description": "一键变猫",
   "peerDependencies": {
-    "koishi": ">=4.0.0"
+    "koishi": "^4.0.0 || ^4.0.0-rc"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "koishi": {
+    "description": {
+      "zh": "一键变🐱插件（🐶也行）"
+    }
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ArilyChan/arilychan.git"
+    "url": "https://github.com/ArilyChan/arilychan/plugins/nyan"
   },
   "keywords": [
     "koishi",

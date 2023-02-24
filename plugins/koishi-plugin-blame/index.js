@@ -211,7 +211,7 @@ try {
         })
       }
 
-      const sendGroup = (message) => {
+      const sendChannel = (message) => {
         concatGroupAndChannel().forEach((ptId) => {
           const [platform, id] = ptId.split(':')
           if (!id) throw new Error('v3 needs `platform:id` as a receiver id')
@@ -243,7 +243,7 @@ try {
           }
           await Promise.all([
             handler(`${reason.stack}`, sendPrivate),
-            handler(`${reason.stack}`, sendGroup)
+            handler(`${reason.stack}`, sendChannel)
           ])
           if (options.crash) {
             crash(1)
@@ -259,7 +259,6 @@ try {
   // noop
 }
 
-// const { version } = require('koishi-core')
 let version
 try {
   // @ts-ignore

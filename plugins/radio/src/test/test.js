@@ -1,10 +1,10 @@
 'use strict'
 
-const Arg = require('../lib/command/arg')
+import Arg from '../lib/command/arg'
+import { createInterface } from 'readline'
 
 const myQQ = 1
-const readline = require('readline')
-const rl = readline.createInterface({
+const rl = createInterface({
   input: process.stdin,
   output: process.stdout
 })

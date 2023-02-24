@@ -1,15 +1,13 @@
-'use strict'
-
-const path = require('path')
-const express = require('express')
-const socketIO = require('socket.io')
-const nocache = require('nocache')
+import { join } from 'path'
+import express, { Router, static as _static } from 'express'
+import socketIO from 'socket.io'
+import nocache from 'nocache'
 const app = express()
-// TODO
-const router = express.Router()
-const publicDir = path.join(__dirname, '../../public')
 
-module.exports = (option, storage, http) => {
+const router = Router()
+const publicDir = join(__dirname, '../../public')
+
+export default (option, storage, http) => {
   router.get('/', (req, res, next) => {
     // res.sendFile(path.join(publicDir, 'index.html'))
     res.redirect(`${option.web.path}/player`)
@@ -17,14 +15,14 @@ module.exports = (option, storage, http) => {
 
   router.use(['/manifest.json', '/service-worker.js', '/player'], nocache())
   router.get('/player', (req, res, next) => {
-    res.sendFile(path.join(publicDir, 'index.html'), {
+    res.sendFile(join(publicDir, 'index.html'), {
       cacheControl: false
     })
   })
   router.get('/history', async (req, res, next) => {
     res.json(await storage.filteredPlaylistArray())
   })
-  router.use(express.static(publicDir))
+  router.use(_static(publicDir))
 
   app.use(router)
 

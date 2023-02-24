@@ -1,10 +1,8 @@
-'use strict'
-
-const querystring = require('querystring')
-const https = require('https')
-const axios = require('axios')
-const axiosRu = axios.create({
-  httpsAgent: new https.Agent({
+import { stringify } from 'querystring'
+import { Agent } from 'https'
+import { create } from 'axios'
+const axiosRu = create({
+  httpsAgent: new Agent({
     rejectUnauthorized: false
   })
 })
@@ -60,14 +58,14 @@ class SearchResult {
 
 class sayobotApi {
   static async apiRequestV2 (options) {
-    const contents = (options) ? querystring.stringify(options) : ''
+    const contents = (options) ? stringify(options) : ''
     const url = 'https://api.sayobot.cn/v2/beatmapinfo?' + contents
     const result = await axiosRu.get(url)
     return result.data
   }
 
   static async apiRequestList (keyword) {
-    const url = 'https://api.sayobot.cn/beatmaplist?0=1&1=0&2=4&' + querystring.stringify({ 3: keyword })
+    const url = 'https://api.sayobot.cn/beatmaplist?0=1&1=0&2=4&' + stringify({ 3: keyword })
     const result = await axiosRu.get(url)
     return result.data
   }
@@ -110,4 +108,4 @@ class sayobotApi {
   }
 }
 
-module.exports = sayobotApi
+export default sayobotApi

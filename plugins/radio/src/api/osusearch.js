@@ -1,10 +1,8 @@
-'use strict'
-
-const querystring = require('querystring')
-const https = require('https')
-const axios = require('axios')
-const axiosRu = axios.create({
-  httpsAgent: new https.Agent({
+import { stringify } from 'querystring'
+import { Agent } from 'https'
+import { create } from 'axios'
+const axiosRu = create({
+  httpsAgent: new Agent({
     rejectUnauthorized: false
   })
 })
@@ -44,7 +42,7 @@ class OsusearchBeatmap {
 
 class OsusearchApi {
   static async apiRequest (options) {
-    const contents = (options) ? querystring.stringify(options) : ''
+    const contents = (options) ? stringify(options) : ''
     const url = 'https://osusearch.com/query/?' + contents
     const result = await axiosRu.get(url)
     return result.data
@@ -99,4 +97,4 @@ class OsusearchApi {
   }
 }
 
-module.exports = OsusearchApi
+export default OsusearchApi

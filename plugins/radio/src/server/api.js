@@ -1,8 +1,8 @@
-const Arg = require('../../lib/command/arg')
+import Arg from '../command/arg'
 
-module.exports = async (option = {}) => {
-  const database = await require('./database')(option)
-  const broadcast = require('./broadcast')(option)
+export default async (option = {}) => {
+  const database = await require('./database').default(option)
+  const broadcast = require('./broadcast').default(option)
   return {
     database,
     /** @type {Map} BeatmapInfo collection */
@@ -19,7 +19,7 @@ module.exports = async (option = {}) => {
     /**
      * 搜索歌曲
      * @param {String} msg “点歌”后面的参数
-     * @returns {import("./lib/api/sayobot").BeatmapInfo} BeatmapInfo
+     * @returns {import("./api/sayobot").BeatmapInfo} BeatmapInfo
      */
     async search (msg) {
       const arg = new Arg(msg)
@@ -29,7 +29,7 @@ module.exports = async (option = {}) => {
 
     /**
      * 检查歌曲是否在指定时间长度内
-     * @param {import("./lib/api/sayobot").BeatmapInfo} beatmapInfo
+     * @param {import("./api/sayobot").BeatmapInfo} beatmapInfo
      * @param {Number} limit 秒数
      * @returns {Boolean} true为在limit内，option.durationLimit未定义则始终为true
      */

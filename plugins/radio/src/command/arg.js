@@ -1,8 +1,7 @@
 /* eslint-disable no-throw-literal */
-'use strict'
 
-const sayobot = require('../api/sayobot')
-const osusearch = require('../api/osusearch')
+const sayobot = require('../api/sayobot').default
+const osusearch = require('../api/osusearch').default
 
 class Arg {
   constructor (message) {
@@ -122,4 +121,4 @@ class Arg {
   }
 }
 
-module.exports = Arg
+export default Arg

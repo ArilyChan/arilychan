@@ -1,5 +1,5 @@
-module.exports = {
-  newerThan: (date) => [
+export function newerThan (date) {
+  return [
     {
       $addFields: {
         insertDate: {
@@ -13,15 +13,19 @@ module.exports = {
         }
       }
     }
-  ],
-  sortByInsertionOrderDesc: () => [
+  ]
+}
+export function sortByInsertionOrderDesc () {
+  return [
     {
       $sort: {
         _id: -1
       }
     }
-  ],
-  playlistUniqueBySid: () => [
+  ]
+}
+export function playlistUniqueBySid () {
+  return [
     {
       $group: {
         _id: '$sid',

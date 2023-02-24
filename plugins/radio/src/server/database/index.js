@@ -1,10 +1,10 @@
 // const songlist = new Map()
-const { MongoClient } = require('mongodb')
-const aggeregations = require('./aggregations')
+import { MongoClient } from 'mongodb'
+import { newerThan, sortByInsertionOrderDesc, playlistUniqueBySid } from './aggregations'
 
 let lastAddedSong
 
-module.exports = async (option) => {
+export default async (option) => {
   const uri = option.db.uri || process.env.DB_URI || 'mongodb://localhost:27017/ArilyChan'
   const dbName = option.db.database || process.env.DB_DATABASE || 'ArilyChan'
   const removeAfterDays = (option.expire || 7) + 1
@@ -35,10 +35,10 @@ module.exports = async (option) => {
       const d = new Date()
       d.setDate(d.getDate() - removeAfterDays)
       return await collection.aggregate([
-        ...aggeregations.newerThan(d),
-        ...aggeregations.sortByInsertionOrderDesc(),
-        ...aggeregations.playlistUniqueBySid(),
-        ...aggeregations.sortByInsertionOrderDesc()
+        ...newerThan(d),
+        ...sortByInsertionOrderDesc(),
+        ...playlistUniqueBySid(),
+        ...sortByInsertionOrderDesc()
       ]).toArray()
     }
   }

@@ -1,5 +1,5 @@
-const EventEmitter = require('events')
-const database = require('../database')
+import EventEmitter from 'events'
+import { lastAddedSong } from '../database'
 
 const emitter = new EventEmitter()
 let lastBroadcasted
@@ -7,7 +7,7 @@ let lastBroadcasted
 const broadcast = (...args) => emitter.emit(...args)
 
 const pushSong = (song) => {
-  const lastSong = lastBroadcasted || database.lastAddedSong || undefined
+  const lastSong = lastBroadcasted || lastAddedSong || undefined
   if (lastSong?.sid === song.sid) return
   broadcast('search-result', song)
   lastBroadcasted = song
@@ -25,4 +25,4 @@ const exportModule = () => ({
   removeSong
 })
 
-module.exports = exportModule
+export default exportModule

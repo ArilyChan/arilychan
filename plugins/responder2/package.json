@@ -2,7 +2,7 @@
   "name": "koishi-plugin-responder2",
   "description": "最新应答机！你可以在conf里写函数！",
   "author": "arily <arily@arily.moe>",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -17,7 +17,7 @@
   ],
   "homepage": "https://github.com/arilychan/arilychan",
   "peerDependencies": {
-    "koishi": "^4.6.1"
+    "koishi": "^4.11.7"
   },
   "dependencies": {
     "js-beautify": "^1.14.7",

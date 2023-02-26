@@ -5,9 +5,9 @@
   "main": "bot/index.js",
   "private": true,
   "scripts": {
-    "preinstall": "yakumo preinstall",
     "new": "koishi-scripts new",
     "setup": "koishi-scripts setup",
+    "clone": "koishi-scripts clone",
     "build": "yakumo build",
     "bump": "yakumo version",
     "dep": "yakumo upgrade",

@@ -1,5 +1,5 @@
 {
-  "name": "koishi-plugin-radio",
+  "name": "koishi-plugin-arilychan-radio",
   "description": "listen to osu songs with other\u0017",
   "version": "0.0.1",
   "main": "lib/index.js",
@@ -17,5 +17,9 @@
   ],
   "peerDependencies": {
     "koishi": "^4.11.7"
+  },
+  "dependencies": {
+    "nocache": "^3.0.4",
+    "socket.io": "^4.6.1"
   }
 }

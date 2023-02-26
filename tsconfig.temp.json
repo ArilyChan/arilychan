@@ -2,37 +2,7 @@
   "files": [],
   "references": [
     {
-      "path": "./utils/schema-compose"
-    },
-    {
-      "path": "./utils/koishi-web-connect"
-    },
-    {
-      "path": "./plugins/responder2"
-    },
-    {
-      "path": "./plugins/osu-info-command"
-    },
-    {
-      "path": "./plugins/osu-calendar"
-    },
-    {
-      "path": "./plugins/nyan"
-    },
-    {
-      "path": "./plugins/meal"
-    },
-    {
-      "path": "./plugins/koishi-plugin-puppeteer-cluster"
-    },
-    {
-      "path": "./plugins/koishi-plugin-express"
-    },
-    {
-      "path": "./plugins/console-toolkits"
-    },
-    {
-      "path": "./plugins/adapter-mail"
+      "path": "./plugins/radio"
     }
   ]
 }

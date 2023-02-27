@@ -11,13 +11,11 @@
     "type": "git",
     "url": "https://github.com/ArilyChan/arilychan.git"
   },
-  "main": "lib-commonjs/index.js",
-  "module": "lib/index.js",
+  "main": "lib/index.js",
   "files": [
     "README.md",
     "css/",
     "dist/",
-    "lib-commonjs/",
     "lib/"
   ],
   "scripts": {

@@ -4,13 +4,9 @@ import { Context, App, Schema } from 'koishi'
 import { asExpressMiddleware } from 'koishi-web-connect'
 
 declare module 'koishi' {
-  // eslint-disable-next-line no-unused-vars
-  namespace Context {
-    // eslint-disable-next-line no-unused-vars
-    interface Services {
-      express: express.Application
-      _expressHttpServer: Server
-    }
+  interface Context {
+    express: express.Application
+    _expressHttpServer: Server
   }
 }
 
@@ -38,7 +34,7 @@ export function apply (ctx: Context, options: Options = {
   port: 0,
   hostname: undefined
 }): void {
-  if (!ctx.app) return
+  if (!ctx.root) return
 
   const expressApp = express()
   ctx.express = expressApp
@@ -58,6 +54,6 @@ export function apply (ctx: Context, options: Options = {
   //   })
   // }
   if (options.koishiRoutes === 'use') {
-    expressApp.use(asExpressMiddleware(ctx.app as App, { waitForServer: true }))
+    expressApp.use(asExpressMiddleware(ctx.root as App, { waitForServer: true }))
   } else if (options.koishiRoutes !== 'ignore') throw new Error('unsupported koishi route handling method: ' + options.koishiRoutes)
 }

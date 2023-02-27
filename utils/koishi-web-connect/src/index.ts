@@ -1,22 +1,19 @@
 import type { IncomingMessage, ServerResponse } from 'http'
 import type { NextFunction, Handler } from 'express'
-import type { App } from 'koishi'
+import type { Context } from 'koishi'
 
-import { URL } from 'url'
-
-export type ConnectableResuest = IncomingMessage & { originalUrl?: string };
+export type ConnectableRequest = IncomingMessage & { originalUrl?: string };
 export type Config = {
   waitForServer?: boolean
 }
-type Root = App & { _httpServer: any, isActive: boolean }
-function checkHttpServer (app: Root) {
-  if (!app?._httpServer) throw new Error('web server does not exists. Please check your configuration.')
+function checkHttpServer (app: Context) {
+  if (!app.router._http) throw new Error('web server does not exists. Please check your configuration.')
 }
 
-export function asExpressMiddleware (app: Root, { waitForServer }: Config = { waitForServer: false }): Handler {
-  const logger = app?.logger('web-connect')?.extend('express-middleware') || { ...console, debug: (...args) => console.log('debug:', ...args) }
+export function asExpressMiddleware (app: Context, { waitForServer }: Config = { waitForServer: false }): Handler {
+  const logger = app.logger('web-connect').extend('express-middleware')
   let serverOk = false
-  if (waitForServer && !app?.isActive) {
+  if (waitForServer && !app.events.isActive) {
     serverOk = false
     app.once('ready', () => {
       checkHttpServer(app)
@@ -28,7 +25,7 @@ export function asExpressMiddleware (app: Root, { waitForServer }: Config = { wa
     serverOk = true
   }
 
-  return (req: ConnectableResuest, res: ServerResponse, next: NextFunction) => {
+  return (req: ConnectableRequest, res: ServerResponse, next: NextFunction) => {
     const exactUrl = req.originalUrl || req.url
     const matchingUrl = new URL(exactUrl as string).pathname || ''
     const match = app.router.match(matchingUrl, req.method as string)
@@ -40,6 +37,6 @@ export function asExpressMiddleware (app: Root, { waitForServer }: Config = { wa
     }
     logger.debug('got matching routes, pass to koa')
     req.url = exactUrl
-    app?._httpServer?.emit('request', req, res)
+    app.router._http?.emit('request', req, res)
   }
 }

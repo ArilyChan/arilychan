@@ -25,7 +25,7 @@
     "clean": "del-cli lib lib-commonjs dist css coverage && jest --clearCache",
     "build:cleanup": "del-cli \"lib?(-*)/**/@(__demo__|__snapshots__|?(*.)test.@(ts|tsx|js|jsx))\"",
     "eslint": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --ignore-pattern \"/__demo__/\" --no-error-on-unmatched-pattern",
-    "jest": "cross-env NODE_ENV=test jest --passWithNoTests",
+    "jest": "cross-env NODE_ENV=test jest --passWithNoTests --detectOpenHandles",
     "prepack": "npm run build",
     "reformat": "npm run eslint --fix --quiet",
     "tsc": "tsc"
@@ -34,8 +34,9 @@
     "koishi": ">=2.0.0"
   },
   "devDependencies": {
-    "@types/jest": "^27.5.2",
+    "@types/jest": "^29.4.0",
     "@types/node": "^17.0.45",
+    "@types/supertest": "^2.0.12",
     "cross-env": "^7.0.3",
     "del-cli": "^4.0.1",
     "eslint-plugin-jest": "^27.2.1",
@@ -44,6 +45,7 @@
     "koishi": "*",
     "prettier": "^2.8.4",
     "supertest": "^6.3.3",
+    "ts-jest": "^29.0.5",
     "typescript": "^4.9.5"
   },
   "dependencies": {

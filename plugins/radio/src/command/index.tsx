@@ -10,8 +10,7 @@ import { Uploader } from '../types'
 export const name = 'arilychan-radio-commands'
 export { schema } from '../index'
 export const apply = async (ctx: Context, options) => {
-  console.log('here')
-  const storage = await api(options)
+  const storage = await api(ctx, options)
   // @ts-expect-error should exists
   ctx.using(['express'], function arilychanRadioWebService ({ express, _expressHttpServer }) {
     express.use(options.web.path, server(options, storage, _expressHttpServer))

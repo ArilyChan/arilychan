@@ -7,8 +7,6 @@ import { Context } from 'koishi'
 
 export default async (ctx: Context, option: {expire?: number} = {}) => {
   const database = await createDb(ctx, option)
-  // const database = await require('./database').default(option)
-  // const broadcast = require('./broadcast').default(option)
   return {
     database,
     /** pushed events */

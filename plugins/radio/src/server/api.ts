@@ -1,9 +1,14 @@
+import type { Guild, Uploader } from '../types'
 import Arg from '../command/arg'
-import type { BeatmapInfo } from '../package/sayobot'
+import { BeatmapsetInfo, DatabaseBeatmapsetInfo } from '../package/sayobot'
+import createDb from './database'
+import * as broadcast from './broadcast'
+import { Context } from 'koishi'
 
-export default async (option: Record<string, unknown> = {}) => {
-  const database = await require('./database').default(option)
-  const broadcast = require('./broadcast').default(option)
+export default async (ctx: Context, option: {expire?: number} = {}) => {
+  const database = await createDb(ctx, option)
+  // const database = await require('./database').default(option)
+  // const broadcast = require('./broadcast').default(option)
   return {
     database,
     /** pushed events */
@@ -21,7 +26,7 @@ export default async (option: Record<string, unknown> = {}) => {
      * @param {Number} limit 秒数
      * @returns {Boolean} true为在limit内，option.durationLimit未定义则始终为true
      */
-    withinDurationLimit (beatmapInfo: BeatmapInfo, limit = option.durationLimit || 10 * 60) {
+    withinDurationLimit (beatmapInfo: BeatmapsetInfo, limit = /* option.durationLimit || */ 10 * 60) {
       if (!beatmapInfo.duration) return false
       return beatmapInfo.duration <= limit
     },
@@ -31,10 +36,19 @@ export default async (option: Record<string, unknown> = {}) => {
      * @param {Object} song
      * @returns {import('mongodb').WriteOpResult.result} WriteResult
      */
-    async add (song) {
-      const result = await database.songlistAdd(song)
-      if (!song.uploader && !song.uploader.nickname) throw new Error('unknown uploader')
-      broadcast.pushSong(song)
+    async add (song: BeatmapsetInfo, guild?: Guild) {
+      const replica = {
+        ...song,
+        scope: guild ? 'guild' : 'public',
+        guildId: guild as Guild
+      } as const
+
+      if (!BeatmapsetInfo.assertDatabaseReady(replica)) {
+        throw new Error('validation failed')
+      }
+      const result = await database.addSongToList(replica)
+      if (!replica.uploader) throw new Error('unknown uploader')
+      broadcast.pushSong(replica)
       return result
     },
 
@@ -46,8 +60,8 @@ export default async (option: Record<string, unknown> = {}) => {
      * @param {String} uploader.nickname
      * @returns {import('mongodb').WriteOpResult.result} WriteResult
      */
-    async delete (song, uploader) {
-      const result = await database.songlistRemove(song)
+    async delete (song: DatabaseBeatmapsetInfo, uploader: Uploader) {
+      const result = await database.removeSongFromList(song)
       broadcast.removeSong({ ...song, uploader })
       return result
     },
@@ -57,15 +71,12 @@ export default async (option: Record<string, unknown> = {}) => {
      * @param {Number|String} name qqId或其他东西
      * @param {String} msg message to send
      */
-    async broadcast (name, msg) {
+    async broadcast (name: string | number, msg: string) {
       broadcast.broadcast('broadcast-message', { name }, msg)
     },
-    /**
-     * to playlist
-     * @returns {Promise<Array<BeatmapInfo>>}
-     */
-    filteredPlaylistArray () {
-      return database.toPlaylist()
+
+    async filteredPlaylistArray () {
+      return await database.toPlaylist() as BeatmapsetInfo[]
     }
 
   }

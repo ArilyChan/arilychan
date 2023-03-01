@@ -1,6 +1,6 @@
 // const manual = require('sb-bot-manual')
 import api from './server/api'
-import server from './server/server'
+import server from './server/express'
 import { Schema } from 'koishi'
 import * as Command from './command'
 import { config } from 'process'

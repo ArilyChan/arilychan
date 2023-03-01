@@ -22,7 +22,7 @@ export function sortByInsertionOrderDesc () {
         _id: -1
       }
     }
-  ]
+  ] as const
 }
 export function playlistUniqueBySid () {
   return [

@@ -1,8 +1,7 @@
-import { BeatmapInfo } from './../package/sayobot'
-/* eslint-disable no-throw-literal */
-
 import { sayobotApi as SayobotApi } from '../package/sayobot'
 import { OsusearchApi as osusearch } from '../package/osusearch'
+
+class ErrorMessage extends Error {}
 
 class Arg {
   message: string
@@ -94,9 +93,9 @@ class Arg {
   }
 
   async getBeatmapInfo () {
-    if (!this.message) throw '请输入正确格式：artist - title(mapper)[diff_name] 或直接给出beatmapSetId，参数只有纯数字title请在前后加上双引号'
+    if (!this.message) throw new ErrorMessage('请输入正确格式：artist - title(mapper)[diff_name] 或直接给出beatmapSetId，参数只有纯数字title请在前后加上双引号')
     const searchData = this.getSearchData(this.message)
-    if (JSON.stringify(searchData) === '{}') throw '请输入正确格式：artist - title(mapper)[diff_name] 或直接给出beatmapSetId，参数只有纯数字title请在前后加上双引号'
+    if (JSON.stringify(searchData) === '{}') throw new ErrorMessage('请输入正确格式：artist - title(mapper)[diff_name] 或直接给出beatmapSetId，参数只有纯数字title请在前后加上双引号')
 
     let beatmapSetId: number
     const diffName = searchData.diff_name || ''
@@ -108,7 +107,7 @@ class Arg {
     else if (searchData.sayoTitle) {
       const result = await SayobotApi.searchList(searchData.sayoTitle)
       if (result.code) {
-        throw result.message
+        throw new ErrorMessage(result.message)
       }
       beatmapSetId = result
     // eslint-disable-next-line brace-style
@@ -117,8 +116,8 @@ class Arg {
     // 用osusearch搜索谱面setId
     else {
       const result = await osusearch.search(searchData)
-      if (result.code) {
-        throw result.message
+      if (typeof result === 'object') {
+        throw new ErrorMessage(result.message)
       }
       beatmapSetId = result
     }
@@ -126,9 +125,9 @@ class Arg {
     // 用sayobot获取谱面信息
     const beatmapInfo = await SayobotApi.search(beatmapSetId, diffName)
     if ('code' in beatmapInfo) {
-      throw beatmapInfo.message
+      throw new ErrorMessage(beatmapInfo.message)
     }
-    return beatmapInfo as BeatmapInfo
+    return beatmapInfo
   }
 }
 

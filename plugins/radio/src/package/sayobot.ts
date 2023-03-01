@@ -1,16 +1,75 @@
+import type { Guild, Uploader, UUID } from '../types'
 import { ParsedUrlQueryInput, stringify } from 'querystring'
 import { Agent } from 'https'
 import axios from 'axios'
+import { v4 as uuidv4 } from 'uuid'
+
 const { create } = axios
 const axiosRu = create({
   httpsAgent: new Agent({
     rejectUnauthorized: false
   })
 })
+export interface SayoBeatmapData {
+    AR: number;
+    CS: number;
+    HP: number;
+    OD: number;
+    aim: number;
+    audio: string;
+    bg: string;
+    bid: number;
+    circles: number;
+    hit300window: number;
+    img: string;
+    length: number;
+    maxcombo: number;
+    mode: number;
+    passcount: number;
+    playcount: number;
+    pp: number;
+    pp_acc: number;
+    pp_aim: number;
+    pp_speed: number;
+    sliders: number;
+    speed: number;
+    spinners: number;
+    star: number;
+    strain_aim: string;
+    strain_speed: string;
+    version: string;
+}
+export interface SayoBeatmapsetData {
+    approved: number;
+    approved_date: number;
+    artist: string;
+    artistU: string;
+    bid_data: SayoBeatmapData[];
+    bids_amount: number;
+    bpm: number;
+    creator: string;
+    creator_id: number;
+    favourite_count: number;
+    genre: number;
+    language: number;
+    last_update: number;
+    local_update: number;
+    preview: number;
+    sid: number;
+    source: string;
+    storyboard: number;
+    tags: string;
+    title: string;
+    titleU: string;
+    video: number;
+}
+export interface SayoBeatmapInfo {
+    data: SayoBeatmapsetData;
+    status: number;
+}
 
-export class BeatmapInfo {
-  uuid: string
-
+export class BeatmapsetInfo {
+  uuid: UUID
   artist: string
   artistU: string
   title: string
@@ -28,10 +87,10 @@ export class BeatmapInfo {
   background: string | null
   setLink: string
 
-  beatmap: { length: any; audio: string; bg: string, version: string }
-  uploader: unknown
+  // beatmap: SayoBeatmapData
+  uploader?: Uploader
 
-  constructor (data: { artist: string; artistU: string; title: string; titleU: string; sid: any; creator: any; creator_id: any; source: any; bid_data: any[] }, SpecDiff = '') {
+  constructor (data: SayoBeatmapsetData, SpecDiff = '') {
     this.artist = data.artist
     this.artistU = (data.artistU) ? data.artistU : data.artist
     this.title = data.title
@@ -40,19 +99,23 @@ export class BeatmapInfo {
     this.creator = data.creator
     this.creator_id = data.creator_id
     this.source = data.source
-    if (!SpecDiff) this.beatmap = data.bid_data.pop()
-    else {
-      data.bid_data.forEach((bData: this['beatmap']) => {
+    if (!data.bid_data.length) throw new Error('beatmapSet without beatmap?')
+
+    let beatmap: SayoBeatmapData
+
+    if (SpecDiff) {
+      beatmap = data.bid_data.find((bData) => {
         const version = bData.version.toLowerCase()
         const diff = SpecDiff.toLowerCase()
-        if (version.indexOf(diff) >= 0) this.beatmap = bData
-      })
-      if (!this.beatmap) this.beatmap = data.bid_data.pop()
+        return (version.indexOf(diff) >= 0)
+      }) || data.bid_data.pop() as SayoBeatmapData
+    } else {
+      beatmap = data.bid_data.pop() as SayoBeatmapData
     }
-    // this.bid = this.beatmap.bid
-    this.duration = this.beatmap.length
-    this.audioFileName = this.beatmap.audio // 无音频则为""
-    this.bgFileName = this.beatmap.bg // 无背景图则为""
+
+    this.duration = beatmap.length
+    this.audioFileName = beatmap.audio // 无音频则为""
+    this.bgFileName = beatmap.bg // 无背景图则为""
 
     this.thumbImg = `https://cdn.sayobot.cn:25225/beatmaps/${this.sid}/covers/cover.jpg`
     this.previewMp3 = `https://cdn.sayobot.cn:25225/preview/${this.sid}.mp3`
@@ -61,18 +124,34 @@ export class BeatmapInfo {
 
     this.setLink = `https://osu.ppy.sh/beatmapsets/${this.sid}`
 
-    // this.createdAt = new Date()
-    this.uploader = {}
+    this.uuid = uuidv4()
   }
+
+  static hydrate (data: BeatmapsetInfo): BeatmapsetInfo {
+    return Object.setPrototypeOf(data, BeatmapsetInfo.prototype)
+  }
+
+  // eslint-disable-next-line no-use-before-define
+  static assertDatabaseReady (input: BeatmapsetInfo & Partial<DatabaseBeatmapsetInfo>): input is DatabaseBeatmapsetInfo {
+    return (input.scope === 'guild' && Boolean(input.guildId)) ||
+    input.scope === 'public'
+  }
+}
+
+export interface DatabaseBeatmapsetInfo extends Required<BeatmapsetInfo> {
+  scope: 'public' | 'guild'
+  guildId: this['scope'] extends 'public' ? never : Guild,
+  created: Date
 }
 
 export class SearchResult {
   status: number
-  beatmapInfo: BeatmapInfo
-  constructor (result: { status: any; data: any }, SpecDiff?: string) {
+  beatmapInfo: BeatmapsetInfo
+
+  constructor (result: SayoBeatmapInfo, SpecDiff?: string) {
     this.status = result.status
     if (this.status === 0) {
-      this.beatmapInfo = new BeatmapInfo(result.data, SpecDiff)
+      this.beatmapInfo = new BeatmapsetInfo(result.data, SpecDiff)
     }
   }
 
@@ -99,7 +178,7 @@ export class sayobotApi {
      * sayobot搜索谱面信息
      * @param {Number} sid setId
      * @param {String} diffName 难度名，为了获取指定难度的音频
-     * @returns {BeatmapInfo|{code, message}} 返回BeatmapInfo，出错时返回 {code: "error"} 或 {code: 404}
+     * @returns {BeatmapsetInfo|{code, message}} 返回BeatmapInfo，出错时返回 {code: "error"} 或 {code: 404}
      */
   static async search (sid: number, diffName: string) {
     const params = { K: sid, T: 0 } // T=1 匹配bid

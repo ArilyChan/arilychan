@@ -115,15 +115,9 @@ export class OsusearchApi {
 
   /**
      * osusearch搜索谱面
-     * @param {Object} data
-     * @param {String} [data.title]
-     * @param {String} [data.artist]
-     * @param {String} [data.mapper]
-     * @param {String} [data.diff_name]
-     * @param {"set"|"id"} [type] 返回setId还是beatmapId
-     * @returns {Number|{code, message}} 返回id，出错时返回 {code: "error"} 或 {code: 404}
+     * @returns {number | {code: number | string, message: string}} 返回id，出错时返回 {code: "error"} 或 {code: 404}
      */
-  static async search (data: {}, type = 'set') {
+  static async search (data: Partial<{title: string, artist: string, mapper: string, diff_name:string}>, type: 'set' | 'id' = 'set'): Promise<number | { code: string | number, message: string }> {
     const result = await this.doSearch(data)
     if (result.code) return result
     if (type === 'id') return result.beatmap_id

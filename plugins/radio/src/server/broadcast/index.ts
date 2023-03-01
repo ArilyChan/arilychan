@@ -1,28 +1,20 @@
+import { DatabaseBeatmapsetInfo } from '../../package/sayobot'
 import EventEmitter from 'events'
 import { lastAddedSong } from '../database'
 
-const emitter = new EventEmitter()
+export const emitter = new EventEmitter()
 let lastBroadcasted
 
-const broadcast = (ns: string | symbol, ...args: unknown[]) => emitter.emit(ns, ...args)
+export const broadcast = (ns: string | symbol, ...args: unknown[]) => emitter.emit(ns, ...args)
 
-const pushSong = (song) => {
+export const pushSong = (song: DatabaseBeatmapsetInfo) => {
   const lastSong = lastBroadcasted || lastAddedSong || undefined
   if (lastSong?.sid === song.sid) return
   broadcast('search-result', song)
   lastBroadcasted = song
 }
 
-const removeSong = (song) => {
+export const removeSong = (song: DatabaseBeatmapsetInfo) => {
   if (lastBroadcasted?.sid === song.sid) lastBroadcasted = undefined
   broadcast('remove-track', song)
 }
-
-const exportModule = () => ({
-  emitter,
-  broadcast,
-  pushSong,
-  removeSong
-})
-
-export default exportModule

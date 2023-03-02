@@ -2,7 +2,7 @@
   "files": [],
   "references": [
     {
-      "path": "./plugins/osu-calendar"
+      "path": "./plugins/radio"
     }
   ]
 }

@@ -32,16 +32,16 @@ const api_1 = __importDefault(require("./server/api"));
 const express_1 = __importDefault(require("./server/express"));
 const koishi_1 = require("koishi");
 const Command = __importStar(require("./command"));
-const process_1 = require("process");
 exports.name = 'arilychan-radio';
 exports.schema = koishi_1.Schema.object({
     // duration: Schema.number().usage('')
     expire: koishi_1.Schema.number().description('点歌有效期限（天）').default(7),
-    db: koishi_1.Schema.object({
-        uri: koishi_1.Schema.string().description('mongodb connect uri')
-    }).description('currently running on custom server'),
+    // db: Schema.object({
+    //   uri: Schema.string().description('mongodb connect uri')
+    // }).description('currently running on custom server'),
     web: koishi_1.Schema.object({
-        path: koishi_1.Schema.string().description('网页地址，运行在express上。需要websocket服务。').default('/radio')
+        path: koishi_1.Schema.string().description('网页地址，运行在express上。需要websocket服务。').default('/radio'),
+        host: koishi_1.Schema.string().description('domain?')
     })
 });
 const apply = async (ctx, options) => {
@@ -49,6 +49,6 @@ const apply = async (ctx, options) => {
     ctx.using(['express'], function arilychanRadioWebService({ express, _expressHttpServer }) {
         express.use(options.web.path, (0, express_1.default)(options, storage, _expressHttpServer));
     });
-    ctx.plugin(Command, process_1.config);
+    ctx.plugin(Command, options);
 };
 exports.apply = apply;

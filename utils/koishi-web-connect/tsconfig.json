@@ -2,13 +2,14 @@
   "compilerOptions": {
     "skipLibCheck": true,
     "moduleResolution": "node",
+    "target": "es2020",
+    "module": "commonjs",
     "resolveJsonModule": true,
     "strict": true,
     "noImplicitReturns": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "jsx": "preserve",
-    "target": "esnext",
     "declaration": true,
     "outDir": "lib",
     "rootDir": "src"

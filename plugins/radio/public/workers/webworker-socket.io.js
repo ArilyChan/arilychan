@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 
-importScripts('https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.esm.min.js')
+importScripts('/Radio/socket.io.js')
 
 socket = null
 listeners = new Map()

@@ -68,7 +68,7 @@
     "@koishijs/plugin-chat": "^3.3.0",
     "@koishijs/plugin-commands": "^2.3.0",
     "@koishijs/plugin-console": "^5.4.3",
-    "@koishijs/plugin-database-mongo": "^3.6.1",
+    "@koishijs/plugin-database-mongo": "^4.4.2",
     "@koishijs/plugin-database-sqlite": "^3.3.4",
     "@koishijs/plugin-dataview": "^2.2.4",
     "@koishijs/plugin-feedback": "^1.2.2",

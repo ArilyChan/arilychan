@@ -133,8 +133,10 @@ export class BeatmapsetInfo {
 
   // eslint-disable-next-line no-use-before-define
   static assertDatabaseReady (input: BeatmapsetInfo & Partial<DatabaseBeatmapsetInfo>): input is DatabaseBeatmapsetInfo {
-    return (input.scope === 'guild' && Boolean(input.guildId)) ||
+    const scopeOK = (input.scope === 'guild' && Boolean(input.guildId)) ||
     input.scope === 'public'
+
+    return scopeOK && Boolean(input.created)
   }
 }
 

@@ -20,9 +20,6 @@ export default async (ctx: Context, option: {expire?: number} = {}) => {
 
     /**
      * 检查歌曲是否在指定时间长度内
-     * @param {import("./api/sayobot").BeatmapInfo} beatmapInfo
-     * @param {Number} limit 秒数
-     * @returns {Boolean} true为在limit内，option.durationLimit未定义则始终为true
      */
     withinDurationLimit (beatmapInfo: BeatmapsetInfo, limit = /* option.durationLimit || */ 10 * 60) {
       if (!beatmapInfo.duration) return false
@@ -31,22 +28,21 @@ export default async (ctx: Context, option: {expire?: number} = {}) => {
 
     /**
      * 点歌
-     * @param {Object} song
-     * @returns {import('mongodb').WriteOpResult.result} WriteResult
      */
     async add (song: BeatmapsetInfo, guild?: Guild) {
       const replica = {
         ...song,
         scope: guild ? 'guild' : 'public',
-        guildId: guild as Guild
+        guildId: guild as Guild,
+        created: new Date()
       } as const
 
       if (!BeatmapsetInfo.assertDatabaseReady(replica)) {
         throw new Error('validation failed')
       }
-      const result = await database.addSongToList(replica)
       if (!replica.uploader) throw new Error('unknown uploader')
       broadcast.pushSong(replica)
+      const result = await database.addSongToList(replica)
       return result
     },
 
@@ -74,7 +70,7 @@ export default async (ctx: Context, option: {expire?: number} = {}) => {
     },
 
     async filteredPlaylistArray () {
-      return await database.toPlaylist() as BeatmapsetInfo[]
+      return await database.toPlaylist()
     }
 
   }

@@ -1,4 +1,3 @@
-import { Guild } from './../../types'
 import { Context } from 'koishi'
 import { BeatmapsetInfo, DatabaseBeatmapsetInfo } from '../../package/sayobot'
 // import { MongoClient } from 'mongodb'
@@ -73,7 +72,9 @@ export default async (ctx: Context, option: { expire?: number }) => {
     setLink: 'string',
     uploader: 'string',
     uuid: 'string',
-    created: 'date'
+    created: 'date',
+    scope: 'string',
+    guildId: 'string'
   }, {
     primary: 'uuid'
   })
@@ -102,15 +103,15 @@ export default async (ctx: Context, option: { expire?: number }) => {
       const d = new Date()
       d.setDate(d.getDate() - removeAfterDays)
 
-      const playlist = await ctx.database.get('playlist', {
-        created: {
-          $gte: d
-        }
-      }, {
-        sort: {
-          created: 'desc'
-        }
-      })
+      const playlist = await ctx.database.select('playlist')
+        .where({
+          created: {
+            $gte: d
+          }
+        })
+        .orderBy('created', 'desc')
+      //   .groupBy('sid')
+        .execute()
 
       const dedup = playlist.reduce((acc, cur) => {
         const { playlist, sids } = acc

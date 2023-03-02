@@ -3,7 +3,7 @@ import EventEmitter from 'events'
 import { lastAddedSong } from '../database'
 
 export const emitter = new EventEmitter()
-let lastBroadcasted
+let lastBroadcasted: DatabaseBeatmapsetInfo | undefined
 
 export const broadcast = (ns: string | symbol, ...args: unknown[]) => emitter.emit(ns, ...args)
 

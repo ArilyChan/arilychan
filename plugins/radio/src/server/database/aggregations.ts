@@ -1,4 +1,4 @@
-export function newerThan (date) {
+export function newerThan (date: Date) {
   return [
     {
       $addFields: {

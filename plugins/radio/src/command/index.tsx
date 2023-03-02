@@ -42,7 +42,7 @@ export const apply = async (ctx: Context, options) => {
       const argString = unescapeSpecialChars(text)
       try {
         const beatmapInfo = await storage.search(argString)
-        beatmapInfo.uploader = argv.session?.userId as Uploader | undefined
+        beatmapInfo.uploader = argv.session?.userId as Uploader
 
         // beatmapInfo.uuid = uuidv4()
         const reply: Fragment = []

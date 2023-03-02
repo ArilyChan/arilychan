@@ -106,7 +106,7 @@ const apply = async (ctx, options) => {
             if (!sid) {
                 return (0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("at", { id: argv.session.userId }), "sid\u5E94\u8BE5\u662F\u4E2A\u6B63\u6574\u6570"] });
             }
-            const expiredDate = new Date(Date.now() - options.removeAfterDays * 24 * 60 * 60 * 1000 || 7 * 24 * 60 * 60 * 1000);
+            const expiredDate = new Date(Date.now() - options.expire * 24 * 60 * 60 * 1000 || 7 * 24 * 60 * 60 * 1000);
             let p = await ctx.database.get('playlist', {
                 created: {
                     $gte: expiredDate
@@ -116,7 +116,7 @@ const apply = async (ctx, options) => {
             });
             if (!p.length)
                 throw new Error('播放列表中没有该曲目');
-            if (options.isAdmin(argv)) {
+            if ((await argv.session.getUser()).authority > 2) {
                 // 管理员直接删除所有该sid曲目
                 await Promise.all(p.map((song) => {
                     if (!argv.session?.userId)
@@ -147,7 +147,8 @@ const apply = async (ctx, options) => {
         .action(async (argv, text) => {
         const argString = (0, utils_1.unescapeSpecialChars)(text);
         try {
-            if (!options.isAdmin(argv)) {
+            const authority = (await argv.session?.getUser())?.authority || 0;
+            if (authority > 2) {
                 return (0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsx)("at", { id: argv.session?.userId }), "\u53EA\u6709\u7BA1\u7406\u5458\u624D\u80FD\u53D1\u9001\u5E7F\u64AD\u6D88\u606F"] });
             }
             await storage.broadcast(argv.session?.userId, argString);

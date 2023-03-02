@@ -41,11 +41,12 @@ exports.schema = koishi_1.Schema.object({
     // }).description('currently running on custom server'),
     web: koishi_1.Schema.object({
         path: koishi_1.Schema.string().description('网页地址，运行在express上。需要websocket服务。').default('/radio'),
-        host: koishi_1.Schema.string().description('domain?')
+        host: koishi_1.Schema.string().description('domain?').default('https://bot.ri.mk')
     })
 });
 const apply = async (ctx, options) => {
     const storage = await (0, api_1.default)(ctx, options);
+    // @ts-expect-error
     ctx.using(['express'], function arilychanRadioWebService({ express, _expressHttpServer }) {
         express.use(options.web.path, (0, express_1.default)(options, storage, _expressHttpServer));
     });

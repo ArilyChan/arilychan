@@ -1,4 +1,4 @@
-import { Schema } from 'koishi';
+import { Context, Schema } from 'koishi';
 export declare const name = "arilychan-radio";
 export declare const schema: Schema<Schemastery.ObjectS<{
     expire: Schema<number, number>;
@@ -19,4 +19,11 @@ export declare const schema: Schema<Schemastery.ObjectS<{
         host: Schema<string, string>;
     }>>;
 }>>;
-export declare const apply: (ctx: any, options: any) => Promise<void>;
+export type Config = {
+    expire: number;
+    web: {
+        path: string;
+        host: string;
+    };
+};
+export declare const apply: (ctx: Context, options: Config) => Promise<void>;

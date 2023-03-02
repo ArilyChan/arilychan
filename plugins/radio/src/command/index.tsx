@@ -6,10 +6,11 @@ import { unescapeSpecialChars } from '../utils'
 import { Fragment, Context } from 'koishi'
 import type {} from 'koishi-plugin-express'
 import { Uploader } from '../types'
+import { Config } from '../index'
 
 export const name = 'arilychan-radio-commands'
 export { schema } from '../index'
-export const apply = async (ctx: Context, options) => {
+export const apply = async (ctx: Context, options: Config) => {
   const storage = await api(ctx, options)
   // @ts-expect-error should exists
   ctx.using(['express'], function arilychanRadioWebService ({ express, _expressHttpServer }) {
@@ -111,7 +112,7 @@ export const apply = async (ctx: Context, options) => {
         </>
         }
 
-        const expiredDate = new Date(Date.now() - options.removeAfterDays * 24 * 60 * 60 * 1000 || 7 * 24 * 60 * 60 * 1000)
+        const expiredDate = new Date(Date.now() - options.expire * 24 * 60 * 60 * 1000 || 7 * 24 * 60 * 60 * 1000)
 
         let p = await ctx.database.get('playlist', {
           created: {
@@ -122,7 +123,7 @@ export const apply = async (ctx: Context, options) => {
         })
 
         if (!p.length) throw new Error('播放列表中没有该曲目')
-        if (options.isAdmin(argv)) {
+        if ((await argv.session.getUser()).authority > 2) {
           // 管理员直接删除所有该sid曲目
           await Promise.all(p.map((song) => {
             if (!argv.session?.userId) return undefined
@@ -155,7 +156,8 @@ export const apply = async (ctx: Context, options) => {
     .action(async (argv, text) => {
       const argString = unescapeSpecialChars(text)
       try {
-        if (!options.isAdmin(argv)) {
+        const authority = (await argv.session?.getUser())?.authority || 0
+        if (authority > 2) {
           return <>
           <at id={argv.session?.userId}></at>
           只有管理员才能发送广播消息

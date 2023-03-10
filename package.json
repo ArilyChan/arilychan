@@ -48,7 +48,7 @@
   "license": "MIT",
   "workspaces": [
     "plugins/*",
-    "plugins/koishi-plugin-express/../utils/koishi-web-connect",
+    "utils/koishi-web-connect",
     "utils/*",
     "utils/esm-transform/esm-transform"
   ],

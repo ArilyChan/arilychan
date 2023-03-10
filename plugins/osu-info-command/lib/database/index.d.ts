@@ -10,7 +10,6 @@ declare module 'koishi' {
         osu: UserServerBind & {
             defaultServer?: keyof UserServerBind;
         };
-        osu2: string;
     }
 }
 export declare function apply(ctx: Context, options: Options): void;

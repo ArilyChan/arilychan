@@ -5,5 +5,5 @@ export default function tryUser(options: Options): {
         user: {
             osu: Record<string, any>;
         };
-    }, server?: string): string | undefined;
+    }, server: string): string | undefined;
 };

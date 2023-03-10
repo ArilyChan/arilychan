@@ -9,7 +9,7 @@ const tryMode_1 = __importDefault(require("../utils/tryMode"));
 const tryUser_1 = __importDefault(require("../utils/tryUser"));
 exports.name = 'osu-info-command-extend-database';
 function apply(ctx, options) {
-    const replyBindedStatus = (osu, omit = [], only = undefined) => {
+    const replyBoundStatus = (osu, omit = [], only = undefined) => {
         const rep = [];
         const servers = Object.keys(options.server);
         servers.forEach(server => {
@@ -40,18 +40,18 @@ function apply(ctx, options) {
     cmd.subcommand('.bind <username: text>')
         .option('server', '-s [server]')
         .option('mode', '-m [mode]')
-        .userFields(['osu', 'osu2', 'authority'])
+        .userFields(['osu', 'authority'])
         .action(async (argv, user) => {
         const { session } = argv;
         let { options: { server, mode } } = argv;
         if (!server)
             return '请指定服务器: osu.bind --server <server>\n' + Object.entries(options.server).map(([server, conf]) => `${conf.server}: ${server}`).join('\n');
-        // if (!mode && !binded?.[server]?.mode) return '请指定模式: osu.bind --mode <mode>\n' + `${options.server[server].server}: ${options.server[server].mode.join(', ')}`
+        // if (!mode && !bound?.[server]?.mode) return '请指定模式: osu.bind --mode <mode>\n' + `${options.server[server].server}: ${options.server[server].mode.join(', ')}`
         try {
             mode = validateMode(transformMode(mode), server);
             const { tryUser } = (0, tryUser_1.default)(options);
             // @ts-expect-error we got this
-            user = tryUser(user, session);
+            user = tryUser(user, session, server);
             if (mode && !Object.values(options.server).some(server => server.mode.some(m => m === mode)))
                 return `指定的模式不存在。 ${options.server[server].server}可用: ${options.server[server].mode.join(', ')}`;
             if (!session.user.osu[server])
@@ -60,7 +60,7 @@ function apply(ctx, options) {
                 session.user.osu[server].mode = mode;
             if (user)
                 session.user.osu[server].user = user;
-            return replyBindedStatus(session.user.osu, [], [server]);
+            return replyBoundStatus(session.user.osu, [], [server]);
         }
         catch (error) {
             if (session.user.authority > 2) {
@@ -69,9 +69,9 @@ function apply(ctx, options) {
             return error.message;
         }
     });
-    cmd.subcommand('.binded')
+    cmd.subcommand('.bound')
         .userFields(['authority', 'osu'])
-        .action(({ session }) => replyBindedStatus(session.user.osu));
+        .action(({ session }) => replyBoundStatus(session.user.osu));
     cmd.subcommand('.unbind')
         .option('server', '-s <server>')
         .userFields(['authority', 'osu'])

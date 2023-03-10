@@ -5,7 +5,7 @@ export default function TryMode (options: Options) {
   const validateOP = (op, session) => {
     if (!op.server) op.server = session.user?.osu?.defaultServer || defaultServer
     const server = op.server
-    // only apply binded mode when both user and mode are unset: eg: ?stat
+    // only apply bound mode when both user and mode are unset: eg: ?stat
     if (!op.mode && !op.user) op.mode = session.user?.osu?.[server]?.mode // || options.server?.[server].mode[0]
     if (!options.server[server]) throw new Error(['Invalid server:', server].join(' '))
     if (!op.mode) return op

@@ -30,7 +30,7 @@ export function apply (app: Context, options) {
         let { user: username, mode, server, session } = op
         username = tryUser(username, session, server)
         if (!username) {
-          if (session.user.authority > 2) return JSON.stringify({ username, binded: { osu: { ...session.user.osu } } })
+          if (session.user.authority > 2) return JSON.stringify({ username, bound: { osu: { ...session.user.osu } } })
           return '需要提供用户名。'
         }
         app.logger('osu-info-command').info('stat:', { username, mode, server })

@@ -24,6 +24,7 @@
     "build:cleanup": "del-cli \"lib?(-*)/**/@(__demo__|__snapshots__|?(*.)test.@(ts|tsx|js|jsx))\"",
     "eslint": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --ignore-pattern \"/__demo__/\" --no-error-on-unmatched-pattern",
     "jest": "cross-env NODE_ENV=test jest --passWithNoTests --detectOpenHandles",
+    "build": "npm run tsc -b",
     "prepack": "npm run build",
     "reformat": "npm run eslint --fix --quiet",
     "tsc": "tsc"

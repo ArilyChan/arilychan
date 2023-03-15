@@ -1,7 +1,6 @@
 {
   "name": "koishi-plugin-adapter-mail",
   "description": "koishi mail adapter/service",
-  "private": true,
   "version": "1.0.1",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",

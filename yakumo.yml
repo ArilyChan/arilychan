@@ -1,4 +1,5 @@
 require:
+  - esbuild-register
   - yakumo-esbuild
   - yakumo-esbuild-yaml
   - yakumo-publish
@@ -6,7 +7,7 @@ require:
   - yakumo-tsc
   - yakumo-upgrade
   - yakumo-version
-  - "@koishijs/client/lib/yakumo"
+  - '@koishijs/client/lib/yakumo'
 
 pipeline:
   build:

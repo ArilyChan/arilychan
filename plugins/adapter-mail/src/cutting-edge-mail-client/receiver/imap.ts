@@ -2,19 +2,10 @@ import { MailAddress, LocalMailAddress } from '../address'
 import { IncomingMail } from '../../types'
 import { Logger } from 'koishi'
 import { BaseReceiver } from './base-receiver'
-import type { AddressObject, EmailAddress } from 'mailparser'
 import { simpleParser } from 'mailparser'
 
 import IMAP from 'node-imap'
 
-// function toAddress (addr: AddressObject | AddressObject[]): EmailAddress[] | undefined {
-//   if (Array.isArray(addr)) {
-//     const addrs = addr.map(toAddress)
-//     const flat = addrs.flat().filter(a => a) as EmailAddress[]
-//     return flat.length > 0 ? flat : undefined
-//   }
-//   return addr.value.length > 0 ? addr.value : undefined
-// }
 export class IMAPReceiver<T extends never> extends BaseReceiver<T> {
   logger = new Logger('adapter-mail/receiver/imap')
   imap: IMAP
@@ -35,14 +26,11 @@ export class IMAPReceiver<T extends never> extends BaseReceiver<T> {
     const mails = await this.fetch()
     if (!mails) return
     for (const mail of mails) {
-      this.incomingChain(mail)
+      this.receivedMail(mail)
     }
   }
 
   async listen () {
-    // const getBoxes = promisify<IMAP.MailBoxes>((...args) => this.imap.getBoxes(...args))
-    // const boxes = await getBoxes()
-    // this.logger.debug('boxes: ' + Object.keys(boxes).join(', '))
     await this.openBox('INBOX')
     await this.process()
     this.logger.debug('listening to new mails')

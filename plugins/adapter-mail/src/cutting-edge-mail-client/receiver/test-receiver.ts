@@ -30,7 +30,7 @@ export class TestReceiver<T extends never> extends BaseReceiver<T> {
 
   async _fakeMail (context: Partial<IncomingMail>) {
     const mail = this.createFakeMail(context)
-    return await this.incomingChain(mail)
+    return await this.receivedMail(mail)
   }
 
   createFakeMail (context: Partial<IncomingMail>) {

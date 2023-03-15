@@ -4,15 +4,9 @@ import { Config, MailBot } from './adapter'
 const { union, object, string, const: literal, natural, boolean, intersect } = Schema
 
 const TestEntry = literal('dummy').description('dummy')
-// const Disabled = literal('disabled').description('disabled')
 const NodemailerEntry = literal('nodemailer-smtp').description('SMTP w/ NodeMailer')
 const IMAPEntry = literal('imap').description('IMAP w/ node-imap')
 const Port = natural().max(65535)
-
-// const testConfig = object({
-//   name: string(),
-//   address: string()
-// })
 
 export const schema = intersect([
   // base config
@@ -27,7 +21,6 @@ export const schema = intersect([
       sender: union([
         NodemailerEntry,
         TestEntry
-        // Disabled
       ]).description('protocol to send emails').role('radio')
     }).description('send'),
     union([
@@ -56,7 +49,6 @@ export const schema = intersect([
       receiver: union([
         IMAPEntry,
         TestEntry
-        // Disabled
       ]).description('protocol to receive mails').role('radio')
     }).description('receive'),
     union([

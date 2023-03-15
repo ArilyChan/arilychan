@@ -5,7 +5,7 @@ import * as Receivers from '../cutting-edge-mail-client/receiver'
 import { MessageSubscriber, IncomingMail, ReceivedMessage } from '../types'
 import { Logger, Fragment } from 'koishi'
 import { pipeline as toMessagePipeline } from './toMessage'
-import { html } from '../bootleg-html-template'
+import { html } from '../html-template'
 
 type Separator = string;
 export class Bridge {
@@ -81,7 +81,6 @@ export class Bridge {
 
   async sendMessage ({ to, from, content }: { to: { id: string; name?: string}, from: { id: string, name?: string }; content: Fragment }) {
     const messageId = (Math.random() * 114514 * 1919810).toFixed()
-    // const segs = segment.parse(content)
     const h = html`
 <style>
 p, .bot-reply-container {

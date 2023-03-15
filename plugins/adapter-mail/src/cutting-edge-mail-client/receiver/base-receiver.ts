@@ -16,7 +16,7 @@ export abstract class BaseReceiver<T = any> extends BaseIO {
     this.subscribers.delete(subscriber)
   }
 
-  async incomingChain (mail: IncomingMail) {
+  async receivedMail (mail: IncomingMail) {
     // this.logger.debug(`handling mail: ${mail}`)
     const all = <any[]>[]
     for (const subscriber of this.subscribers) {

@@ -107,31 +107,31 @@ function apply(app, options) {
         oi
             .subcommand('.userpage.screenshot <username:text>')
             .action((argv, username) => {
-                const { options, session } = argv;
-                // @ts-expect-error registered later
-                const { server } = options;
-                return ops.userpage({ user: username, server, session });
-            })
+            const { options, session } = argv;
+            // @ts-expect-error registered later
+            const { server } = options;
+            return ops.userpage({ user: username, server, session });
+        })
     ];
     const defaultWithServerModeCommands = [
         oi
             .subcommand('.info.screenshot <username:text>')
             .userFields(['authority', 'osu'])
             .action((argv, username) => {
-                const { options, session } = argv;
-                // @ts-expect-error registered later
-                const { mode, server } = options;
-                return ops.stat({ user: username, mode, server, session });
-            }),
+            const { options, session } = argv;
+            // @ts-expect-error registered later
+            const { mode, server } = options;
+            return ops.stat({ user: username, mode, server, session });
+        }),
         oi
             .subcommand('.recent.screenshot <username:text>')
             .userFields(['authority', 'osu'])
             .action((argv, username) => {
-                const { options, session } = argv;
-                // @ts-expect-error registered later
-                const { mode, server } = options;
-                return ops['recent-score']({ user: username, mode, server, session });
-            }),
+            const { options, session } = argv;
+            // @ts-expect-error registered later
+            const { mode, server } = options;
+            return ops['recent-score']({ user: username, mode, server, session });
+        }),
         oi
             .subcommand('.best.screenshot <username:text>')
             .userFields(['authority', 'osu'])
@@ -139,20 +139,20 @@ function apply(app, options) {
             .option('to', '<date>')
             .option('last', '<hours>')
             .action((argv, username) => {
-                const { options, session } = argv;
-                // @ts-expect-error registered later
-                const { mode, server, from, to, last } = options;
-                return ops.best({ user: username, mode, server, session, find: { from, to, last } });
-            }),
+            const { options, session } = argv;
+            // @ts-expect-error registered later
+            const { mode, server, from, to, last } = options;
+            return ops.best({ user: username, mode, server, session, find: { from, to, last } });
+        }),
         oi
             .subcommand('.score.screenshot <id:number>')
             .userFields(['authority', 'osu'])
             .action((argv, id) => {
-                const { options, session } = argv;
-                // @ts-expect-error registered later
-                const { mode, server } = options;
-                return ops.score({ id, mode, server, session });
-            })
+            const { options, session } = argv;
+            // @ts-expect-error registered later
+            const { mode, server } = options;
+            return ops.score({ id, mode, server, session });
+        })
     ];
     defaultWithServerCommands.forEach((command) => (0, command_inject_options_1.default)(command, ['server']));
     defaultWithServerModeCommands.forEach((command) => (0, command_inject_options_1.default)(command, ['mode', 'server']));

@@ -23,11 +23,11 @@ function TryMode(options) {
             return op;
         Object.entries(options.modeAlias)
             .some(([to, alias]) => {
-                if (!alias.includes(op.mode.toLowerCase()))
-                    return false;
-                op.mode = to;
-                return true;
-            });
+            if (!alias.includes(op.mode.toLowerCase()))
+                return false;
+            op.mode = to;
+            return true;
+        });
         return op;
     };
     const transformMode = (mode) => {
@@ -35,11 +35,11 @@ function TryMode(options) {
             return mode;
         Object.entries(options.modeAlias)
             .some(([to, alias]) => {
-                if (!alias.includes(mode.toLowerCase()))
-                    return false;
-                mode = to;
-                return true;
-            });
+            if (!alias.includes(mode.toLowerCase()))
+                return false;
+            mode = to;
+            return true;
+        });
         return mode;
     };
     return {

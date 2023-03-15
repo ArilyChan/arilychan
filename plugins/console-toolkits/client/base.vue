@@ -1,52 +1,46 @@
 <template>
-  <k-card no-body>
-    <template #header>
-      <div class="d-flex justify-content-between align-items-baseline">
-        <div>toolkit</div>
-        <div class="search-box" v-if="tools.length">
-          <k-badge
-            type="success"
-            v-for="(word, index) in tools.keywords"
-            :key="index"
-            >{{ word }}
-          </k-badge>
-          <input
-            placeholder="search"
-            v-model="keyword"
-          />
-          <k-icon name="search"></k-icon>
+  <div class="layout-container">
+    <div class="main-container">
+
+      <div class="layout-header">
+        <!-- <div class="toggle-sidebar-button" role="button" tabindex="0">
+          <div class="icon"><span></span><span></span><span></span></div>
+        </div> -->
+        <div class="left">manage</div>
+        <div class="right">
+          <div class="search-box" v-if="tools.length">
+            <input placeholder="search section..." v-model="keyword" />
+            <small style="align-self: bottom; opacity: 0.4"><k-icon name="search"></k-icon></small>
+          </div>
         </div>
       </div>
-    </template>
-    <div class="tool-wrap">
-      <div
-        v-for="(entry, index) in tools"
-        :key="index"
-        v-show="showComponent(entry)"
-        class="tool"
-      >
-        <h3 class="entry-name my-1">
-          {{ entry.name || entry.title || "unnamed" }}
-        </h3>
-        <div class="text-wrap-pre px-2 my-1" v-if="entry.description">
-          {{entry.description}}
-        </div>
-        <div class="splitter m-1" />
-        <div class="px-2 tool-component">
-          <component :is="entry.name" />
+      <div class="tool-wrap">
+        <div v-for="(entry, index) in tools" :key="index" v-show="showComponent(entry)" class="tool">
+          <h3 class="my-1 entry-name">
+            {{ entry.name || entry.title || "unnamed" }}
+          </h3>
+          <div class="px-2 my-1 text-wrap-pre" v-if="entry.description">
+            {{ entry.description }}
+          </div>
+          <div class="m-1 splitter" />
+          <div class="px-2 tool-component">
+            <component :is="entry.name" />
+          </div>
         </div>
       </div>
     </div>
-  </k-card>
+  </div>
 </template>
 
-<script>
+<script lang="ts">
 // const modules = import.meta.glob('./components/**/*.vue')
 import assignee from './components/assignee/client.vue'
 export default {
   data() {
     return {
-      tools: [assignee],
+      tools: [
+        assignee
+      ],
       keyword: "",
     };
   },
@@ -66,16 +60,9 @@ export default {
 };
 </script>
 
+
 <style lang="scss">
-.k-card[no-body] {
-  padding: 0;
-  & .k-card-body {
-    padding: 0;
-  }
-}
-</style>
-<style lang="scss">
-$hr-color: rgba(0,0,0,0.1);
+$hr-color: rgba(0, 0, 0, 0.1);
 $spacer: 0.7em;
 $spacing: 0 1 2 3 4;
 $direction: (
@@ -92,17 +79,23 @@ $types: (
   m: margin,
   p: padding,
 );
-@each $type, $field in $types {
+
+@each $type,
+$field in $types {
   @each $space in $spacing {
     .#{$type}-#{$space} {
       #{$field}: $spacer * $space !important;
     }
-    @each $shorthand, $direction in $direction {
+
+    @each $shorthand,
+    $direction in $direction {
       .#{$type}#{$shorthand}-#{$space} {
         #{$field}-#{$direction}: $spacer * $space !important;
       }
     }
-    @each $shorthand, $direction in $extends {
+
+    @each $shorthand,
+    $direction in $extends {
       .#{$type}#{$shorthand}-#{$space} {
         @each $i in $direction {
           @extend .#{$type}#{$i}-#{$space};
@@ -111,15 +104,23 @@ $types: (
     }
   }
 }
+
 .text-wrap-pre {
   white-space: pre;
 }
+
 .justify-content-between {
   justify-content: space-between;
 }
+
+.align-items-baseline {
+  align-items: baseline;
+}
+
 .d-flex {
   display: flex;
 }
+
 .align-items-baseline {
   align-items: baseline;
 }
@@ -128,6 +129,7 @@ $types: (
   @extend .m-0;
   @extend .px-2;
 }
+
 .tool-wrap {
   .tool:not(:last-child) {
     &::after {
@@ -138,6 +140,7 @@ $types: (
     }
   }
 }
+
 .search-box {
   display: flex;
   justify-content: center;
@@ -148,18 +151,22 @@ $types: (
   align-items: center;
   padding: 0 1.2rem;
   transition: var(--color-transition);
+
   input {
     font-size: 1em;
     background-color: transparent;
     border: none;
     outline: none;
   }
+
   .badge {
     flex-shrink: 0;
   }
+
   .badge + input {
     margin-left: 0.4rem;
   }
+
   .k-badge {
     cursor: pointer;
     user-select: none;

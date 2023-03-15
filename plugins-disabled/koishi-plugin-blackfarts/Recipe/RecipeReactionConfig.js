@@ -1,4 +1,4 @@
-const CQ = require('cqcode-builder')
+// @ts-check
 const compiledMenu = []
 let menuCompiled = false
 

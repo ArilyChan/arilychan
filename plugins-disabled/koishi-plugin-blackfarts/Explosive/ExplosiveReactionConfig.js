@@ -1,3 +1,4 @@
+// @ts-check
 const fetch = require('node-fetch')
 // const AbortController = require('abort-controller')
 const he = require('he')
@@ -6,7 +7,6 @@ const { URLSearchParams } = require('url')
 
 const prompt = require('sb-prompt-filter')
 
-const CQCode = require('cqcode-builder')
 // const moment = require('moment');
 // const osu = require('node-osu');
 // const Beatmap = require("./node-osu/lib/base/Beatmap");
@@ -636,10 +636,10 @@ const betOnMatch = async ({ command, meta, app }) => {
     amount = await meta.$prompt()
   }
   await meta.send([
-      `对局: ${match}`,
-      `下注: ${target}`,
-      `数量: ${amount}`,
-      '没问题嘛？发送“确认”提交'
+    `对局: ${match}`,
+    `下注: ${target}`,
+    `数量: ${amount}`,
+    '没问题嘛？发送“确认”提交'
   ].join('\n'))
   const confirm = await prompt({
     source: () => meta.$prompt(),
@@ -676,9 +676,9 @@ const endMatch = async ({ command, meta, app }) => {
     if (parseInt(winner) && !matched.member.find(m => m == winner)) winner = matched.member[winner - 1]
   }
   await meta.send([
-      `将被清算的对局: ${match}`,
-      `胜方: ${winner}`,
-      '没问题嘛？发送“确认”提交'
+    `将被清算的对局: ${match}`,
+    `胜方: ${winner}`,
+    '没问题嘛？发送“确认”提交'
   ].join('\n'))
   const confirm = await meta.$prompt().then(res => res.trim() === '确认')
   if (!confirm) return

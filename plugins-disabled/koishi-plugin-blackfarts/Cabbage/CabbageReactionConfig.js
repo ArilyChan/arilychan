@@ -1,4 +1,4 @@
-const CQ = require('cqcode-builder')
+// @ts-check
 const StatusMe = require('./StatusMe')
 const config = require('./cabbageReactionUser')
 const manual = require('sb-bot-manual')

@@ -3,94 +3,48 @@
     <div class="d-flex align-items-baseline">
       <!-- <label for="channel" class="pr-1">search:</label> -->
       <!-- <k-input prefix="channel" :value="123"></k-input> -->
-      <el-input
-        id="channel"
-        clearable
-        v-model="search"
-        placeholder="search assignee, channel, platform"
-        class="pb-2"
-      ></el-input>
+      <el-input id="channel" clearable v-model="search" placeholder="search assignee, channel, platform"
+        class="pb-2"></el-input>
     </div>
     <div v-if="channelSearchResult.length">
       <div>result:</div>
-      <template
-        v-for="(result, index) in channelSearchResult"
-        :key="`${result.type}-${index}`"
-      >
+      <template v-for="(result, index) in channelSearchResult" :key="`${result.type}-${index}`">
         <el-card class="my-1">
-          <el-descriptions
-            v-if="['platform', 'assignee'].includes(result.type)"
-            :title="`${result.type}: ${
-              result.type === 'assignee' ? result.assignee : result.platform
-            }`"
-            direction="vertical"
-            border
-          >
+          <el-descriptions v-if="['platform', 'assignee'].includes(result.type)" :title="`${result.type}: ${result.type === 'assignee' ? result.assignee : result.platform
+            }`" direction="vertical" border>
             <template #extra>
               <el-button-group>
                 <el-button round color="#626aef" disabled>replace all</el-button>
                 <el-button round type="danger" disabled>clear all</el-button>
               </el-button-group>
             </template>
-            <el-descriptions-item
-              :label="`Affects: ${
-                result.selects.length
-                  ? `${result.selects.length} channels`
-                  : 'nothing'
-              }`"
-              class-name="p-0"
-            >
-              <el-table
-                ref="multipleTableRef"
-                :data="result.selects"
-                stripe
-                table-layout="auto"
-                :max-height="380"
-                size="small"
-              >
-                <el-table-column
-                  v-if="result.type !== 'platform'"
-                  prop="platform"
-                  label="Platform"
-                />
+            <el-descriptions-item :label="`Affects: ${result.selects.length
+              ? `${result.selects.length} channels`
+              : 'nothing'
+              }`" class-name="p-0">
+              <el-table ref="multipleTableRef" :data="result.selects" stripe table-layout="auto" :max-height="380"
+                size="small">
+                <el-table-column v-if="result.type !== 'platform'" prop="platform" label="Platform" />
                 <el-table-column prop="id" label="id" />
                 <el-table-column prop="name" label="Name" />
-                <el-table-column
-                  v-if="result.type !== 'assignee'"
-                  prop="assignee"
-                  label="Assignee"
-                />
+                <el-table-column v-if="result.type !== 'assignee'" prop="assignee" label="Assignee" />
                 <el-table-column fixed="right" label="Edit Assignee">
                   <template #default="scope">
                     <el-button-group>
                       <el-popover width="fit-content" trigger="click">
-                        <el-form
-                        :inline="true"
-                        :model="scope.row"
-                        @submit.prevent="editAsignee(scope.row)">
+                        <el-form :inline="true" :model="scope.row" @submit.prevent="editAsignee(scope.row)">
                           <el-form-item label="Assignee:" class="m-0 mr-2">
-                            <el-input
-                              v-model="scope.row.assignee"
-                              autocomplete="on"
-                            />
+                            <el-input v-model="scope.row.assignee" autocomplete="on" />
                           </el-form-item>
                           <el-form-item class="m-0">
-                            <el-button
-                              round
-                              color="#626aef"
-                              @click="editAsignee(scope.row)"
-                              >confirm</el-button
-                            >
+                            <el-button round color="#626aef" @click="editAsignee(scope.row)">confirm</el-button>
                           </el-form-item>
                         </el-form>
                         <template #reference>
                           <el-button round color="#626aef">change</el-button>
                         </template>
                       </el-popover>
-                      <el-popconfirm
-                        title="Are you sure to clear this?"
-                        @confirm="clearAsignee(scope.row)"
-                      >
+                      <el-popconfirm title="Are you sure to clear this?" @confirm="clearAsignee(scope.row)">
                         <template #reference>
                           <el-button round type="danger">clear</el-button>
                         </template>
@@ -107,7 +61,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import "element-plus/es/components/descriptions/style/css";
 import "element-plus/es/components/button-group/style/css";
 import "element-plus/es/components/form-item/style/css";

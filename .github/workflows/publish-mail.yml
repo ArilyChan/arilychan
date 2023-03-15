@@ -9,6 +9,7 @@ on:
       - publish
     paths:
       - "plugins/adapter-mail/package.json"
+  workflow_dispatch:
 
 jobs:
   publish-nyan:

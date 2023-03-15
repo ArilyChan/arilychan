@@ -9,6 +9,7 @@ on:
       - publish
     paths:
       - "plugins/nyan/package.json"
+  workflow_dispatch:
 
 jobs:
   publish-nyan:

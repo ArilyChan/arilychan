@@ -9,7 +9,7 @@ on:
       - publish
     paths:
       - "plugins/koishi-plugin-blame/package.json"
-
+  workflow_dispatch:
 jobs:
   publish-blame:
     runs-on: ubuntu-latest

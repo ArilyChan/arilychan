@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.apply = exports.schema = exports.name = void 0;
 const jsx_runtime_1 = require("@satorijs/element/jsx-runtime");
-// const manual = require('sb-bot-manual')
 const api_1 = __importDefault(require("../server/api"));
 const express_1 = __importDefault(require("../server/express"));
 // import { newerThan } from '../server/database/aggregations'
@@ -15,7 +14,6 @@ var index_1 = require("../index");
 Object.defineProperty(exports, "schema", { enumerable: true, get: function () { return index_1.schema; } });
 const apply = async (ctx, options) => {
     const storage = await (0, api_1.default)(ctx, options);
-    // @ts-expect-error should exists
     ctx.using(['express'], function arilychanRadioWebService({ express, _expressHttpServer }) {
         express.use(options.web.path, (0, express_1.default)(options, storage, _expressHttpServer));
     });

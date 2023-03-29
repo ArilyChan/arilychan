@@ -2,6 +2,7 @@ import api from './server/api'
 import server from './server/express'
 import { Context, Schema } from 'koishi'
 import * as Command from './command'
+import {} from 'koishi-plugin-express'
 
 export const name = 'arilychan-radio'
 export const schema = Schema.object({
@@ -11,7 +12,7 @@ export const schema = Schema.object({
   //   uri: Schema.string().description('mongodb connect uri')
   // }).description('currently running on custom server'),
   web: Schema.object({
-    path: Schema.string().description('网页地址，运行在express上。需要websocket服务。').default('/radio'),
+    path: Schema.string().description('网页地址，运行在express上。需要socket.io服务, 暂时不兼容koishi的http服务器').default('/radio'),
     host: Schema.string().description('domain?').default('https://bot.ri.mk')
   })
 })
@@ -24,7 +25,6 @@ export type Config = {
 }
 export const apply = async (ctx: Context, options: Config) => {
   const storage = await api(ctx, options)
-  // @ts-expect-error
   ctx.using(['express'], function arilychanRadioWebService ({ express, _expressHttpServer }) {
     express.use(options.web.path, server(options, storage, _expressHttpServer))
   })

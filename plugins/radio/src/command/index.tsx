@@ -1,6 +1,5 @@
 import api from '../server/api'
 import server from '../server/express'
-// import { newerThan } from '../server/database/aggregations'
 import { unescapeSpecialChars } from '../utils'
 import { Fragment, Context } from 'koishi'
 import type {} from 'koishi-plugin-express'
@@ -11,7 +10,6 @@ export const name = 'arilychan-radio-commands'
 export { schema } from '../index'
 export const apply = async (ctx: Context, options: Config) => {
   const storage = await api(ctx, options)
-  // @ts-expect-error should exists
   ctx.using(['express'], function arilychanRadioWebService ({ express, _expressHttpServer }) {
     express.use(options.web.path, server(options, storage, _expressHttpServer))
   })

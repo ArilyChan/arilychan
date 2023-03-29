@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import type { Guild, Uploader } from '../types';
 import { BeatmapsetInfo, DatabaseBeatmapsetInfo } from '../package/sayobot';
 import { Context } from 'koishi';

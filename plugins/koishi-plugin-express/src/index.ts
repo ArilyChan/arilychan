@@ -4,7 +4,7 @@ import { Context, App, Schema } from 'koishi'
 import { asExpressMiddleware } from 'koishi-web-connect'
 
 declare module 'koishi' {
-  interface Context {
+  export interface Context {
     express: express.Application
     _expressHttpServer: Server
   }
@@ -42,17 +42,6 @@ export function apply (ctx: Context, options: Options = {
   ctx._expressHttpServer = createServer(expressApp)
 
   if (options.port) ctx._expressHttpServer.listen(options.port, options.hostname, () => ctx.logger('express').info('express server listening at', options.hostname, ':', options.port))
-  // if (options.koishiRoutes === 'join') {
-  //   ;(ctx.app as App).router.all('(.*)', async (_ctx, next) => {
-  //     try {
-  //       await next()
-  //       if (_ctx.status === 404) _ctx.throw(404)
-  //     } catch (err) {
-  //       const { req, res } = _ctx
-  //       ;(ctx as App)._expressHttpServer.emit('request', req, res)
-  //     }
-  //   })
-  // }
   if (options.koishiRoutes === 'use') {
     expressApp.use(asExpressMiddleware(ctx.root as App, { waitForServer: true }))
   } else if (options.koishiRoutes !== 'ignore') throw new Error('unsupported koishi route handling method: ' + options.koishiRoutes)

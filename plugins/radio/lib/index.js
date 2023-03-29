@@ -27,7 +27,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.apply = exports.schema = exports.name = void 0;
-// const manual = require('sb-bot-manual')
 const api_1 = __importDefault(require("./server/api"));
 const express_1 = __importDefault(require("./server/express"));
 const koishi_1 = require("koishi");
@@ -46,7 +45,6 @@ exports.schema = koishi_1.Schema.object({
 });
 const apply = async (ctx, options) => {
     const storage = await (0, api_1.default)(ctx, options);
-    // @ts-expect-error
     ctx.using(['express'], function arilychanRadioWebService({ express, _expressHttpServer }) {
         express.use(options.web.path, (0, express_1.default)(options, storage, _expressHttpServer));
     });

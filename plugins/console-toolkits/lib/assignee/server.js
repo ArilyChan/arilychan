@@ -5,14 +5,12 @@ require("@koishijs/plugin-console");
 function groupBy(array, key) {
     return array
         .reduce((acc, cur) => {
-        // @ts-expect-error you don't understand
-        acc[key] || (acc[key] = []);
         const curValue = cur[key];
         if (curValue === undefined) {
             return acc;
         }
-        // @ts-expect-error you don't understand
-        acc[key].push(cur);
+        acc[curValue] || (acc[curValue] = []);
+        acc[curValue].push(cur);
         return acc;
     }, {});
 }
@@ -30,10 +28,10 @@ function default_1(ctx) {
             type: 'platform',
             platform,
             selects: await Promise.all(result.map(async (r) => {
-                const name = await ctx.bots[platform].getChannel(r.id);
+                const name = await ctx.bots[platform]?.getChannel(r.id);
                 return ({
                     ...r,
-                    name: name.channelName
+                    name: name?.channelName ?? 'unknown'
                 });
             }))
         })));
@@ -53,10 +51,10 @@ function default_1(ctx) {
             type: 'assignee',
             assignee,
             selects: await Promise.all(result.map(async (r) => {
-                const name = await ctx.bots[assignee].getChannel(r.id);
+                const name = await ctx.bots[assignee]?.getChannel(r.id);
                 return ({
                     ...r,
-                    name: name.channelName
+                    name: name.channelName ?? 'unknown'
                 });
             }))
         })));
@@ -66,7 +64,6 @@ function default_1(ctx) {
             ...await searchPlatform(query),
             ...(await searchAssignee(query))
         ];
-        console.log(result);
         return result.filter(a => a);
     };
     const app = ctx;

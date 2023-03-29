@@ -5,14 +5,12 @@ import { PlatformRow, AssigneeRow, SearchChannelResult } from './base'
 function groupBy<Obj extends Record<string | number, string | number>, Key extends keyof Obj> (array: Obj[], key: Key) {
   return array
     .reduce((acc, cur) => {
-      // @ts-expect-error you don't understand
-      (acc[key] as Obj[]) ||= []
       const curValue = cur[key]
       if (curValue === undefined) {
         return acc
       }
-      // @ts-expect-error you don't understand
-      (acc[key] as Obj[]).push(cur)
+      acc[curValue] ||= []
+      acc[curValue].push(cur)
       return acc
     }, {} as Record<Obj[Key], Obj[]>)
 }
@@ -31,10 +29,10 @@ export default function (ctx: Context) {
       type: 'platform',
       platform,
       selects: await Promise.all(result.map(async r => {
-        const name = await ctx.bots[platform].getChannel(r.id)
+        const name = await ctx.bots[platform]?.getChannel(r.id)
         return ({
           ...r,
-          name: name.channelName
+          name: name?.channelName ?? 'unknown'
         })
       }))
     })))
@@ -54,10 +52,10 @@ export default function (ctx: Context) {
       type: 'assignee',
       assignee,
       selects: await Promise.all(result.map(async r => {
-        const name = await ctx.bots[assignee].getChannel(r.id)
+        const name = await ctx.bots[assignee]?.getChannel(r.id)
         return ({
           ...r,
-          name: name.channelName
+          name: name.channelName ?? 'unknown'
         })
       }))
     })))
@@ -68,7 +66,6 @@ export default function (ctx: Context) {
       ...await searchPlatform(query),
       ...(await searchAssignee(query))
     ]
-    console.log(result)
     return result.filter(a => a)
   }
   const app = ctx

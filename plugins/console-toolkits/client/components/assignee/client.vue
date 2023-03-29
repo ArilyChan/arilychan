@@ -80,9 +80,8 @@ import {
   ElMessage
 } from "element-plus";
 import { defineComponent, ref, watch, unref } from "vue";
-// import { store, send } from "@koishijs/client";
 import axios from "axios";
-// import "./base";
+
 export default defineComponent({
   setup() {
     const search = ref("");
@@ -95,7 +94,7 @@ export default defineComponent({
         return
       }
       const result = axios
-        .get("/toolkit/assignee/search/" + val)
+        .get("/toolkit/assignee/search/" + encodeURIComponent(val))
         .then((res) => res.data);
       channelSearchResult.value = await result;
     });

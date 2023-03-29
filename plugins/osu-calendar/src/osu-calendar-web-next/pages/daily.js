@@ -1,7 +1,7 @@
 import fs from 'fs/promises'
 import getConfig from 'next/config'
 
-import Fortune from '../../lib/Fortune'
+import Fortune from '../../bin/Fortune'
 
 import Page from '../components/page'
 const { serverRuntimeConfig } = getConfig()

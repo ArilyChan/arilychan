@@ -2,7 +2,7 @@
 import { Schema, segment } from 'koishi'
 import * as run from './run'
 import path from 'path'
-import EventsJson from './lib/EventsJson'
+import EventsJson from './bin/EventsJson'
 
 import nextJSWeb from './osu-calendar-web-next/export'
 

@@ -1,6 +1,6 @@
 
 import { Session } from 'koishi'
-import Fortune from './lib/Fortune'
+import Fortune from './bin/Fortune'
 import { OsuCalendarEvents } from './types/store'
 
 export { Fortune }

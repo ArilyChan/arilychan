@@ -1,8 +1,10 @@
+import Image from 'next/image'
 export default function Footer({build}) {
     return (
         <footer className="p-10 footer bg-base-200 text-base-content">
             <div className="flex items-end">
-                <img src="https://img.icons8.com/clouds/500/000000/fortune-teller.png" style={{height: '150px'}}/>
+                {/* eslint-disable-next-line jsx-a11y/alt-text */}
+                <Image src="https://img.icons8.com/clouds/500/000000/fortune-teller.png" style={{height: '150px'}}/>
                 {/* <p className="pb-6">今日运势 {build}</p> */}
             </div>
             <div>

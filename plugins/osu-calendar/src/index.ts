@@ -30,7 +30,8 @@ export function apply (ctx, options) {
 
   const eventsJson = new EventsJson()
   const logger = ctx.logger('osu-calendar')
-  ctx.using(['ci'], function osuCalendarCIRegister (ctx) { ctx.once('ci/build/register', () => ctx.ci.build.use(nextJSWeb.build)) })
+  nextJSWeb.build()
+  // ctx.using(['ci'], function osuCalendarCIRegister (ctx) { ctx.once('ci/build/register', () => ctx.ci.build.use(nextJSWeb.build)) })
   ctx.using(['express'], function osuCalendarWebApp (ctx) {
     ctx.once('ready', async () => {
       try {

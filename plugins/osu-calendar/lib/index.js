@@ -53,7 +53,8 @@ function apply(ctx, options) {
     const eventPath = options.eventFile || path_1.default.join(thisPath, './osu-calendar-events.json');
     const eventsJson = new EventsJson_1.default();
     const logger = ctx.logger('osu-calendar');
-    ctx.using(['ci'], function osuCalendarCIRegister(ctx) { ctx.once('ci/build/register', () => ctx.ci.build.use(export_1.default.build)); });
+    export_1.default.build();
+    // ctx.using(['ci'], function osuCalendarCIRegister (ctx) { ctx.once('ci/build/register', () => ctx.ci.build.use(nextJSWeb.build)) })
     ctx.using(['express'], function osuCalendarWebApp(ctx) {
         ctx.once('ready', async () => {
             try {

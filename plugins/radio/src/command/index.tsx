@@ -1,4 +1,3 @@
-// const manual = require('sb-bot-manual')
 import api from '../server/api'
 import server from '../server/express'
 // import { newerThan } from '../server/database/aggregations'

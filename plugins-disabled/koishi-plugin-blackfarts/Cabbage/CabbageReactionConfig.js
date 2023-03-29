@@ -1,7 +1,6 @@
 // @ts-check
 const StatusMe = require('./StatusMe')
 const config = require('./cabbageReactionUser')
-const manual = require('sb-bot-manual')
 
 const usage = {
   anotherElo: '!anotherelo <osu用户名或id>',
@@ -79,10 +78,10 @@ module.exports = {
   }
 }
 
-const cabbage = manual.section('black-farts').name('黑屁功能')
-Object.entries(usage).forEach(([name, usage]) => {
-  const entry = cabbage
-    .entry((desc[name] !== undefined) ? desc[name] : '未添加命令说明')
-    .usage(usage)
-  entry.entriesTitle = ''
-})
+// const cabbage = manual.section('black-farts').name('黑屁功能')
+// Object.entries(usage).forEach(([name, usage]) => {
+//   const entry = cabbage
+//     .entry((desc[name] !== undefined) ? desc[name] : '未添加命令说明')
+//     .usage(usage)
+//   entry.entriesTitle = ''
+// })

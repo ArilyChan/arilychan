@@ -2,12 +2,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.using = void 0;
 require("@koishijs/plugin-console");
-function groupByKey(array, key) {
+function groupBy(array, key) {
     return array
-        .reduce((hash, obj) => {
-        if (obj[key] === undefined)
-            return hash;
-        return Object.assign(hash, { [obj[key]]: (hash[obj[key]] || []).concat(obj) });
+        .reduce((acc, cur) => {
+        // @ts-expect-error you don't understand
+        acc[key] || (acc[key] = []);
+        const curValue = cur[key];
+        if (curValue === undefined) {
+            return acc;
+        }
+        // @ts-expect-error you don't understand
+        acc[key].push(cur);
+        return acc;
     }, {});
 }
 exports.using = ['database'];
@@ -15,17 +21,22 @@ function default_1(ctx) {
     const searchPlatform = async (platform) => {
         const result = await ctx.database.get('channel', {
             platform: new RegExp(platform)
-            // @ts-expect-error
-        }, ['id', 'name', 'platform', 'assignee']);
+        }, ['id', 'platform', 'assignee']);
         if (!result.length) {
             return [];
         }
-        const grouped = groupByKey(result, 'platform');
-        return Object.entries(grouped).map(([platform, result]) => ({
+        const grouped = groupBy(result, 'platform');
+        return await Promise.all(Object.entries(grouped).map(async ([platform, result]) => ({
             type: 'platform',
             platform,
-            selects: result
-        }));
+            selects: await Promise.all(result.map(async (r) => {
+                const name = await ctx.bots[platform].getChannel(r.id);
+                return ({
+                    ...r,
+                    name: name.channelName
+                });
+            }))
+        })));
     };
     const searchAssignee = async (assignee) => {
         if (!assignee.length) {
@@ -33,23 +44,30 @@ function default_1(ctx) {
         }
         const result = await ctx.database.get('channel', {
             assignee: new RegExp(assignee)
-            // @ts-expect-error
-        }, ['id', 'assignee', 'name', 'platform']);
+        }, ['id', 'assignee', 'platform']);
         if (!result.length) {
             return [];
         }
-        const grouped = groupByKey(result, 'assignee');
-        return Object.entries(grouped).map(([assignee, result]) => ({
+        const grouped = groupBy(result, 'assignee');
+        return await Promise.all(Object.entries(grouped).map(async ([assignee, result]) => ({
             type: 'assignee',
             assignee,
-            selects: result
-        }));
+            selects: await Promise.all(result.map(async (r) => {
+                const name = await ctx.bots[assignee].getChannel(r.id);
+                return ({
+                    ...r,
+                    name: name.channelName
+                });
+            }))
+        })));
     };
     const searchChannel = async (query) => {
-        return [
+        const result = [
             ...await searchPlatform(query),
             ...(await searchAssignee(query))
-        ].filter(a => a);
+        ];
+        console.log(result);
+        return result.filter(a => a);
     };
     const app = ctx;
     ctx.using(['router'], ({ router }) => {

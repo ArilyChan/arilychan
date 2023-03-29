@@ -2,29 +2,42 @@ import { Context } from 'koishi'
 import '@koishijs/plugin-console'
 import { PlatformRow, AssigneeRow, SearchChannelResult } from './base'
 
-function groupByKey (array, key) {
+function groupBy<Obj extends Record<string | number, string | number>, Key extends keyof Obj> (array: Obj[], key: Key) {
   return array
-    .reduce((hash, obj) => {
-      if (obj[key] === undefined) return hash
-      return Object.assign(hash, { [obj[key]]: (hash[obj[key]] || []).concat(obj) })
-    }, {})
+    .reduce((acc, cur) => {
+      // @ts-expect-error you don't understand
+      (acc[key] as Obj[]) ||= []
+      const curValue = cur[key]
+      if (curValue === undefined) {
+        return acc
+      }
+      // @ts-expect-error you don't understand
+      (acc[key] as Obj[]).push(cur)
+      return acc
+    }, {} as Record<Obj[Key], Obj[]>)
 }
+
 export const using = ['database']
 export default function (ctx: Context) {
   const searchPlatform = async (platform: string): Promise<PlatformRow[]> => {
     const result = await ctx.database.get('channel', {
       platform: new RegExp(platform)
-      // @ts-expect-error
-    }, ['id', 'name', 'platform', 'assignee'])
+    }, ['id', 'platform', 'assignee'])
     if (!result.length) {
       return []
     }
-    const grouped = groupByKey(result, 'platform')
-    return Object.entries(grouped).map(([platform, result]) => ({
+    const grouped = groupBy(result, 'platform')
+    return await Promise.all(Object.entries(grouped).map(async ([platform, result]) => ({
       type: 'platform',
       platform,
-      selects: result as Array<{ id: string, assignee: string, name: string, platform: string }>
-    }))
+      selects: await Promise.all(result.map(async r => {
+        const name = await ctx.bots[platform].getChannel(r.id)
+        return ({
+          ...r,
+          name: name.channelName
+        })
+      }))
+    })))
   }
 
   const searchAssignee = async (assignee: string): Promise<AssigneeRow[]> => {
@@ -32,24 +45,31 @@ export default function (ctx: Context) {
 
     const result = await ctx.database.get('channel', {
       assignee: new RegExp(assignee)
-      // @ts-expect-error
-    }, ['id', 'assignee', 'name', 'platform'])
+    }, ['id', 'assignee', 'platform'])
     if (!result.length) {
       return []
     }
-    const grouped = groupByKey(result, 'assignee')
-    return Object.entries(grouped).map(([assignee, result]) => ({
+    const grouped = groupBy(result, 'assignee')
+    return await Promise.all(Object.entries(grouped).map(async ([assignee, result]) => ({
       type: 'assignee',
       assignee,
-      selects: result as Array<{ id: string, assignee: string, name: string, platform: string }>
-    }))
+      selects: await Promise.all(result.map(async r => {
+        const name = await ctx.bots[assignee].getChannel(r.id)
+        return ({
+          ...r,
+          name: name.channelName
+        })
+      }))
+    })))
   }
 
   const searchChannel = async (query: string): Promise<SearchChannelResult[]> => {
-    return [
+    const result = [
       ...await searchPlatform(query),
       ...(await searchAssignee(query))
-    ].filter(a => a)
+    ]
+    console.log(result)
+    return result.filter(a => a)
   }
   const app = ctx
   ctx.using(['router'], ({ router }) => {

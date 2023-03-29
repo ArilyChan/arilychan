@@ -3,8 +3,8 @@ export function withDefault (_def) {
     return templateStr.map((template, index) => `${template}${index <= args.length ? args[index] || _def : ''}`).join('')
   }
 }
+const defaultToEmptyString = withDefault('')
 export function html (template, ...args) {
-  const defaultToEmptyString = withDefault('')
   if (!Array.isArray(template)) template = [template]
   return template.map((str, i) => {
     const variable = args[i]

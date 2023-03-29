@@ -7,8 +7,8 @@ function withDefault(_def) {
     };
 }
 exports.withDefault = withDefault;
+const defaultToEmptyString = withDefault('');
 function html(template, ...args) {
-    const defaultToEmptyString = withDefault('');
     if (!Array.isArray(template))
         template = [template];
     return template.map((str, i) => {

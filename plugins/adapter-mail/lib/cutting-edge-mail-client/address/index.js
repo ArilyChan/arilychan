@@ -9,7 +9,7 @@ class MailAddress {
         this.address = address;
         this.local = local;
     }
-    [customInspectSymbol](depth, inspectOptions, inspect) {
+    [customInspectSymbol](_, inspectOptions, __) {
         const { stylize } = inspectOptions;
         const formattedAddress = stylize(`<${`${stylize(this.name ?? '', 'null')}`}${stylize(`<${this.address}>`, 'string')}>`, 'module');
         // @ts-expect-error not so sure about this.

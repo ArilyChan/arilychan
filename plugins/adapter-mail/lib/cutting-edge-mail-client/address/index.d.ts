@@ -6,7 +6,7 @@ export declare class MailAddress implements MailAddressInterface<boolean> {
     local?: boolean;
     static _printName: string;
     constructor({ name, address, local }: MailAddressInterface<boolean>);
-    [customInspectSymbol](depth: any, inspectOptions: any, inspect: any): string;
+    [customInspectSymbol](_: any, inspectOptions: any, __: any): string;
     toString(): string;
     extend(e: MailAddressInterface): MailAddress;
 }

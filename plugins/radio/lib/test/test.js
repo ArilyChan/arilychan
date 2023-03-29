@@ -1,6 +1,6 @@
 'use strict'
 
-import Arg from '../lib/command/arg'
+import Arg from '../bin/command/arg'
 import { createInterface } from 'readline'
 
 const rl = createInterface({

@@ -30,7 +30,7 @@ exports.apply = exports.schema = exports.name = void 0;
 const koishi_1 = require("koishi");
 const run = __importStar(require("./run"));
 const path_1 = __importDefault(require("path"));
-const EventsJson_1 = __importDefault(require("./lib/EventsJson"));
+const EventsJson_1 = __importDefault(require("./bin/EventsJson"));
 const export_1 = __importDefault(require("./osu-calendar-web-next/export"));
 const thisPath = __dirname;
 exports.name = 'koishi-plugin-osu-calendar';

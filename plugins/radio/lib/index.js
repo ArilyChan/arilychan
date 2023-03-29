@@ -39,7 +39,7 @@ exports.schema = koishi_1.Schema.object({
     //   uri: Schema.string().description('mongodb connect uri')
     // }).description('currently running on custom server'),
     web: koishi_1.Schema.object({
-        path: koishi_1.Schema.string().description('网页地址，运行在express上。需要websocket服务。').default('/radio'),
+        path: koishi_1.Schema.string().description('网页地址，运行在express上。需要socket.io服务, 暂时不兼容koishi的http服务器').default('/radio'),
         host: koishi_1.Schema.string().description('domain?').default('https://bot.ri.mk')
     })
 });

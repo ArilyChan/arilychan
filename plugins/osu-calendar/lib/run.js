@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.koishiHandler = exports.Fortune = void 0;
-const Fortune_1 = __importDefault(require("./lib/Fortune"));
+const Fortune_1 = __importDefault(require("./bin/Fortune"));
 exports.Fortune = Fortune_1.default;
 async function koishiHandler(meta, eventPath) {
     try {

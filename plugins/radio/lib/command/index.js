@@ -7,7 +7,6 @@ exports.apply = exports.schema = exports.name = void 0;
 const jsx_runtime_1 = require("@satorijs/element/jsx-runtime");
 const api_1 = __importDefault(require("../server/api"));
 const express_1 = __importDefault(require("../server/express"));
-// import { newerThan } from '../server/database/aggregations'
 const utils_1 = require("../utils");
 exports.name = 'arilychan-radio-commands';
 var index_1 = require("../index");

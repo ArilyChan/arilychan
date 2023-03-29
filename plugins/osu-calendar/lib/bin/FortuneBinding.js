@@ -1,0 +1,37 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const Activity_1 = __importDefault(require("./Activity"));
+// eslint-disable-next-line no-unmodified-loop-condition, no-var
+const getDaysArray = function (s, e) { for (var a = [], d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
+    a.push(new Date(d));
+} return a; };
+class FortuneBinding {
+    constructor(me, fortune) {
+        this.me = me;
+        this.fortune = fortune;
+    }
+    when(date) {
+        date = new Date(date); // de-bind the date from
+        date.setUTCHours(0, 0, 0, 0);
+        return new Activity_1.default(this.me, this.fortune.events, date);
+    }
+    get today() {
+        return this.when(new Date());
+    }
+    from(from) {
+        from = new Date(from); // de-bind the date from
+        from.setUTCHours(0, 0, 0, 0);
+        const self = this;
+        return new (class FortuneBindingPeriodCursor {
+            to(to) {
+                to = new Date(to);
+                to.setUTCHours(0, 0, 0, 0);
+                return getDaysArray(from, to).map(date => self.when(date));
+            }
+        })();
+    }
+}
+exports.default = FortuneBinding;

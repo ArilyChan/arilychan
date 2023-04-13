@@ -1,7 +1,9 @@
-import { PuppeteerLifeCycleEvent } from 'puppeteer';
-import { Schema } from 'koishi';
-export declare const name = "koishi-plugin-puppeteer-cluster";
-type config = {
+/// <reference types="node" />
+import { Page, PuppeteerLifeCycleEvent, ScreenshotOptions } from 'puppeteer';
+import { Context, Schema } from 'koishi';
+import { Cluster } from 'puppeteer-cluster';
+type Screenshot = ScreenshotOptions;
+type Config = {
     cluster: {
         launch: {
             concurrency: number;
@@ -21,6 +23,37 @@ type config = {
         waitUntil: PuppeteerLifeCycleEvent;
     };
 };
+declare module 'koishi' {
+    interface Context {
+        puppeteerCluster: {
+            instance: Cluster;
+            options: {
+                navigation: Config['navigation'];
+                viewport: Config['viewport'];
+                screenshot: Screenshot;
+            };
+            _defaultCallback?: () => {};
+            defaultCallback: CallableFunction;
+            utils: {
+                wait: (ms: number) => Promise<any>;
+                screenshot: (opt: {
+                    page: Page;
+                    data: {
+                        url: string;
+                        screenshot: Screenshot;
+                        viewport: Config['viewport'];
+                    };
+                }) => Promise<any>;
+            };
+            screenshot: {
+                base64: (url: string | URL, options: ScreenshotOptions) => Promise<string>;
+                binary: (url: string | URL, options: ScreenshotOptions) => Promise<Buffer>;
+                save: (url: string | URL, options: ScreenshotOptions) => Promise<any>;
+            };
+        };
+    }
+}
+export declare const name = "koishi-plugin-puppeteer-cluster";
 export declare const schema: Schema<Schemastery.ObjectS<{
     cluster: Schema<Schemastery.ObjectS<{
         launch: Schema<Schemastery.ObjectS<{
@@ -142,5 +175,5 @@ export declare const schema: Schema<Schemastery.ObjectS<{
         waitUntil: Schema<string, string>;
     }>>;
 }>>;
-export declare const apply: (ctx: any, options: config) => Promise<void>;
+export declare const apply: (ctx: Context, options: Config) => Promise<void>;
 export {};

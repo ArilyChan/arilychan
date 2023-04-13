@@ -52,7 +52,7 @@ const apply = async (ctx, options) => {
                 }
             },
             _defaultCallback: undefined,
-            get defaultCallback() { return c._defaultCallback ?? ctx.puppeteerCluster.utils.screenshot; },
+            get defaultCallback() { return c._defaultCallback ?? c.utils.screenshot; },
             set defaultCallback(newVal) { c._defaultCallback = newVal; },
             utils: {
                 wait,
@@ -67,7 +67,7 @@ const apply = async (ctx, options) => {
             screenshot: {
                 base64: (url, options) => cluster.execute({ url, screenshot: { ...c.options.screenshot, encoding: 'base64' }, ...options || {} }, c.utils.screenshot),
                 binary: (url, options) => cluster.execute({ url, screenshot: { ...c.options.screenshot, encoding: undefined }, ...options || {} }, c.utils.screenshot),
-                save: (url, path, options) => cluster.execute({ url, screenshot: { ...c.options.screenshot, encoding: undefined, path }, ...options || {} }, c.utils.screenshot)
+                save: (url, options) => cluster.execute({ url, screenshot: { ...c.options.screenshot, encoding: undefined }, ...options || {} }, c.utils.screenshot)
             },
             status
         };
@@ -81,13 +81,13 @@ const apply = async (ctx, options) => {
         status.cluster.injectedToContext = false;
         throw error;
     }
-    ctx.before('disconnect', async () => {
+    ctx.on('dispose', async () => {
         if (!status.cluster.inited)
             return;
         if (!status.cluster.injectedToContext)
             return;
-        await ctx.puppeteerCluster.idle();
-        const closeResult = ctx.puppeteerCluster.close().then(res => {
+        await ctx.puppeteerCluster.instance.idle();
+        const closeResult = ctx.puppeteerCluster.instance.close().then(res => {
             delete ctx.puppeteerCluster;
             return res;
         });

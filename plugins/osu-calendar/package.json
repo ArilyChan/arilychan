@@ -12,13 +12,13 @@
     "seedrandom": "^3.0.5",
     "shuffle-seed": "^1.1.6",
     "xorshift": "^1.2.0",
-    "autoprefixer": "^10.4.13",
+    "autoprefixer": "^10.4.14",
     "daisyui": "^1.25.4",
     "next": "12.1.0",
     "postcss": "^8.4.21",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "tailwindcss": "^3.2.7"
+    "tailwindcss": "^3.3.1"
   },
   "devDependencies": {
     "babel-preset-next": "^1.4.0",

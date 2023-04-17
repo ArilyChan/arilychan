@@ -4,6 +4,7 @@ const querystring = require('querystring')
 const { getEncryptObj } = require('./aes')
 const decryptMusic = require('./decryptMusic')
 const https = require('https')
+const { h } = require('koishi')
 
 class api {
   static apiRequest (keyWord) {
@@ -73,7 +74,7 @@ class api {
         if (bestIndex >= 0) songIndex = bestIndex
         else if (incIndex >= 0) songIndex = incIndex
         else songIndex = 0
-        return `[CQ:music,id=${data.songs[songIndex].id},type=163]`
+        return h('music', { id: data.songs[songIndex].id, type: 163 })
       } catch (ex) {
         console.log(ex)
         return { code: 'error' }

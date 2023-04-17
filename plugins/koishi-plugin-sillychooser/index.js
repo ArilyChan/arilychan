@@ -4,6 +4,7 @@ const AskObject = require('./objects/AskObject')
 const QuestionTypeHelper = require('./QuestionType/QuestionTypeHelper')
 const SendMessageObject = require('./objects/SendMessageObject')
 const SentMessageCollection = require('./objects/SentMessageCollection')
+const { h } = require('koishi')
 
 class SillyChooser {
   /**
@@ -24,7 +25,7 @@ class SillyChooser {
   apply (botId, qqId, message) {
     try {
       if (!message.length || message.length < 2) return ''
-      const atBot = `[CQ:at,id=${botId}]`
+      const atBot = h('at', { id: botId })
       if (message.substring(0, atBot.length) === atBot) message = message.substring(atBot.length).trim()
       else if (this.prefixes.indexOf(message.substring(0, 1)) >= 0) message = message.substring(1).trim()
       else return ''
@@ -61,10 +62,11 @@ module.exports.apply = (ctx, options) => {
       const reply = sc.apply(meta.selfId, userId, message)
       if (!reply) return next()
       const replyMessage = []
-      if (meta.contentType !== 'private') replyMessage.push(`[CQ:quote,id=${meta.messageId}]`)
+      if (meta.contentType !== 'private') {
+        replyMessage.push(h('quote', { id: meta.messageId }))
+      }
       replyMessage.push(reply)
-      // if (reply) return `[CQ:at,id=${userId}]` + '\n' + reply
-      await meta.send(replyMessage.join(''))
+      return replyMessage.join('')
     } catch (ex) {
       console.log(ex)
       return next()

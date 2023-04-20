@@ -4,11 +4,11 @@ class AskObject {
   constructor (message) {
     this.ask = message
 
-    this.replaceCQObjects = []
-    this.replaceCQTexts = []
+    // this.replaceCQObjects = []
+    // this.replaceCQTexts = []
 
-    this.replaceQuoteObjects = []
-    this.replaceQuoteTexts = []
+    // this.replaceQuoteObjects = []
+    // this.replaceQuoteTexts = []
   }
 
   // 取最后一句话
@@ -86,9 +86,9 @@ class AskObject {
     // 注意顺序
     this.escape2Html()
     this.removeReturn()
-    this.cutCQCode()
-    this.cutQuote()
-    this.getLastSentence()
+    // this.cutCQCode()
+    // this.cutQuote()
+    // this.getLastSentence()
     return this.ask
   }
 

@@ -20,8 +20,8 @@ jobs:
         with:
           node-version: 16
           registry-url: https://registry.npmjs.org/
-      - run: npm install && npm install --only=dev
-      - run: npm run build koishi-plugin-express
+      - run: yarn
+      - run: yarn build koishi-plugin-express
       - run: npm publish 'plugins/koishi-plugin-express'
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}

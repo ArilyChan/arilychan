@@ -1,26 +1,15 @@
+import { Schema } from 'koishi'
 import { schema } from '.'
-const a = schema`
-@description('基础配置')
-{
-  shared: string,
-  type: @required 'foo' | 'bar',
-} & 
-@description('特殊配置1')
-union([
-  {
-    @required
-    type: 'foo',
+const config = <Schema<unknown, {a: boolean, b: number }>>schema`{
+  @required
+  a: true,
+  @default(1)
+  b: number
+} | {
+  @required
+  a: false,
+  @default(2)
+  b: number
+}`
 
-    @default(114514)
-    value: number
-  },
-  {
-    @required
-    type: 'bar',
-
-    @default(114514)
-    text: string
-  },
-])
-`
-console.log(a)
+console.log(config({ a: false }))

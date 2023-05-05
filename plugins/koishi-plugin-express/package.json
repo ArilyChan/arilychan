@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-express",
   "description": "express routing plugin for koishi",
-  "version": "4.0.1",
+  "version": "4.1.0",
   "license": "MIT",
   "author": {
     "name": "arily",
@@ -27,7 +27,7 @@
     "tsc": "tsc"
   },
   "peerDependencies": {
-    "koishi": ">=4.0.0"
+    "koishi": "^4.0.0"
   },
   "devDependencies": {
     "@types/jest": "^27.5.2",
@@ -44,5 +44,8 @@
   },
   "workspaces": [
     "../utils/koishi-web-connect"
-  ]
+  ],
+  "koishi": {
+    "browser": false
+  }
 }

@@ -8,7 +8,7 @@ on:
     branches:
       - publish
     paths:
-      - "plugins/koishi-plugin-express/package.json"
+      - "plugins/express/package.json"
   workflow_dispatch:
 
 jobs:
@@ -22,6 +22,6 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - run: npm install -D
       - run: npm run build express
-      - run: npm publish './plugins/koishi-plugin-express'
+      - run: npm publish './plugins/express'
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}

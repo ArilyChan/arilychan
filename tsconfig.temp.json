@@ -2,7 +2,7 @@
   "files": [],
   "references": [
     {
-      "path": "./plugins/koishi-plugin-express"
+      "path": "./plugins/express"
     }
   ]
 }

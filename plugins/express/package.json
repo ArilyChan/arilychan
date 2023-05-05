@@ -14,15 +14,12 @@
   "main": "lib/index.js",
   "files": [
     "README.md",
-    "dist/",
-    "lib-commonjs/",
     "lib/"
   ],
   "scripts": {
     "test": "npm run eslint && npm run tsc --noEmit && npm run jest",
     "eslint": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --ignore-pattern \"/__demo__/\" --no-error-on-unmatched-pattern",
     "jest": "cross-env NODE_ENV=test jest --passWithNoTests",
-    "prepack": "npm run build",
     "reformat": "npm run eslint --fix --quiet",
     "tsc": "tsc"
   },

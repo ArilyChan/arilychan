@@ -1,28 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const _1 = require(".");
-const a = (0, _1.schema) `
-@description('基础配置')
-{
-  shared: string,
-  type: @required 'foo' | 'bar',
-} & 
-@description('特殊配置1')
-union([
-  {
-    @required
-    type: 'foo',
-
-    @default(114514)
-    value: number
-  },
-  {
-    @required
-    type: 'bar',
-
-    @default(114514)
-    text: string
-  },
-])
-`;
-console.log(a);
+const config = (0, _1.schema) `{
+  @required
+  a: true,
+  @default(1)
+  b: number
+} | {
+  @required
+  a: false,
+  @default(2)
+  b: number
+}`;
+console.log(config({ a: false }));

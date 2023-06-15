@@ -8,9 +8,8 @@
     "lib",
     "dist"
   ],
-  "license": "MIT",
+  "license": "CC",
   "scripts": {
-    "prebuild": "echo pre-built",
     "build:console": "koishi-console build"
   },
   "keywords": [

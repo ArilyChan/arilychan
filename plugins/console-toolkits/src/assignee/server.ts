@@ -17,7 +17,7 @@ function groupBy<Obj extends Record<string | number, string | number>, Key exten
 
 export const using = ['database']
 export default function (ctx: Context) {
-  const searchPlatform = async (platform: string): Promise<PlatformRow[]> => {
+  async function searchPlatform (platform: string): Promise<PlatformRow[]> {
     const result = await ctx.database.get('channel', {
       platform: new RegExp(platform)
     }, ['id', 'platform', 'assignee'])
@@ -28,7 +28,7 @@ export default function (ctx: Context) {
     return await Promise.all(Object.entries(grouped).map(async ([platform, result]) => ({
       type: 'platform',
       platform,
-      selects: await Promise.all(result.map(async r => {
+      selects: await Promise.all(result.map(async (r) => {
         const name = await ctx.bots[platform]?.getChannel(r.id)
         return ({
           ...r,
@@ -38,7 +38,7 @@ export default function (ctx: Context) {
     })))
   }
 
-  const searchAssignee = async (assignee: string): Promise<AssigneeRow[]> => {
+  async function searchAssignee (assignee: string): Promise<AssigneeRow[]> {
     if (!assignee.length) { return [] }
 
     const result = await ctx.database.get('channel', {
@@ -51,20 +51,20 @@ export default function (ctx: Context) {
     return await Promise.all(Object.entries(grouped).map(async ([assignee, result]) => ({
       type: 'assignee',
       assignee,
-      selects: await Promise.all(result.map(async r => {
+      selects: await Promise.all(result.map(async (r) => {
         const name = await ctx.bots[assignee]?.getChannel(r.id)
         return ({
           ...r,
-          name: name.channelName ?? 'unknown'
+          name: name?.channelName ?? 'unknown'
         })
       }))
     })))
   }
 
-  const searchChannel = async (query: string): Promise<SearchChannelResult[]> => {
+  async function searchChannel (query: string): Promise<SearchChannelResult[]> {
     const result = [
       ...await searchPlatform(query),
-      ...(await searchAssignee(query))
+      ...await searchAssignee(query)
     ]
     return result.filter(a => a)
   }
@@ -73,18 +73,10 @@ export default function (ctx: Context) {
     router.get('/toolkit/assignee/search/:kw', async (ctx) => {
       ctx.body = await searchChannel(ctx.params.kw)
     })
-    router.post('/toolkit/assignee/clearOne', async (ctx) => {
-      // console.log(ctx.request.body.channel)
-      const body = ctx.request.body.data
-      const { platform, id } = body.channel
+    router.post('/toolkit/assignee/clear', async (ctx) => {
+      const body = ctx.request.body
       try {
-        // await app.database.setChannel(platform, id, { $remove: 'assignee' })
-        await app.database.set('channel', {
-          platform,
-          id
-        }, {
-          assignee: null
-        })
+        await app.database.set('channel', body.query, { assignee: null })
         ctx.body = {
           message: 'removed'
         }
@@ -95,15 +87,14 @@ export default function (ctx: Context) {
         ctx.status = 500
       }
     })
-    router.post('/toolkit/assignee/changeOne', async (ctx) => {
-      // console.log(ctx.request.body.channel)
-      const body = ctx.request.body.data
-      const { platform, id } = body.channel
+
+    router.post('/toolkit/assignee/change', async (ctx) => {
+      const body = ctx.request.body
       const { assignee } = body
       try {
-        await app.database.setChannel(platform, id, { assignee })
+        await app.database.set('channel', body.query, { assignee })
         ctx.body = {
-          message: 'updated'
+          message: 'done'
         }
       } catch (error) {
         ctx.body = {
@@ -113,10 +104,4 @@ export default function (ctx: Context) {
       }
     })
   })
-  // ctx.using(['console'], () => {
-  //   ctx.console.ws.broadcast()
-  //   ctx.console.ws.addListener('toolkit/assignee/searchChannel', channel => {
-  //     console.log(channel)
-  //   })
-  // })
 }

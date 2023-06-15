@@ -2,7 +2,34 @@
   "files": [],
   "references": [
     {
+      "path": "./utils/schema-compose"
+    },
+    {
+      "path": "./utils/koishi-web-connect"
+    },
+    {
+      "path": "./plugins/responder2"
+    },
+    {
+      "path": "./plugins/radio"
+    },
+    {
+      "path": "./plugins/osu-info-command"
+    },
+    {
+      "path": "./plugins/nyan"
+    },
+    {
+      "path": "./plugins/meal"
+    },
+    {
+      "path": "./plugins/koishi-plugin-puppeteer-cluster"
+    },
+    {
       "path": "./plugins/express"
+    },
+    {
+      "path": "./plugins/console-toolkits"
     }
   ]
 }

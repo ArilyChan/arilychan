@@ -16,7 +16,7 @@ function groupBy(array, key) {
 }
 exports.using = ['database'];
 function default_1(ctx) {
-    const searchPlatform = async (platform) => {
+    async function searchPlatform(platform) {
         const result = await ctx.database.get('channel', {
             platform: new RegExp(platform)
         }, ['id', 'platform', 'assignee']);
@@ -35,8 +35,8 @@ function default_1(ctx) {
                 });
             }))
         })));
-    };
-    const searchAssignee = async (assignee) => {
+    }
+    async function searchAssignee(assignee) {
         if (!assignee.length) {
             return [];
         }
@@ -54,35 +54,27 @@ function default_1(ctx) {
                 const name = await ctx.bots[assignee]?.getChannel(r.id);
                 return ({
                     ...r,
-                    name: name.channelName ?? 'unknown'
+                    name: name?.channelName ?? 'unknown'
                 });
             }))
         })));
-    };
-    const searchChannel = async (query) => {
+    }
+    async function searchChannel(query) {
         const result = [
             ...await searchPlatform(query),
-            ...(await searchAssignee(query))
+            ...await searchAssignee(query)
         ];
         return result.filter(a => a);
-    };
+    }
     const app = ctx;
     ctx.using(['router'], ({ router }) => {
         router.get('/toolkit/assignee/search/:kw', async (ctx) => {
             ctx.body = await searchChannel(ctx.params.kw);
         });
-        router.post('/toolkit/assignee/clearOne', async (ctx) => {
-            // console.log(ctx.request.body.channel)
-            const body = ctx.request.body.data;
-            const { platform, id } = body.channel;
+        router.post('/toolkit/assignee/clear', async (ctx) => {
+            const body = ctx.request.body;
             try {
-                // await app.database.setChannel(platform, id, { $remove: 'assignee' })
-                await app.database.set('channel', {
-                    platform,
-                    id
-                }, {
-                    assignee: null
-                });
+                await app.database.set('channel', body.query, { assignee: null });
                 ctx.body = {
                     message: 'removed'
                 };
@@ -94,15 +86,13 @@ function default_1(ctx) {
                 ctx.status = 500;
             }
         });
-        router.post('/toolkit/assignee/changeOne', async (ctx) => {
-            // console.log(ctx.request.body.channel)
-            const body = ctx.request.body.data;
-            const { platform, id } = body.channel;
+        router.post('/toolkit/assignee/change', async (ctx) => {
+            const body = ctx.request.body;
             const { assignee } = body;
             try {
-                await app.database.setChannel(platform, id, { assignee });
+                await app.database.set('channel', body.query, { assignee });
                 ctx.body = {
-                    message: 'updated'
+                    message: 'done'
                 };
             }
             catch (error) {
@@ -113,11 +103,5 @@ function default_1(ctx) {
             }
         });
     });
-    // ctx.using(['console'], () => {
-    //   ctx.console.ws.broadcast()
-    //   ctx.console.ws.addListener('toolkit/assignee/searchChannel', channel => {
-    //     console.log(channel)
-    //   })
-    // })
 }
 exports.default = default_1;

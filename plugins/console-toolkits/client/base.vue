@@ -1,7 +1,6 @@
 <template>
   <div class="layout-container">
     <div class="main-container">
-
       <div class="layout-header">
         <!-- <div class="toggle-sidebar-button" role="button" tabindex="0">
           <div class="icon"><span></span><span></span><span></span></div>
@@ -10,56 +9,50 @@
         <div class="right">
           <div class="search-box" v-if="tools.length">
             <input placeholder="search section..." v-model="keyword" />
-            <small style="align-self: bottom; opacity: 0.4"><k-icon name="search"></k-icon></small>
+            <small style="align-self: bottom; opacity: 0.4"
+              ><k-icon name="search"></k-icon
+            ></small>
           </div>
         </div>
       </div>
       <div class="tool-wrap">
-        <div v-for="(entry, index) in tools" :key="index" v-show="showComponent(entry)" class="tool">
+        <div
+          v-for="(entry, index) in tools"
+          :key="index"
+          v-show="showComponent(entry)"
+          class="tool"
+        >
           <h3 class="my-1 entry-name">
-            {{ entry.name || entry.title || "unnamed" }}
+            {{ capitalize(entry.name) || entry.title || 'unnamed' }}
           </h3>
           <div class="px-2 my-1 text-wrap-pre" v-if="entry.description">
             {{ entry.description }}
           </div>
           <div class="m-1 splitter" />
           <div class="px-2 tool-component">
-            <component :is="entry.name" />
+            <component :is="entry" />
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
+<script lang="ts" setup>
+import { capitalize } from 'koishi';
+import { ref } from 'vue';
+import assignee from './components/assignee/client.vue';
 
-<script lang="ts">
-// const modules = import.meta.glob('./components/**/*.vue')
-import assignee from './components/assignee/client.vue'
-export default {
-  data() {
-    return {
-      tools: [
-        assignee
-      ],
-      keyword: "",
-    };
-  },
-  beforeMount() {
-    this.tools.forEach((entry) => {
-      this.$options.components[entry.name] = entry;
-    });
-  },
-  methods: {
-    showComponent(entry) {
-      if (!this.keyword) return true
-      return entry.keywords.includes(this.keyword) || entry.keywords.some(str => str.includes(this.keyword)) || entry.description?.includes(this.keyword)
-    }
-  },
-  // magic, do not remove
-  components: {},
-};
+const keyword = ref('');
+const tools = [assignee];
+function showComponent(entry) {
+  if (!keyword.value) return true;
+  return (
+    entry.keywords.includes(this.keyword) ||
+    entry.keywords.some((str) => str.includes(this.keyword)) ||
+    entry.description?.includes(this.keyword)
+  );
+}
 </script>
-
 
 <style lang="scss">
 $hr-color: rgba(0, 0, 0, 0.1);
@@ -80,22 +73,19 @@ $types: (
   p: padding,
 );
 
-@each $type,
-$field in $types {
+@each $type, $field in $types {
   @each $space in $spacing {
     .#{$type}-#{$space} {
       #{$field}: $spacer * $space !important;
     }
 
-    @each $shorthand,
-    $direction in $direction {
+    @each $shorthand, $direction in $direction {
       .#{$type}#{$shorthand}-#{$space} {
         #{$field}-#{$direction}: $spacer * $space !important;
       }
     }
 
-    @each $shorthand,
-    $direction in $extends {
+    @each $shorthand, $direction in $extends {
       .#{$type}#{$shorthand}-#{$space} {
         @each $i in $direction {
           @extend .#{$type}#{$i}-#{$space};
@@ -133,10 +123,10 @@ $field in $types {
 .tool-wrap {
   .tool:not(:last-child) {
     &::after {
-      content: "";
+      content: '';
       display: block;
       @extend .my-1;
-      border-top: 1px solid $hr-color
+      border-top: 1px solid $hr-color;
     }
   }
 }

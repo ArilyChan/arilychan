@@ -26,7 +26,7 @@ const builder = (args) => {
         }
         else if (['default'].includes(decorator)) {
             const built = _buildSchema(values[0]);
-            return kSchema.default(built === null || built === void 0 ? void 0 : built.inner);
+            return kSchema.default(built === null || built === void 0 ? void 0 : built.value);
         }
         else {
             console.log(decorator, values);

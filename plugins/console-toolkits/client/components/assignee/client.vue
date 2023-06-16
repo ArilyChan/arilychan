@@ -271,14 +271,14 @@ function clearAll(result: {
 import { defineComponent } from 'vue';
 import { capitalize } from 'koishi';
 export default defineComponent({
-  keywords: ['assignee'],
+  keywords: ['assignee', 'platform', 'edit', 'clear', 'channel'],
   name: 'assignee',
   title: '修改Assignee',
-  description: '支持搜索 Asignee 和 Platform.',
+  description: '搜索 Assignee 和 Platform',
 });
 </script>
 
-<style>
+<style scoped>
 .d-block {
   display: block;
 }

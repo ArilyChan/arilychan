@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.using = void 0;
+const koishi_1 = require("koishi");
 require("@koishijs/plugin-console");
 function groupBy(array, key) {
     return array
@@ -28,10 +29,9 @@ function default_1(ctx) {
             type: 'platform',
             platform,
             selects: await Promise.all(result.map(async (r) => {
-                const name = await ctx.bots[platform]?.getChannel(r.id);
                 return ({
                     ...r,
-                    name: name?.channelName ?? 'unknown'
+                    name: await nameOfChannelOrGuild(r.id, r)
                 });
             }))
         })));
@@ -51,10 +51,9 @@ function default_1(ctx) {
             type: 'assignee',
             assignee,
             selects: await Promise.all(result.map(async (r) => {
-                const name = await ctx.bots[assignee]?.getChannel(r.id);
                 return ({
                     ...r,
-                    name: name?.channelName ?? 'unknown'
+                    name: await nameOfChannelOrGuild(r.id, r)
                 });
             }))
         })));
@@ -75,15 +74,10 @@ function default_1(ctx) {
             const body = ctx.request.body;
             try {
                 await app.database.set('channel', body.query, { assignee: null });
-                ctx.body = {
-                    message: 'removed'
-                };
+                removed(ctx);
             }
             catch (error) {
-                ctx.body = {
-                    message: error.message
-                };
-                ctx.status = 500;
+                serverSideError(ctx, error.message);
             }
         });
         router.post('/toolkit/assignee/change', async (ctx) => {
@@ -91,17 +85,36 @@ function default_1(ctx) {
             const { assignee } = body;
             try {
                 await app.database.set('channel', body.query, { assignee });
-                ctx.body = {
-                    message: 'done'
-                };
+                done(ctx);
             }
             catch (error) {
-                ctx.body = {
-                    message: error.message
-                };
-                ctx.status = 500;
+                serverSideError(ctx, error.message);
             }
         });
     });
+    async function nameOfChannelOrGuild(channelOrGuildId, supplementaryQueries) {
+        const bots = ctx.bots.filter(b => supplementaryQueries ? supplementaryQueries.assignee === b.selfId || supplementaryQueries.platform === b.platform : true);
+        for (const bot of bots) {
+            const result = await bot.getGuild(channelOrGuildId).then(g => g?.guildId).catch(koishi_1.noop) || await bot.getChannel(channelOrGuildId).then(c => c?.channelName).catch(koishi_1.noop);
+            if (result)
+                return result;
+        }
+        return '?';
+    }
 }
 exports.default = default_1;
+function serverSideError(ctx, message, status = 500) {
+    ctx.body = { message };
+    ctx.status = status;
+    return ctx;
+}
+function done(ctx) {
+    ctx.body = {
+        message: 'done'
+    };
+}
+function removed(ctx) {
+    ctx.body = {
+        message: 'removed'
+    };
+}

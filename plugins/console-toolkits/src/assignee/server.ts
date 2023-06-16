@@ -1,4 +1,4 @@
-import { Context } from 'koishi'
+import { Bot, Context, noop } from 'koishi'
 import '@koishijs/plugin-console'
 import { PlatformRow, AssigneeRow, SearchChannelResult } from './base'
 
@@ -29,10 +29,9 @@ export default function (ctx: Context) {
       type: 'platform',
       platform,
       selects: await Promise.all(result.map(async (r) => {
-        const name = await ctx.bots[platform]?.getChannel(r.id)
         return ({
           ...r,
-          name: name?.channelName ?? 'unknown'
+          name: await nameOfChannelOrGuild(r.id, r)
         })
       }))
     })))
@@ -52,10 +51,9 @@ export default function (ctx: Context) {
       type: 'assignee',
       assignee,
       selects: await Promise.all(result.map(async (r) => {
-        const name = await ctx.bots[assignee]?.getChannel(r.id)
         return ({
           ...r,
-          name: name?.channelName ?? 'unknown'
+          name: await nameOfChannelOrGuild(r.id, r)
         })
       }))
     })))
@@ -77,14 +75,9 @@ export default function (ctx: Context) {
       const body = ctx.request.body
       try {
         await app.database.set('channel', body.query, { assignee: null })
-        ctx.body = {
-          message: 'removed'
-        }
+        removed(ctx)
       } catch (error) {
-        ctx.body = {
-          message: error.message
-        }
-        ctx.status = 500
+        serverSideError(ctx, error.message)
       }
     })
 
@@ -93,15 +86,34 @@ export default function (ctx: Context) {
       const { assignee } = body
       try {
         await app.database.set('channel', body.query, { assignee })
-        ctx.body = {
-          message: 'done'
-        }
+        done(ctx)
       } catch (error) {
-        ctx.body = {
-          message: error.message
-        }
-        ctx.status = 500
+        serverSideError(ctx, error.message)
       }
     })
   })
+  async function nameOfChannelOrGuild (channelOrGuildId: string, supplementaryQueries?: {platform: Bot['platform'], assignee: Bot['selfId']}) {
+    const bots = ctx.bots.filter(b => supplementaryQueries ? supplementaryQueries.assignee === b.selfId || supplementaryQueries.platform === b.platform : true)
+    for (const bot of bots) {
+      const result = await bot.getGuild(channelOrGuildId).then(g => g?.guildId).catch(noop) || await bot.getChannel(channelOrGuildId).then(c => c?.channelName).catch(noop)
+      if (result) return result
+    }
+    return '?'
+  }
+}
+function serverSideError (ctx: {body: any, status: number}, message: string, status = 500) {
+  ctx.body = { message }
+  ctx.status = status
+  return ctx
+}
+
+function done (ctx:{body: any}) {
+  ctx.body = {
+    message: 'done'
+  }
+}
+function removed (ctx:{body: any}) {
+  ctx.body = {
+    message: 'removed'
+  }
 }

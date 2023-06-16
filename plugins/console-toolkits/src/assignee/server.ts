@@ -99,9 +99,8 @@ export default function (ctx: Context) {
   async function nameOfChannelOrGuild (channelOrGuildId: string, supplementaryQueries?: {platform: Bot['platform'], assignee: Bot['selfId']}) {
     const bots = ctx.bots.filter(b => supplementaryQueries ? supplementaryQueries.assignee === b.selfId || supplementaryQueries.platform === b.platform : true)
     for (const bot of bots) {
-      const result = await Promise.all([bot.getGuild(channelOrGuildId).catch(noop), bot.getChannel(channelOrGuildId).catch(noop)])
-      console.log(result)
-      // if (result) return result
+      const result = bot.getChannel(channelOrGuildId).then(c => c.channelName).catch(noop) || bot.getGuild(channelOrGuildId).then(g => g.guildName).catch(noop)
+      if (result) return result
     }
     return '?'
   }

@@ -94,6 +94,7 @@ function default_1(ctx) {
     });
     async function nameOfChannelOrGuild(channelOrGuildId, supplementaryQueries) {
         const bots = ctx.bots.filter(b => supplementaryQueries ? supplementaryQueries.assignee === b.selfId || supplementaryQueries.platform === b.platform : true);
+        console.log(bots);
         for (const bot of bots) {
             const result = await bot.getGuild(channelOrGuildId).then(g => g?.guildId).catch(koishi_1.noop) || await bot.getChannel(channelOrGuildId).then(c => c?.channelName).catch(koishi_1.noop);
             if (result)

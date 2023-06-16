@@ -98,12 +98,13 @@ function default_1(ctx) {
     });
     async function nameOfChannelOrGuild(channelOrGuildId, supplementaryQueries) {
         const bots = ctx.bots.filter(b => supplementaryQueries ? supplementaryQueries.assignee === b.selfId || supplementaryQueries.platform === b.platform : true);
-        for (const bot of bots) {
-            const result = await bot.getChannel(channelOrGuildId).then(c => c.channelName).catch(koishi_1.noop) || await bot.getGuild(channelOrGuildId).then(g => g.guildName).catch(koishi_1.noop);
-            if (result)
-                return result;
-        }
-        return '?';
+        // for (const bot of bots) {
+        //   const result = await bot.getChannel(channelOrGuildId).then(c => c.channelName).catch(noop) || await bot.getGuild(channelOrGuildId).then(g => g.guildName).catch(noop)
+        //   if (result) return result
+        // }
+        return Promise.all(bots.map(async (bot) => await bot.getChannel(channelOrGuildId).then(c => c.channelName).catch(koishi_1.noop) || await bot.getGuild(channelOrGuildId).then(g => g.guildName).catch(koishi_1.noop)))
+            .then(ps => ps.filter(Boolean))
+            .then(f => f.length ? f[0] : '?');
     }
 }
 exports.default = default_1;

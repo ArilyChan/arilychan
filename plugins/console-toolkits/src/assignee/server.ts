@@ -20,7 +20,7 @@ export default function (ctx: Context) {
   async function searchPlatform (platform: string): Promise<PlatformRow[]> {
     const result = await ctx.database.get('channel', {
       platform: new RegExp(platform)
-    }, ['id', 'platform', 'assignee'])
+    }, ['guildId', 'platform', 'assignee'])
     if (!result.length) {
       return []
     }
@@ -31,7 +31,9 @@ export default function (ctx: Context) {
       selects: await Promise.all(result.map(async (r) => {
         return ({
           ...r,
-          name: await nameOfChannelOrGuild(r.id, r)
+          id: r.guildId,
+          guildId: undefined,
+          name: await nameOfChannelOrGuild(r.guildId, r)
         })
       }))
     })))
@@ -42,7 +44,7 @@ export default function (ctx: Context) {
 
     const result = await ctx.database.get('channel', {
       assignee: new RegExp(assignee)
-    }, ['id', 'assignee', 'platform'])
+    }, ['guildId', 'assignee', 'platform'])
     if (!result.length) {
       return []
     }
@@ -53,7 +55,9 @@ export default function (ctx: Context) {
       selects: await Promise.all(result.map(async (r) => {
         return ({
           ...r,
-          name: await nameOfChannelOrGuild(r.id, r)
+          id: r.guildId,
+          guildId: undefined,
+          name: await nameOfChannelOrGuild(r.guildId, r)
         })
       }))
     })))

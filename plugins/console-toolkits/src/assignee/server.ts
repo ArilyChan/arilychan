@@ -100,7 +100,6 @@ export default function (ctx: Context) {
     const bots = ctx.bots.filter(b => supplementaryQueries ? supplementaryQueries.assignee === b.selfId || supplementaryQueries.platform === b.platform : true)
     for (const bot of bots) {
       const result = await bot.getChannel(channelOrGuildId).then(c => c.channelName).catch(noop) || await bot.getGuild(channelOrGuildId).then(g => g.guildName).catch(noop)
-      console.log(result)
       if (result) return result
     }
     return '?'

@@ -100,7 +100,6 @@ function default_1(ctx) {
         const bots = ctx.bots.filter(b => supplementaryQueries ? supplementaryQueries.assignee === b.selfId || supplementaryQueries.platform === b.platform : true);
         for (const bot of bots) {
             const result = await bot.getChannel(channelOrGuildId).then(c => c.channelName).catch(koishi_1.noop) || await bot.getGuild(channelOrGuildId).then(g => g.guildName).catch(koishi_1.noop);
-            console.log(result);
             if (result)
                 return result;
         }

@@ -1,8 +1,9 @@
 const mongoose = require('mongoose')
 const config = require('./config/db')
+
 mongoose.connect(config.url, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
 })
 
 const MenuSchema = new mongoose.Schema({
@@ -11,8 +12,8 @@ const MenuSchema = new mongoose.Schema({
   description: String,
   creator: {
     name: String,
-    qq: String
-  }
+    qq: String,
+  },
 })
 const Menu = mongoose.model('Menu', MenuSchema)
 const RecipeSchema = new mongoose.Schema({
@@ -23,15 +24,16 @@ const RecipeSchema = new mongoose.Schema({
   cqImage: String,
   uploader: {
     name: String,
-    qq: String
+    qq: String,
   },
   menu: {
-    type: mongoose.Schema.Types.ObjectId, ref: Menu
-  }
+    type: mongoose.Schema.Types.ObjectId,
+    ref: Menu,
+  },
 })
 const Recipe = mongoose.model('Recipe', RecipeSchema)
 
 module.exports = {
   Recipe,
-  Menu
+  Menu,
 }

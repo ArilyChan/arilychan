@@ -5,16 +5,16 @@ const Command = require('./command/Command')
 
 class PpysbQuery {
   /**
-     * @param {Object} params
-     * @param {Array<String>} params.admin 管理员列表，必要
-     * @param {String} [params.host] osu网址，默认为"osu.ppy.sb"
-     * @param {String} [params.database] 数据库路径，默认为根目录下的Opsbot-Ripple-v1.db
-     * @param {Array<String>} [params.prefixs] 指令前缀，必须为单个字符，默认为[*]
-     * @param {String} [params.prefix] 兼容旧版，指令前缀，必须为单个字符，默认为*
-     * @param {String} [params.prefix2] 兼容旧版，备用指令前缀，必须为单个字符，默认为*
-     * @param {Boolean} [params.exscore] 设为true时获取谱面文件以计算更多数据，但是会拖慢响应时间，默认为false
-     */
-  constructor (params) {
+   * @param {object} params
+   * @param {Array<string>} params.admin 管理员列表，必要
+   * @param {string} [params.host] osu网址，默认为"osu.ppy.sb"
+   * @param {string} [params.database] 数据库路径，默认为根目录下的Opsbot-Ripple-v1.db
+   * @param {Array<string>} [params.prefixs] 指令前缀，必须为单个字符，默认为[*]
+   * @param {string} [params.prefix] 兼容旧版，指令前缀，必须为单个字符，默认为*
+   * @param {string} [params.prefix2] 兼容旧版，备用指令前缀，必须为单个字符，默认为*
+   * @param {boolean} [params.exscore] 设为true时获取谱面文件以计算更多数据，但是会拖慢响应时间，默认为false
+   */
+  constructor(params) {
     this.globalConstant = {}
     this.globalConstant.admin = params.admin || []
     this.globalConstant.host = params.host || 'osu.ppy.sb'
@@ -24,7 +24,8 @@ class PpysbQuery {
       this.prefix = params.prefix || '*'
       this.prefix2 = params.prefix2 || '*'
       this.prefixs = [this.prefix, this.prefix2]
-    } else {
+    }
+    else {
       this.prefixs = params.prefixs || ['*']
     }
     this.globalConstant.commandsInfo = new CommandsInfo(this.prefixs)
@@ -32,18 +33,21 @@ class PpysbQuery {
   }
 
   /**
-     * 获得返回消息
-     * @param {String} qqId
-     * @param {String} message 输入的消息
-     */
-  async apply (qqId, message) {
+   * 获得返回消息
+   * @param {string} qqId
+   * @param {string} message 输入的消息
+   */
+  async apply(qqId, message) {
     try {
-      if (!message.length || message.length < 2) return ''
-      if (this.prefixs.indexOf(message.substring(0, 1)) < 0) return ''
+      if (!message.length || message.length < 2)
+        return ''
+      if (!this.prefixs.includes(message.substring(0, 1)))
+        return ''
       const commandObject = new Command(qqId, message.substring(1).trim(), this.globalConstant)
       const reply = await commandObject.execute()
       return reply
-    } catch (ex) {
+    }
+    catch (ex) {
       console.log(ex)
       return ''
     }
@@ -62,13 +66,14 @@ module.exports.apply = (ctx, options) => {
       const reply = await pbq.apply(userId, message)
       if (reply) {
         // record格式不要艾特
-        if (reply.indexOf('CQ:record') > 0) {
+        if (reply.indexOf('CQ:record') > 0)
           await meta.send(reply)
-        } else {
-          await meta.send(`[CQ:at,id=${userId}]` + '\n' + reply)
-        }
-      } else return next()
-    } catch (ex) {
+        else
+          await meta.send(`[CQ:at,id=${userId}]` + `\n${reply}`)
+      }
+      else { return next() }
+    }
+    catch (ex) {
       console.log(ex)
       return next()
     }

@@ -28,7 +28,7 @@ An array of errors or rejections. mapped as `error` in `process.on(error, handle
 Group of contact to send the error messages. (use default if you want error handling only)
 
 **v3 requires all elements to be a string contains platform and id (formatted as `{platform}:{id}`)**
-| Key | Type | Version | Default | Description | 
+| Key | Type | Version | Default | Description |
 |-----|------|--------:|---------|-------------|
 | private | Array | v1, v2, v3 | [] | Contacts you want to send the error message to.
 | group | Array | v1, v2, v3 | [] | Groups you want to send the error message to.

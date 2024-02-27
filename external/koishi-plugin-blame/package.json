@@ -2,13 +2,13 @@
   "name": "koishi-plugin-blame",
   "version": "3.0.0",
   "description": "notice you when unhandled error",
+  "author": "arily",
+  "license": "MIT",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "peerDependencies": {
     "koishi-core": ">=1.0.0"
-  },
-  "author": "arily",
-  "license": "MIT"
+  }
 }

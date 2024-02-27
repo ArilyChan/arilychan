@@ -1,8 +1,7 @@
-const fetch = require('node-fetch')
 // const AbortController = require('abort-controller')
+const { URLSearchParams } = require('node:url')
 const he = require('he')
-const { getOsuApi, addPlus, timeoutSignal } = require('../utils/utils')
-const { URLSearchParams } = require('url')
+const fetch = require('node-fetch')
 
 const prompt = require('sb-prompt-filter')
 
@@ -19,6 +18,8 @@ const CQCode = require('cqcode-builder')
 // const createEWCPlayer = require("./Matchmaking/Player");
 // const { Matchmaking, createPlayer: createEWCPlayer, Api: EWCMatchmakingApi } = require("ewc-matchmaking");
 const EApi = require('ewc-api')
+const { getOsuApi, addPlus, timeoutSignal } = require('../utils/utils')
+
 const E = new EApi()
 // const match = new Matchmaking();
 // const matchapi = new EWCMatchmakingApi('http://localhost:11451');
@@ -26,37 +27,37 @@ const E = new EApi()
 // const Recipe = require('../views/components/recipe');
 
 const tips = {
-  NullMatchName: '!!使用比赛房间作为比赛名称。这通常会出问题。比赛格式示例：EloWeeklyCup Season0 1400-1800。'
+  NullMatchName: '!!使用比赛房间作为比赛名称。这通常会出问题。比赛格式示例：EloWeeklyCup Season0 1400-1800。',
 }
 const usage = {
-  anotherelo: '【叹号】anotherelo <osu用户名或id>',
+  'anotherelo': '【叹号】anotherelo <osu用户名或id>',
   'elo.upload': '【叹号】elo.upload <mp id> [比赛名]:格式示例: EloWeeklyCup Season0 1400-1800。',
-  sendMatchResult: '【叹号】elo.result <MatchId>',
+  'sendMatchResult': '【叹号】elo.result <MatchId>',
   // '排': `【叹号】(排, join) <osu用户名或id> `,
   // '找打': `【叹号】(找打, rival, rivals) `,
   // '不打了': `【叹号】(不打了, drop, quit) `,
   // joinTeam: `【叹号】(team.join, jointeam) <osu用户名或id>#<队伍名>`,
   // quitTeam: `【叹号】(team.quit, quitteam) <osu用户名或id>#<队伍名>`,
   // registerTeam: `【叹号】(team.create, createteam) <队伍名>`,
-  dad: '【叹号】(dad, dad_of) <osu用户名或id>'
+  'dad': '【叹号】(dad, dad_of) <osu用户名或id>',
   // findTeam: `【叹号】(team.find, findteam) <队伍名>`,
   // findTeamsByRank: `【叹号】(team.findbyrank, findteamsbyrank, findteambyrank) <分段>`,
 }
 
 class NullUserError extends Error {
-  constructor (handle) {
+  constructor(handle) {
     super(`没有找到用户。 (User: ${handle})`) // (1)
     this.name = 'NullUserError' // (2)
   }
 }
 class NullMatchError extends Error {
-  constructor (matchID) {
+  constructor(matchID) {
     super(`没有找到这场比赛。(MatchID: ${matchID})`) // (1)
     this.name = 'NullMatchError' // (2)
   }
 }
 class NeedHelps extends Error {
-  constructor () {
+  constructor() {
     super() // (1)
     this.name = 'NeedHelps' // (2)
   }
@@ -79,32 +80,37 @@ class NeedHelps extends Error {
 //         this.name = "TeamNameInvalidError"; // (2)
 //     }
 // }
-async function getUserByHandle (handle) {
+async function getUserByHandle(handle) {
   const osuApi = getOsuApi()
   try {
     return osuApi.getUser({ u: handle })
-  } catch (Error) {
-    if (Error.message === 'User not found') throw new NullUserError(handle)
-    else throw Error('API broken...')
+  }
+  catch (Error) {
+    if (Error.message === 'User not found')
+      throw new NullUserError(handle)
+    else throw new Error('API broken...')
   }
 }
 // const playOrNot = async ({ command, meta, app}) => {
 //     const logger = app.logger('CabbageReaction');
 //     meta.send(`${Math.round(Math.random()) ? '打' : '不打'}`).catch(e => console.error.bind(console))
 // }
-const uploadElo = async ({ command, meta, app }) => {
+async function uploadElo({ command, meta, app }) {
   // const logger = app.logger('CabbageReaction');
   const message = []
-  if (meta.contentType !== 'private') message.push(new CQCode.At().qq(meta.userId))
+  if (meta.contentType !== 'private')
+    message.push(new CQCode.At().qq(meta.userId))
   try {
-    if (command[1] === undefined || command[1] === '') throw new NeedHelps()
+    if (command[1] === undefined || command[1] === '')
+      throw new NeedHelps()
     const matchID = command[1]
     let matchName = command.slice(2).join(' ').trim()
 
     const osuApi = getOsuApi()
     const match = await osuApi.apiCall('/get_match', { mp: matchID })
 
-    if (match.match === 0) throw new NullMatchError(matchID)
+    if (match.match === 0)
+      throw new NullMatchError(matchID)
     if (matchName === '') {
       message.push(tips.NullMatchName)
       matchName = match.match.name
@@ -122,16 +128,19 @@ const uploadElo = async ({ command, meta, app }) => {
       clear()
       meta.send(`${new CQCode.At().qq(meta.userId)} ${updateResult.message}`).catch(e => console.error.bind(console))
       const message = []
-      if (meta.contentType !== 'private') message.push(new CQCode.At().qq(meta.userId))
+      if (meta.contentType !== 'private')
+        message.push(new CQCode.At().qq(meta.userId))
       message.push(await getMatchEloChangeWithOsuUser(matchID).then(res => res.toString()))
       await meta.send(message.join('\n'))
     }
     message.push(response.message)
-  } catch (Error) {
+  }
+  catch (Error) {
     const append = handleErrorMessage(Error, 'elo.upload') || ''
     message.push(append)
     console.error(Error)
-  } finally {
+  }
+  finally {
     meta.send(message.join('\n')).catch(e => console.error.bind(console))
   }
 }
@@ -406,7 +415,8 @@ const uploadElo = async ({ command, meta, app }) => {
 const dad = async function ({ command, meta, app }) {
   // const logger = app.logger('CabbageReaction')
   const message = []
-  if (meta.contentType !== 'private') message.push(new CQCode.At().qq(meta.userId))
+  if (meta.contentType !== 'private')
+    message.push(new CQCode.At().qq(meta.userId))
   try {
     let user = command.slice(1).join(' ').trim()
     user = he.decode(user)
@@ -414,95 +424,112 @@ const dad = async function ({ command, meta, app }) {
 
     const response = await E.users.dad(user.id)
     // logger.warn(response);
-    if (response.message) throw response.message
+    if (response.message)
+      throw response.message
     message.push(`你一共被爆锤${response.count}次,`)
     try {
       const dad = await getUserByHandle(response.dad)
       message.push(`最爱你的爸爸是${dad.name}，爱过你${response.dad_times}次。`)
-    } catch (e) {
+    }
+    catch (e) {
       message.push(`最爱你的爸爸爱过你${response.dad_times}次，但是他号没了。他的uid是${response.dad}。`)
     }
-  } catch (Error) {
+  }
+  catch (Error) {
     const append = handleErrorMessage(Error, 'dad') || ''
     message.push(append)
     console.warn(Error)
-  } finally {
+  }
+  finally {
     meta.send(message.join('\n')).catch(e => console.error.bind(console))
   }
 }
 
-async function getMatchEloChangeWithOsuUser (matchId) {
+async function getMatchEloChangeWithOsuUser(matchId) {
   const match = await E.matches(matchId)
-  if (Object.entries(match.elo_change).length === 0) throw new Error('Match不存在或未上传')
+  if (Object.entries(match.elo_change).length === 0)
+    throw new Error('Match不存在或未上传')
   const result = await Promise.all(Object.entries(match.elo_change).map(async ([id, eloChange]) => {
     return Object.assign(await getUserByHandle(id), { eloChange })
   }))
   return {
-    toArray: async function () {
+    async toArray() {
       const message = []
       try {
         message.push(`mplink: https://osu.ppy.sh/community/matches/${matchId}`)
         message.push(`otsu: http://otsu.fun/matches/${matchId}`)
         message.push('elo变动:')
         message.push(...this.result.map(user => `    ${user.name}: ${addPlus(user.eloChange)}`))
-      } catch (Error) {
+      }
+      catch (Error) {
         console.log(Error)
-      } finally {
+      }
+      finally {
         // eslint-disable-next-line no-unsafe-finally
         return message
       }
     },
-    toString: async function () {
+    async toString() {
       return (await this.toArray()).join('\n')
     },
-    result
+    result,
   }
 }
-async function sendMatchResult ({ meta, command }) {
+async function sendMatchResult({ meta, command }) {
   const message = []
-  if (meta.contentType !== 'private') message.push(new CQCode.At().qq(meta.userId))
+  if (meta.contentType !== 'private')
+    message.push(new CQCode.At().qq(meta.userId))
   try {
     const matchId = command[1]
-    if (!(matchId >>> 0 === parseFloat(matchId))) throw new NeedHelps()
+    if (!(matchId >>> 0 === Number.parseFloat(matchId)))
+      throw new NeedHelps()
     message.push(await (await getMatchEloChangeWithOsuUser(matchId)).toString())
-  } catch (Error) {
+  }
+  catch (Error) {
     const append = handleErrorMessage(Error, 'sendMatchResult') || ''
     message.push(append)
     console.log(Error)
-  } finally {
+  }
+  finally {
     meta.send(message.join('\n')).catch(e => console.error.bind(console))
   }
 }
 
-function handleErrorMessage (Error, from) {
-  if (typeof Error === 'string') return Error
-  if (Error.name === 'NeedHelps') return `Usage: ${usage[from] || '未添加使用说明'}`
-  else if (Error.name === 'AbortError') return '请求花费了太长时间。请重试。'
+function handleErrorMessage(Error, from) {
+  if (typeof Error === 'string')
+    return Error
+  if (Error.name === 'NeedHelps')
+    return `Usage: ${usage[from] || '未添加使用说明'}`
+  else if (Error.name === 'AbortError')
+    return '请求花费了太长时间。请重试。'
   else return `${Error.message} \nUsage: ${usage[from] || '未添加使用说明'}`
 }
 
-const elo = async ({ command, meta, app }) => {
+async function elo({ command, meta, app }) {
   try {
     const handle = command.slice(1).join(' ')
-    if (handle === '') throw new NeedHelps() //         let osuApi = getOsuApi();
+    if (handle === '')
+      throw new NeedHelps() //         let osuApi = getOsuApi();
 
     let user
     try {
       user = user = await getUserByHandle(he.decode(handle))
-    } catch (error) {
+    }
+    catch (error) {
       console.log(error)
-      if (error.message === 'Not found') throw new NullUserError(handle)
-      else throw Error('API broken...')
+      if (error.message === 'Not found')
+        throw new NullUserError(handle)
+      else throw new Error('API broken...')
     }
 
     const userId = user.id
     const { signal, clear } = timeoutSignal(20)
     const [
       elo,
-      recentPlay
+      recentPlay,
     ] = await Promise.all([
       E.users.elo(userId, { signal }),
-      E.users.recentPlay(userId, { signal })
+      E.users.recentPlay(userId, { signal }),
     ])
     clear()
     // let recentMatch = await E.matches(recentPlay.match_id, { signal: timeoutSignal(20) }).catch(err => {
@@ -517,66 +544,69 @@ const elo = async ({ command, meta, app }) => {
     const res = Object.assign(user, elo, recentPlay /* { recentMatch } */)
 
     await meta.send(`${new CQCode.At().qq(meta.userId)} \n${await eloTable(res)}`)
-  } catch (Error) {
+  }
+  catch (Error) {
     const append = handleErrorMessage(Error, 'elo')
     meta.send(`${new CQCode.At().qq(meta.userId)} ${append}`).catch(e => console.error.bind(console))
   }
 }
 const gamblingApiBase = 'http://47.101.168.165:5002'
-const createMatch = (data) => {
+function createMatch(data) {
   const url = `${gamblingApiBase}/match`
   return fetch(url, {
     method: 'POST',
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   })
 }
-const matchList = () => {
+function matchList() {
   const url = `${gamblingApiBase}/match`
   return fetch(url).then(res => res.json())
 }
-const bet = ({ id }, data) => {
+function bet({ id }, data) {
   const url = `${gamblingApiBase}/match/${id}/bet`
   console.log(url, data)
   return fetch(url, {
     method: 'POST',
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   })
 }
-const settleBet = ({ id }, data) => {
+function settleBet({ id }, data) {
   const url = `${gamblingApiBase}/match/${id}/finished`
   console.log(url, data)
   return fetch(url, {
     method: 'POST',
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   })
 }
-const createBet = async ({ command, meta: session, app }) => {
+async function createBet({ command, meta: session, app }) {
   try {
     session.send('给对局起个名字。发送“取消”可以中止。')
     const name = await prompt({
       source: () => session.$prompt(),
       filter: res => res.length,
       rejectFilter: rej => rej.trim() === '取消',
-      maxRetries: 2
+      maxRetries: 2,
     })
     session.send(`介绍一下对局：${name}。发送“取消”可以中止。`)
     const description = await prompt({
       source: () => session.$prompt(),
       filter: res => res.length,
       rejectFilter: rej => rej.trim() === '取消',
-      maxRetries: 2
+      maxRetries: 2,
     })
     session.send('请提供出场队伍/队员，用换行区分。发送“取消”可以中止。')
     const member = await prompt({
       source: () => session.$prompt(),
       onRetry: (message, reason) => {
-        if (message) session.send(`${message} 不符合要求。\n${reason || '换一个答案'}`)
+        if (message)
+          session.send(`${message} 不符合要求。\n${reason || '换一个答案'}`)
       },
-      filter: res => {
-        if (res.split('\n').length > 1) return '至少要有两个人。'
+      filter: (res) => {
+        if (res.split('\n').length > 1)
+          return '至少要有两个人。'
       },
       rejectFilter: rej => rej.trim() === '取消',
-      maxRetries: 3
+      maxRetries: 3,
     })
       .then(res => res.split('\r').join('').split('\n'))
 
@@ -584,54 +614,62 @@ const createBet = async ({ command, meta: session, app }) => {
       `对局: ${name}`,
       `介绍: ${description}`,
       `队伍: ${member.join(',')}`,
-      '没问题嘛？发送“确认”提交对局。发送“取消”可以中止。'
+      '没问题嘛？发送“确认”提交对局。发送“取消”可以中止。',
     ].join('\n'))
     const confirm = await prompt({
       source: () => session.$prompt(),
       filter: res => res.trim() === '确认',
       rejectFilter: rej => rej.trim() === '取消',
-      maxRetries: 10
+      maxRetries: 10,
     })
     console.log(confirm)
-    if (!confirm) return session.send('请重试。')
+    if (!confirm)
+      return session.send('请重试。')
     let result = await createMatch({
       name,
       description,
       member,
-      adder_qq: session.userId
+      adder_qq: session.userId,
     })
       .then(res => res.text())
     try {
       // .then(res => res.json())
       console.log(result)
       result = JSON.parse(result)
-    } catch (error) {
+    }
+    catch (error) {
       return session.send(result)
     }
 
-    if (result.message) session.send(result.message)
+    if (result.message)
+      session.send(result.message)
     else session.send(JSON.stringify(result))
-  } catch (error) {
+  }
+  catch (error) {
   }
 }
 
-const betOnMatch = async ({ command, meta, app }) => {
+async function betOnMatch({ command, meta, app }) {
   let match, target, amount, matched
   if (command.length >= 4) {
     [, match, target, amount] = command
     const matches = await matchList()
     matched = matches.find(m => m.name === match)
-    if (!matched) return meta.send('没有找到这个对局。（小阿日没找到）')
-  } else {
+    if (!matched)
+      return meta.send('没有找到这个对局。（小阿日没找到）')
+  }
+  else {
     await meta.send('对局名？')
     match = await meta.$prompt()
     const matches = await matchList()
     matched = matches.find(m => m.name === match)
-    if (!matched) return meta.send('没有找到这个对局。（小阿日没找到）')
+    if (!matched)
+      return meta.send('没有找到这个对局。（小阿日没找到）')
     await meta.send(`你可以支持:\n${matched.member.map((t, index) => `  ${index + 1}: ${t}`).join('\n')}\n你可以提供序号或者名字`)
     target = await meta.$prompt()
     // eslint-disable-next-line eqeqeq
-    if (parseInt(target) && !matched.member.find(m => m == target)) target = matched.member[target - 1]
+    if (Number.parseInt(target) && !matched.member.find(m => m == target))
+      target = matched.member[target - 1]
     await meta.send('支持多少？')
     amount = await meta.$prompt()
   }
@@ -639,66 +677,74 @@ const betOnMatch = async ({ command, meta, app }) => {
       `对局: ${match}`,
       `下注: ${target}`,
       `数量: ${amount}`,
-      '没问题嘛？发送“确认”提交'
+      '没问题嘛？发送“确认”提交',
   ].join('\n'))
   const confirm = await prompt({
     source: () => meta.$prompt(),
     filter: res => res.trim() === '确认',
     rejectFilter: rej => rej.trim() === '取消',
-    maxRetries: 10
+    maxRetries: 10,
   }).catch(() => { meta.send('操作已经取消') }) // confirm = undefined
-  if (!confirm) return
+  if (!confirm)
+    return
   const result = await bet(matched, {
     qq: meta.userId,
     amount,
-    target
+    target,
   }).then(res => res.json())
-  if (result.message) return meta.send(result.message)
+  if (result.message)
+    return meta.send(result.message)
   else meta.send(JSON.stringify(result))
 }
 
-const endMatch = async ({ command, meta, app }) => {
+async function endMatch({ command, meta, app }) {
   let match, winner, matched
   if (command.length >= 4) {
     [, match, winner] = command
     const matches = await matchList()
     matched = matches.find(m => m.name === match)
-    if (!matched) return meta.send('没有找到这个对局。（小阿日没找到）')
-  } else {
+    if (!matched)
+      return meta.send('没有找到这个对局。（小阿日没找到）')
+  }
+  else {
     await meta.send('对局名？')
     match = await meta.$prompt()
     const matches = await matchList()
     matched = matches.find(m => m.name === match)
-    if (!matched) return meta.send('没有找到这个对局。（小阿日没找到）')
+    if (!matched)
+      return meta.send('没有找到这个对局。（小阿日没找到）')
     await meta.send(`赢方？你可以宣布:\n${matched.member.map((t, index) => `  ${index + 1}: ${t}`).join('\n')}\n你可以提供序号或者名字`)
     winner = await meta.$prompt()
     // eslint-disable-next-line eqeqeq
-    if (parseInt(winner) && !matched.member.find(m => m == winner)) winner = matched.member[winner - 1]
+    if (Number.parseInt(winner) && !matched.member.find(m => m == winner))
+      winner = matched.member[winner - 1]
   }
   await meta.send([
       `将被清算的对局: ${match}`,
       `胜方: ${winner}`,
-      '没问题嘛？发送“确认”提交'
+      '没问题嘛？发送“确认”提交',
   ].join('\n'))
   const confirm = await meta.$prompt().then(res => res.trim() === '确认')
-  if (!confirm) return
+  if (!confirm)
+    return
   const result = await settleBet(matched, {
     qq: meta.userId,
-    winner
+    winner,
   }).then(res => res.json())
-  if (result.message) return meta.send(result.message)
+  if (result.message)
+    return meta.send(result.message)
   else meta.send(JSON.stringify(result))
 }
 
 module.exports = {
-  gamble: createBet,
-  bet: betOnMatch,
-  closebet: endMatch,
-  anotherelo: elo,
+  'gamble': createBet,
+  'bet': betOnMatch,
+  'closebet': endMatch,
+  'anotherelo': elo,
   'elo.upload': uploadElo,
   'elo.result': sendMatchResult,
   'mapp.upload': ({ command, meta, app }) => {
-    const base = (pool) => `http://47.101.168.165:5004/mappool/${pool}/maps_uploader`
+    const base = pool => `http://47.101.168.165:5004/mappool/${pool}/maps_uploader`
     const pool = command.slice(1).join(' ').trim()
     // const poolName = command[1]
     const qq = meta.userId
@@ -707,11 +753,12 @@ module.exports = {
       return acc
     }, {})
     data.uploader_qq = qq
-    meta.send('order:' + JSON.stringify(data)).catch(e => console.error.bind(console))
-    if (!data.mappool_name) return meta.send('mappool_name unspecified').catch(e => console.error.bind(console))
+    meta.send(`order:${JSON.stringify(data)}`).catch(e => console.error.bind(console))
+    if (!data.mappool_name)
+      return meta.send('mappool_name unspecified').catch(e => console.error.bind(console))
     fetch(base(data.mappool_name), {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     })
       .then(res => res.text())
       .then(text => meta.send(text))
@@ -739,8 +786,8 @@ module.exports = {
   // 'team.findbyrank': findTeamsByRank,
   // findteamsbyrank: findTeamsByRank,
   // findteambyrank: findTeamsByRank,
-  dad: dad,
-  dad_of: dad
+  'dad': dad,
+  'dad_of': dad,
   // policeadd: async ({ command, meta, app}) => meta.send(await addUser(command.slice(1).join(' ')).then(_ => 'added')),
   // forceupdate: async ({ command, meta, app}) => meta.send(await addUser(command.slice(1).join(' '), true).then(_ => 'updated').catch(e => Promise.resolve(e.toString()))),
   // deranker: async ({ command, meta, app}) => meta.send(`[CQ:image,file=base64://${await DerankerBase64Table()}]`),
@@ -750,7 +797,6 @@ module.exports = {
   // },
 }
 
-// eslint-disable-next-line no-unused-vars
 // function getMatchPlayers (match) {
 //   return match.damage
 // }
@@ -762,11 +808,11 @@ module.exports = {
 //     });
 // }
 
-async function recentMatchName (matchID) {
+async function recentMatchName(matchID) {
   return (await getOsuApi().apiCall('/get_match', { mp: matchID })).match.name
 }
 
-async function eloTable (user) {
+async function eloTable(user) {
   // against ${getMatchPlayersExclude(user,user.recentMatch).map(player => player.username).join(" , ")}
   return `${user.name}
 ELO: ${user.elo} [ ${addPlus(user.elo_change)} in ${await recentMatchName(user.match_id)} ]

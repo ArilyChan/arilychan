@@ -1,10 +1,11 @@
-function CabbageReaction (reaction, storage) {
+function CabbageReaction(reaction, storage) {
   this.reaction = reaction
   this.storage = storage
 }
 
 CabbageReaction.prototype.reactTo = function (reaction) {
-  if (this.reaction[reaction.action] === undefined) return false
+  if (this.reaction[reaction.action] === undefined)
+    return false
 
   const action = this.reaction[reaction.action]
   this.actionRecursive(action, reaction)
@@ -12,13 +13,12 @@ CabbageReaction.prototype.reactTo = function (reaction) {
 }
 
 CabbageReaction.prototype.actionRecursive = async function (action, reaction) {
-  if (action instanceof Function) {
+  if (action instanceof Function)
     await action(reaction)
-  } else if (typeof action === 'string') {
+  else if (typeof action === 'string')
     await reaction.meta.send(action).catch(e => console.error.bind(console))
-  } else if (action instanceof Array) {
+  else if (Array.isArray(action))
     await Promise.all(action.map(sub => this.actionRecursive(sub, reaction)))
-  }
 }
 
 module.exports = CabbageReaction

@@ -1,5 +1,7 @@
 import propTypes from 'prop-types'
-var React = require('react')
+
+const React = require('react')
+
 const style = `
 html {
   font-family: "Indie Flower";
@@ -14,7 +16,7 @@ ul {
   -webkit-columns: 4;
   -moz-columns: 4;
 }`
-function DefaultLayout (props) {
+function DefaultLayout(props) {
   return (
     <html>
       <style dangerouslySetInnerHTML={{ __html: style }}></style>
@@ -27,6 +29,6 @@ function DefaultLayout (props) {
 }
 DefaultLayout.propTypes = {
   title: propTypes.string,
-  children: propTypes.element
+  children: propTypes.element,
 }
 module.exports = DefaultLayout

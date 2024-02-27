@@ -1,17 +1,18 @@
 'use strict'
 
 const run = require('./run')
-const fsP = require('fs').promises
+const fsP = require('node:fs').promises
+
 const eventPath = './osuercalendar-events.json'
 
 // 模拟meta
 class Meta {
-  constructor (userId) {
+  constructor(userId) {
     this.userId = userId
   }
 
-  send (mes) {
-    console.log(mes + '\n')
+  send(mes) {
+    console.log(`${mes}\n`)
   }
 }
 
@@ -19,21 +20,23 @@ console.log('你的QQ号是1了')
 
 let meta = new Meta('1')
 
-const readline = require('readline')
+const readline = require('node:readline')
+
 const rl = readline.createInterface({
   input: process.stdin,
-  output: process.stdout
+  output: process.stdout,
 })
 rl.on('line', (line) => {
   if (line.startsWith('qq')) {
     const myQQ = line.substring(2)
     meta = new Meta(myQQ)
-    console.log('你的QQ号是' + myQQ + '了')
-  } else if (line === 'period') console.log(period(meta.userId))
-  else run.koishiHandler(meta, eventPath, new Date())
+    console.log(`你的QQ号是${myQQ}了`)
+  }
+  else if (line === 'period') { console.log(period(meta.userId)) }
+  else { run.koishiHandler(meta, eventPath, new Date()) }
 })
 
-async function period (id) {
+async function period(id) {
   const { Fortune } = run
   const start = new Date()
   start.setDate(start.getDate() - 10)

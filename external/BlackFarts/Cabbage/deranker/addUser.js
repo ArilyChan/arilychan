@@ -1,5 +1,6 @@
 const { Deranker, calcUser } = require('./common.js')
-async function addUser (user, force = false) {
+
+async function addUser(user, force = false) {
   return await calcUser(user, force)
 }
 

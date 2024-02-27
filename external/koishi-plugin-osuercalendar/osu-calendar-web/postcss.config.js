@@ -1,10 +1,12 @@
-const path = require('path')
+const path = require('node:path')
+
 let rootPath = `${path.relative(process.cwd(), __dirname)}`
-if (!rootPath) rootPath = '.'
+if (!rootPath)
+  rootPath = '.'
 module.exports = {
   plugins: {
     tailwindcss: {
-      config: `${rootPath}/tailwind.config.js`
+      config: `${rootPath}/tailwind.config.js`,
     },
     autoprefixer: {},
   },

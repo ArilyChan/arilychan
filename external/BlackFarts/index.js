@@ -10,16 +10,18 @@ const { menu, models: menuModels } = require('./Recipe/menu')
 // const RollReaction = require('./Roll/RollReaction')
 // const ExsperReaction = require('./Exsper/ExsperReaction');
 module.exports.name = 'BlackFarts'
-module.exports.init = (options) => ({
+module.exports.init = options => ({
   originalMenu: menu,
   menu: {},
-  menuModels
+  menuModels,
 })
 
 const web = require('./server')
+
 let webInited = false
 module.exports.webView = (options, storage, http) => {
-  if (webInited) return undefined
+  if (webInited)
+    return undefined
   webInited = true
   return web(storage, http)
 }
@@ -42,6 +44,7 @@ module.exports.apply = function (app, options, storage) {
         return false
       })
     }
-    if (!reacted) return next()
+    if (!reacted)
+      return next()
   })
 }

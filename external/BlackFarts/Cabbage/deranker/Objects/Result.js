@@ -1,4 +1,4 @@
-function Result () {
+function Result() {
 
 }
 
@@ -12,7 +12,7 @@ Result.prototype.withSO = function () {
   return this.mods.includes('SpunOut')
 }
 Result.prototype.roundPP = function () {
-  this.pp = +(Math.round(this.pp + 'e+2') + 'e-2')
+  this.pp = +(`${Math.round(`${this.pp}e+2`)}e-2`)
 }
 
 module.exports = Result

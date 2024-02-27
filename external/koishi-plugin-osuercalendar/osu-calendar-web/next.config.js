@@ -12,6 +12,6 @@ module.exports = {
     ignoreDuringBuilds: true,
   },
   serverRuntimeConfig: {
-    fortunePath: '../osuercalendar-events.json'
-  }
+    fortunePath: '../osuercalendar-events.json',
+  },
 }

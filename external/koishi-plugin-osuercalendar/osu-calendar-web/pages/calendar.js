@@ -1,4 +1,4 @@
-import fs from 'fs/promises'
+import fs from 'node:fs/promises'
 import getConfig from 'next/config'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
@@ -6,8 +6,8 @@ import { useState } from 'react'
 import Fortune from '../../lib/Fortune'
 
 import Page from '../components/page'
-const { serverRuntimeConfig } = getConfig()
 
+const { serverRuntimeConfig } = getConfig()
 
 export async function getServerSideProps(context) {
   // const events = require(serverRuntimeConfig.fortunePath)
@@ -32,8 +32,8 @@ export async function getServerSideProps(context) {
   //   }
   return {
     props: {
-      events
-    }
+      events,
+    },
   }
 }
 
@@ -51,12 +51,16 @@ export default function ({ events }) {
   const [index, setIndex] = useState(activity.length - 2)
   const fortuneTheDay = () => activity[index].getStatList()
   const statList = fortuneTheDay()
-  const children = <div className="btn-group mx-auto">
-    <button className={["btn", "btn-wide", activity[index - 1] ? '' : 'btn-disabled'].join(' ')} onClick={() => activity[index - 1] && setIndex(index - 1)}>Yesterday</button>
-    <button class="btn btn-active">{statList.date.toLocaleDateString()}</button>
-    <button className={["btn btn-wide", activity[index + 1] ? '' : 'btn-disabled'].join(' ')} onClick={() => activity[index + 1] && setIndex(index + 1)}>Tomorrow</button>
-  </div>
-  return <Page statList={statList} displayName={displayName} seed={seed}>
-    {children}
-  </Page>
+  const children = (
+    <div className="btn-group mx-auto">
+      <button className={['btn', 'btn-wide', activity[index - 1] ? '' : 'btn-disabled'].join(' ')} onClick={() => activity[index - 1] && setIndex(index - 1)}>Yesterday</button>
+      <button class="btn btn-active">{statList.date.toLocaleDateString()}</button>
+      <button className={['btn btn-wide', activity[index + 1] ? '' : 'btn-disabled'].join(' ')} onClick={() => activity[index + 1] && setIndex(index + 1)}>Tomorrow</button>
+    </div>
+  )
+  return (
+    <Page statList={statList} displayName={displayName} seed={seed}>
+      {children}
+    </Page>
+  )
 }

@@ -1,11 +1,11 @@
-import fs from 'fs/promises'
+import fs from 'node:fs/promises'
 import getConfig from 'next/config'
 
 import Fortune from '../../lib/Fortune'
 
 import Page from '../components/page'
-const { serverRuntimeConfig } = getConfig()
 
+const { serverRuntimeConfig } = getConfig()
 
 export async function getServerSideProps(context) {
   // const events = require(serverRuntimeConfig.fortunePath)
@@ -24,9 +24,11 @@ export async function getServerSideProps(context) {
     props: {
       statList: {
         ...statList,
-        date: statList.date.getTime()
-      }, displayName, seed
-    }
+        date: statList.date.getTime(),
+      },
+      displayName,
+      seed,
+    },
   }
 }
 

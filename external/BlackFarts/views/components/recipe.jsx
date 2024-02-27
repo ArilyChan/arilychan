@@ -1,7 +1,9 @@
 import PropTypes from 'prop-types'
+
 const React = require('react')
+
 class Recipe extends React.Component {
-  render () {
+  render() {
     // console.log(this.props)
     return (
       <li key={this.props.recipe}>
@@ -11,6 +13,6 @@ class Recipe extends React.Component {
   }
 }
 Recipe.propTypes = {
-  recipe: PropTypes.string
+  recipe: PropTypes.string,
 }
 module.exports = Recipe

@@ -2,7 +2,12 @@
   "name": "deranker",
   "version": "1.0.0",
   "description": "",
+  "author": "",
+  "license": "ISC",
   "main": "Main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
     "abort-controller": "^3.0.0",
     "glob": "^7.1.6",
@@ -12,10 +17,5 @@
     "node-fetch": "^2.6.1",
     "node-osu": "^2.2.0"
   },
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC"
+  "devDependencies": {}
 }

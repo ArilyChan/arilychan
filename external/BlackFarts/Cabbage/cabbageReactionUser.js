@@ -6,10 +6,10 @@ const blackFartsEnabled = [
   630060047, // CYCLC
   976685185, // lsahi
   387820244, // crystal
-  2227385902 // Miracle
+  2227385902, // Miracle
 ]
 const enabled = {
-  say: [2038548858]
+  say: [2038548858],
 }
 
 exports.isManager = function (qq) {

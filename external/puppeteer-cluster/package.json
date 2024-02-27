@@ -1,0 +1,27 @@
+{
+  "name": "koishi-plugin-puppeteer-cluster",
+  "description": "1",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "dist"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "chatbot",
+    "koishi",
+    "plugin"
+  ],
+  "dependencies": {
+    "puppeteer": "^22.2.0",
+    "puppeteer-cluster": "^0.22.0"
+  },
+  "devDependencies": {
+    "@types/puppeteer": "^5.4.3"
+  },
+  "peerDependencies": {
+    "koishi": "^4.17.1"
+  }
+}
